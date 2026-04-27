@@ -1,0 +1,39 @@
+{
+  "projectId": "17328508936189160962",
+  "projectTitle": "Fridge Manager",
+  "designSystemId": "b8bcc18c33574bc5a4b82e92a1ebfb75",
+  "designSystemName": "Heirloom Pantry",
+  "screens": {
+    "grocery-list": {
+      "screenId": "a7d38bbe1428482ebbf35f40af2a578d",
+      "title": "Grocery List",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/grocery-list-screenshot.png",
+        "html": ".stitch/designs/grocery-list.html"
+      }
+    },
+    "inventory-view": {
+      "screenId": "44181874ca534b9f8cdc8057a7d532ac",
+      "title": "Inventory",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/inventory-view-screenshot.png",
+        "html": ".stitch/designs/inventory-view.html"
+      }
+    },
+    "item-detail-sheet": {
+      "screenId": "68fd2f7f69424e05aab0847099d0499d",
+      "title": "Item Detail Sheet",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/item-detail-sheet-screenshot.png",
+        "html": ".stitch/designs/item-detail-sheet.html"
+      }
+    }
+  },
+  "createdAt": "2026-04-27T11:23:00-04:00"
+}

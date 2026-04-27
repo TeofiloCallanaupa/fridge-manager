@@ -101,7 +101,8 @@ households (
   name text not null,           -- "Teo & Emilia's Apartment"
   timezone text not null default 'America/New_York',  -- IANA timezone, set to where the fridge is
   created_by uuid FK → auth.users,
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()  -- auto-updated via trigger
 )
 
 -- Many-to-many: users ↔ households (supports multi-household from day one)
@@ -111,7 +112,9 @@ household_members (
   user_id uuid FK → auth.users,
   role text default 'member',   -- 'owner' | 'member'
   joined_at timestamptz default now(),
-  UNIQUE(household_id, user_id)
+  updated_at timestamptz default now(),  -- auto-updated via trigger (tracks role changes)
+  UNIQUE(household_id, user_id),
+  CHECK (role IN ('owner', 'member'))
 )
 
 -- Invite someone to a household by email
@@ -122,17 +125,20 @@ household_invites (
   invited_email text not null,
   status text default 'pending', -- 'pending' | 'accepted' | 'expired'
   created_at timestamptz default now(),
-  expires_at timestamptz default now() + interval '7 days'
+  expires_at timestamptz default now() + interval '7 days',
+  CHECK (status IN ('pending', 'accepted', 'expired'))
 )
 
 -- Food categories with display order and defaults
+-- GLOBAL TABLE: no household_id, shared across all households. RLS: public SELECT, no client writes.
 categories (
   id uuid PK default gen_random_uuid(),
   name text not null UNIQUE,       -- 'produce', 'dairy', 'meat', 'household', 'snacks', etc.
   emoji text,                      -- '🥬', '🥛', '🥩', '🧹'
   display_order int not null,      -- controls sort in grocery list view
   default_destination text,        -- 'fridge' | 'freezer' | 'pantry' | 'none'
-  has_expiration boolean default true  -- false for 'household' category
+  has_expiration boolean default true,  -- false for 'household' category
+  CHECK (default_destination IN ('fridge', 'freezer', 'pantry', 'none'))
 )
 
 -- Seed data for categories:
@@ -159,7 +165,10 @@ grocery_items (
   added_by uuid FK → auth.users,
   checked_by uuid FK → auth.users,
   created_at timestamptz default now(),
-  checked_at timestamptz
+  updated_at timestamptz default now(),  -- auto-updated via trigger (required for WatermelonDB sync)
+  checked_at timestamptz,
+  completed_at timestamptz,       -- set when checked off; null = active. Keeps row for purchase history analytics.
+  CHECK (destination IN ('fridge', 'freezer', 'pantry', 'none'))
 )
 
 -- Items in the household (fridge, freezer, pantry)
@@ -174,9 +183,14 @@ inventory_items (
   expiration_source text,         -- 'user' | 'default' | null (how the expiration was set)
   added_by uuid FK → auth.users,
   added_at timestamptz default now(),
+  updated_at timestamptz default now(),  -- auto-updated via trigger (required for WatermelonDB sync)
   discarded_at timestamptz,       -- null = still in inventory, set when tossed/consumed
   discard_reason text,            -- 'consumed' | 'expired' | 'wasted' (see Discard Flow for logic)
-  source text default 'manual'    -- 'manual' | 'grocery_checkout'
+  source text default 'manual',   -- 'manual' | 'grocery_checkout'
+  CHECK (location IN ('fridge', 'freezer', 'pantry')),
+  CHECK (discard_reason IN ('consumed', 'expired', 'wasted')),
+  CHECK (source IN ('manual', 'grocery_checkout')),
+  CHECK (expiration_source IN ('user', 'default'))
 )
 
 -- Default shelf life by food category (used for auto-estimating expiration dates)
@@ -210,10 +224,11 @@ default_shelf_days (
 ### Notification Tables
 
 ```sql
--- Per-user notification preferences (one row per user)
+-- Per-user notification preferences (one row per user per household)
 notification_preferences (
   id uuid PK default gen_random_uuid(),
-  user_id uuid FK → auth.users UNIQUE,
+  user_id uuid FK → auth.users,
+  household_id uuid FK → households,   -- scoped per household (different prefs per household)
   halfway_enabled boolean default true,
   two_day_enabled boolean default true,
   one_day_enabled boolean default true,
@@ -222,17 +237,20 @@ notification_preferences (
   quiet_hours_start time,         -- e.g., '22:00' (no notifications after 10pm)
   quiet_hours_end time,           -- e.g., '08:00' (no notifications before 8am)
   created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  updated_at timestamptz default now(),
+  UNIQUE(user_id, household_id)
 )
 
 -- Store each device's push subscription (FCM for mobile, Web Push for browser)
 push_subscriptions (
   id uuid PK default gen_random_uuid(),
   user_id uuid FK → auth.users,
+  household_id uuid FK → households,   -- scoped per household (route notifications correctly)
   platform text not null,          -- 'android' | 'web'
   token text not null,             -- FCM token (android) or Web Push endpoint (web)
   keys jsonb,                      -- Web Push p256dh + auth keys (null for FCM)
-  created_at timestamptz default now()
+  created_at timestamptz default now(),
+  CHECK (platform IN ('android', 'web'))
 )
 
 -- Track what notifications were already sent (prevents duplicates)
@@ -241,7 +259,8 @@ notification_log (
   inventory_item_id uuid FK → inventory_items,
   household_id uuid FK → households,
   type text not null,              -- 'halfway' | 'two_day' | 'one_day' | 'day_of' | 'expired'
-  sent_at timestamptz default now()
+  sent_at timestamptz default now(),
+  CHECK (type IN ('halfway', 'two_day', 'one_day', 'day_of', 'expired'))
 )
 ```
 
@@ -263,14 +282,19 @@ system_logs (
 - **`destination` on `grocery_items`** so the checkout flow knows where items go (fridge, freezer, pantry, or nowhere). Defaults from the category's `default_destination`.
 - **`discard_reason` has three values** but the user only sees two buttons ("Used it" / "Tossed it"). The `'expired'` value is auto-set: if `discarded_at > expiration_date` and user taps "Tossed it", it's `'expired'`. If tossed before expiration, it's `'wasted'`. This distinction matters for analytics (forgot about it vs deliberately threw away).
 - **`profiles` table** auto-created on signup via Supabase database trigger. Stores display name and avatar.
-- **`notification_preferences`** is its own table (not on profiles) for clean separation and its own `updated_at` timestamp.
+- **`notification_preferences` is scoped per user per household** (`UNIQUE(user_id, household_id)`) so users can have different notification settings for different households. Separate table from profiles for clean separation.
+- **`push_subscriptions` includes `household_id`** so the notification Edge Function can route push messages to the correct household context.
 - **`households.timezone`** set to where the fridge physically is (IANA format, e.g., `America/New_York`). Does NOT auto-update when traveling. The fridge doesn't move.
 - **`household_members` is many-to-many from day one.** Schema supports multiple households per user without migration.
 - **`quiet_hours`** on notification preferences so alerts don't wake you up at night.
 - **`default_shelf_days` table** provides smart defaults for expiration dates by category and storage location. When an item is auto-added to inventory via checkout, the expiration date is calculated from `added_at + shelf_days`. Users can override any default.
 - **`expiration_source`** tracks whether the expiration date was set by the user or auto-calculated from defaults. Useful for improving defaults over time.
 - **"Days since added" counter** displayed on every inventory item regardless of expiration date. Even if an item has no expiration (like a condiment), seeing "added 45 days ago" creates passive awareness.
-- **RLS (Row Level Security)** on all tables. Users can only read/write data for households they belong to.
+- **`updated_at` on all synced tables** (`grocery_items`, `inventory_items`, `households`, `household_members`) with an auto-update Postgres trigger. Required for WatermelonDB incremental sync ("give me everything changed since timestamp X").
+- **`completed_at` on `grocery_items`** provides soft-delete behavior. When an item is checked off and auto-moved to inventory, `completed_at` is set instead of deleting the row. This preserves purchase history for analytics ("bought 6 times in 3 months"). The grocery list view filters `WHERE completed_at IS NULL`.
+- **CHECK constraints on all enum-like text columns** (`discard_reason`, `source`, `location`, `role`, `status`, `platform`, `destination`). Enforces valid values at the database level, not just application code.
+- **RLS (Row Level Security) enabled on ALL tables at creation time.** Users can only read/write data for households they belong to. `categories` and `default_shelf_days` are global (public SELECT, no client writes). `system_logs` is service-role only.
+- **Seed data uses `ON CONFLICT DO NOTHING`** to prevent duplicate insertion errors during migration re-runs.
 
 ---
 

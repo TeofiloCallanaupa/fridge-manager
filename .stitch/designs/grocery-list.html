@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Grocery List - Fridge Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f7;
+            color: #1a1c1b;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0px 12px 32px rgba(26, 28, 27, 0.06);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "inverse-primary": "#93d5ac",
+                        "on-primary-container": "#c5ffd8",
+                        "tertiary-fixed": "#dae2ff",
+                        "secondary": "#585f6c",
+                        "tertiary-container": "#596da1",
+                        "surface": "#f9f9f7",
+                        "on-tertiary-fixed-variant": "#314576",
+                        "tertiary-fixed-dim": "#b1c5ff",
+                        "on-primary-fixed": "#002111",
+                        "on-secondary-fixed-variant": "#404754",
+                        "inverse-on-surface": "#f1f1ef",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c0c7d6",
+                        "on-tertiary-fixed": "#001947",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#93d5ac",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#2a6a48",
+                        "inverse-surface": "#2f3130",
+                        "secondary-container": "#dce2f3",
+                        "surface-dim": "#dadad8",
+                        "surface-variant": "#e2e3e1",
+                        "on-background": "#1a1c1b",
+                        "primary-container": "#3b7a57",
+                        "on-secondary-container": "#5e6572",
+                        "surface-container": "#eeeeec",
+                        "on-tertiary-container": "#f0f1ff",
+                        "outline": "#707972",
+                        "on-secondary-fixed": "#151c27",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#aff1c6",
+                        "surface-container-high": "#e8e8e6",
+                        "outline-variant": "#bfc9c0",
+                        "error-container": "#ffdad6",
+                        "primary": "#206140",
+                        "background": "#f9f9f7",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#dce2f3",
+                        "surface-container-highest": "#e2e3e1",
+                        "on-surface": "#1a1c1b",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f4f4f2",
+                        "on-surface-variant": "#404942",
+                        "tertiary": "#405587",
+                        "on-primary-fixed-variant": "#0a5132",
+                        "surface-bright": "#f9f9f7"
+                    },
+                    borderRadius: {
+                        "xl": "1rem",
+                        "2xl": "1.5rem"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-[#F9F9F7]/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl docked full-width top-0 sticky z-40">
+<div class="flex justify-between items-center px-8 py-6 max-w-full">
+<div class="flex flex-col">
+<h1 class="font-['Plus_Jakarta_Sans'] tracking-tight text-2xl font-bold leading-tight text-primary">Grocery List</h1>
+<p class="text-on-secondary-container text-sm font-medium">12 items · 4 categories</p>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-full transition-colors hover:bg-[#E2E3E1]/50">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-semibold text-primary uppercase tracking-wider">Synced</span>
+<span class="material-symbols-outlined text-primary text-lg" data-icon="sync">sync</span>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 mt-4 space-y-10">
+<!-- Category: Produce -->
+<section class="space-y-4">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed flex items-center justify-center text-xl">🥬</div>
+<h2 class="text-xl font-bold tracking-tight text-on-surface">Produce</h2>
+</div>
+<div class="space-y-3">
+<!-- Item Card Unchecked -->
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full flex items-center justify-center"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Strawberries</span>
+<span class="text-on-secondary-container text-sm">(1 lb)</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with short brown hair and glasses on a soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfAvvghulja1e6VwSAbx4G6FIIR0Rnb4ucNsO169_EaocGYXPo-fK4mWNpDxgIZ-ZIV1W96yaTmsMRPwQEbt9wsleN3qYoCzOsFXfZ-XTTrX0C266poBc1Jfxx7vfQhudzuie_SrKosEZx1Mx9s8o0v3z_0vjb6_nV9UIRrvSdUM_kDXuFESPwCwkhyGJIwsQV9ER6eoWYkU35kEP2oloCQh8neNvoqkOvlGvztJUJgWoVcpMlz20dKiHC-Fjevdf1UzA2fvVY5ySN"/>
+</div>
+<!-- Item Card Unchecked -->
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full flex items-center justify-center"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Spinach</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with long wavy hair and a blue shirt on a light beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_EQYxczgduqEUT8hy9EYH6Z7HZ8lmmLyJihNMDvhFJ7qbS3sTHtCyosBX2HN0YUmeQikc9nI8qePvc6i9IKIq6hwD1kuC4qPRYupmvqTqyiDUU5isuvlKQ3jODlm56lO4rdREH5SFUXmekNa1YJX-v2fuHpRhvH5fGSqsfS8q1ZFzI3PdqipTEroIf9UOuz9f_EMjlghIXHhrp9kD6RKHZGs6oytSUEXkoObEK8Kzr17gcETFzWhqOgRsS4v6xSXThXsEc5fQ41bW"/>
+</div>
+<!-- Item Card Checked -->
+<div class="bg-surface-container-lowest/60 opacity-60 rounded-2xl p-4 flex items-center justify-between border border-dashed border-outline-variant/30">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background line-through">Yellow onions</span>
+<span class="text-on-secondary-container text-sm">(3)</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full" data-alt="minimalist flat vector avatar of a person with short brown hair and glasses on a soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxGe28G34bUkTUPalpd7j9glrUVGDSuLJlWreMjL3NL7WFG5vP2RckgkwYFuME7RMxiZUqUW_bZyy_RcWZmT9jFER_Ejlx_QM6zZ6MSQuX9qCbalDYpB0Pomj2Uf2ph2LTyEfVj7IkVWaeXAenvKZSyt-Mrx1r4qkDvOgd3vQG55c5bjIDlJuD2ZeIa-3AWTuqsB7xm-dmXWqCZiMtqM8NxsNUzwWk85xzCo54Emfrd-7PZA2cx01y6Jl4QDlftoyuNvmqWeztU0wq"/>
+</div>
+</div>
+</section>
+<!-- Category: Dairy -->
+<section class="space-y-4">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-secondary-fixed flex items-center justify-center text-xl">🥛</div>
+<h2 class="text-xl font-bold tracking-tight text-on-surface">Dairy</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Whole milk</span>
+<span class="text-on-secondary-container text-sm">(1 gallon)</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with long wavy hair and a blue shirt on a light beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpV5cUlDT86NQetqtrjaZW3x3xGyJ_AzK8OXDgl7tP_aSnkaEk6iDaYmJ6r93ZzI0f0odd0c0OrLUwej07yocO-y8B-U6z33lYU6tAtWqGJhEffl8FH563a-I15S9bQ0eHfTIlxMIMlgH3Ij7-1-gCGHUJxAD7U9bqlf30GQYwjga-OTLuvUaYkT8NGg0aHTR97fDXB5yJYljj-UWAxdzGlxHxfrBtEcUsxJI1JgmsUdjCl5LiDcs8k2oZvyWyRZ67ZvaOOcFdjB6p"/>
+</div>
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Greek yogurt</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with short brown hair and glasses on a soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4HjXJZrKq5mgTcQD0_lGsLFV_ecF3x8Afmqp2CQszCnAr4B-nlKpUbpOxx2bWCKafbrWt-1RgEZkaEBNEsWKZx6uq68-L_gBPHmAOBeZansGQ-7bsVSrOdBSw0JEvzN-gmhstvCvHpbdMFC_HM7o4Ei2FEb9as4SigxDRlTnk4RRAM5503EXhjx1bdDJFwMxlBe1Gs6q2ERRI4t0KROkaxdfV9HpOkVEGWBwW9RmtyXiKmAaCPQjYQl-IhA4OO7voe-_mTvAdgP6r"/>
+</div>
+</div>
+</section>
+<!-- Category: Meat -->
+<section class="space-y-4">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-error-container flex items-center justify-center text-xl">🥩</div>
+<h2 class="text-xl font-bold tracking-tight text-on-surface">Meat</h2>
+</div>
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Chicken breast</span>
+<span class="text-on-secondary-container text-sm">(2 lbs)</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with long wavy hair and a blue shirt on a light beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6Qfi1efSN0ESK31B59OIAx3a1VN5Tm5jwTbDBNTiZflO0zAtcxgsRwxmYkJ3Bj6Pia4B-3m9Zy5UOJNKkXLQ12zJjn--Oz-r9sCDVtAnS4JUU6tLB2JKjxsew2GbfoLJMm-eU1RItcSPAfUnr_ANf-g302_OOgcp4-E4t7Wijq7XInhnv8ssONqJCcyS2u90cbx9C3pwPaVel4NrPD2X1SZfF4VTtR6Li8ucwJ0574H8PH5XacRAbrwbGD-yNJE4rUmJjgsaCCXX_"/>
+</div>
+</section>
+<!-- Category: Household -->
+<section class="space-y-4">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed flex items-center justify-center text-xl">🧹</div>
+<h2 class="text-xl font-bold tracking-tight text-on-surface">Household</h2>
+</div>
+<div class="space-y-3">
+<div class="bg-surface-container-lowest editorial-shadow rounded-2xl p-4 flex items-center justify-between transition-transform active:scale-95 duration-150">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 border-2 border-primary rounded-full"></div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background">Dish soap</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full bg-surface-container-high" data-alt="minimalist flat vector avatar of a person with short brown hair and glasses on a soft grey background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2OrQSoQyjEDF7mOOr4lm8T3F9tbygu6EwoXhYBlqqk6nCY7WtbtMyXnqXhCifAGJ8bFHbL6U0z9EGy3tOIZd6Xi8o3MamDnAT4psmbd6Vhpl2blbDI2YtsFlifzqmL4hcSbmQfWS7nnzlYbR-GW9-pBx9jWiW3cuCWL6afF7hAZ0KIWjHx9Nc5IP4Fvi0D4b9di4U-ufQxl4oxFp1sLW2PX86E9NgyNxqiKi9e2EiSxnD7JsTYjmEvRSEpEb6k56yypQY0bjNdTfq"/>
+</div>
+<!-- Item Card Checked -->
+<div class="bg-surface-container-lowest/60 opacity-60 rounded-2xl p-4 flex items-center justify-between border border-dashed border-outline-variant/30">
+<div class="flex items-center gap-4">
+<div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-background line-through">Paper towels</span>
+</div>
+</div>
+<img alt="User Avatar" class="w-6 h-6 rounded-full" data-alt="minimalist flat vector avatar of a person with long wavy hair and a blue shirt on a light beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTExl0iY1-9dBjth8kUBXZPGqnc2XR6bzNGOZ1XvNyvSh1TpjXuZrNZoMsijEu4rjXgy6oWxfpnLhWv9DnM4GBPGlVhE_fTKxqvzSezy6iknFVPVRm-2_ChlaMUB1HRlEOWdLuyZGF84SPQrn_FyvCQZjVVgJSaS6PZfTjqhmv47q4UqxuYOkuPkDTqxVOT5kSpTjVaaAHxwr_nUKczGFC9WVgjPh2YCpg8xCkvggYE1Vt0oB5XYUDZ6uug4fVEzFHAgQWe7TXfCc4"/>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-28 right-8 w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all duration-200 z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-[#F9F9F7]/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-t-[2rem] shadow-[0px_-12px_32px_rgba(26,28,27,0.06)] px-4 pb-8 pt-4 flex justify-around items-center">
+<!-- Active Tab: Grocery -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#206140] to-[#3B7A57] text-white rounded-full px-6 py-2 transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold tracking-wide uppercase mt-1">Grocery</span>
+</a>
+<!-- Inactive Tab: Inventory -->
+<a class="flex flex-col items-center justify-center text-[#5E6572] dark:text-[#A1A1A1] px-6 py-2 hover:text-[#3B7A57] transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold tracking-wide uppercase mt-1">Inventory</span>
+</a>
+<!-- Inactive Tab: Settings -->
+<a class="flex flex-col items-center justify-center text-[#5E6572] dark:text-[#A1A1A1] px-6 py-2 hover:text-[#3B7A57] transition-all active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-semibold tracking-wide uppercase mt-1">Settings</span>
+</a>
+</nav>
+<!-- Separation Logic Gradient -->
+<div class="fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#F4F4F2] to-transparent pointer-events-none z-40"></div>
+</body></html>

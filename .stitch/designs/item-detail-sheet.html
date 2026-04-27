@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#405587",
+                        "tertiary-fixed": "#dae2ff",
+                        "surface": "#f9f9f7",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#001947",
+                        "outline-variant": "#bfc9c0",
+                        "outline": "#707972",
+                        "on-primary-fixed": "#002111",
+                        "tertiary-container": "#596da1",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#b1c5ff",
+                        "on-surface": "#1a1c1b",
+                        "primary-container": "#3b7a57",
+                        "inverse-surface": "#2f3130",
+                        "on-secondary-fixed": "#151c27",
+                        "primary-fixed": "#aff1c6",
+                        "on-background": "#1a1c1b",
+                        "on-tertiary-fixed-variant": "#314576",
+                        "surface-dim": "#dadad8",
+                        "primary-fixed-dim": "#93d5ac",
+                        "surface-container": "#eeeeec",
+                        "surface-tint": "#2a6a48",
+                        "on-secondary-fixed-variant": "#404754",
+                        "surface-variant": "#e2e3e1",
+                        "secondary-container": "#dce2f3",
+                        "surface-bright": "#f9f9f7",
+                        "on-primary": "#ffffff",
+                        "primary": "#206140",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#0a5132",
+                        "inverse-primary": "#93d5ac",
+                        "secondary-fixed": "#dce2f3",
+                        "secondary": "#585f6c",
+                        "inverse-on-surface": "#f1f1ef",
+                        "secondary-fixed-dim": "#c0c7d6",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-surface-variant": "#404942",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#c5ffd8",
+                        "surface-container-low": "#f4f4f2",
+                        "surface-container-high": "#e8e8e6",
+                        "surface-container-highest": "#e2e3e1",
+                        "on-tertiary-container": "#f0f1ff",
+                        "background": "#f9f9f7",
+                        "on-secondary-container": "#5e6572",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen overflow-hidden">
+<!-- Background Content: Dimmed Inventory View (SCRIMMED) -->
+<div class="relative w-full h-screen overflow-hidden bg-surface-container-low">
+<!-- TopAppBar Placeholder -->
+<header class="flex items-center justify-between px-8 py-4 w-full bg-[#F9F9F7]/80 backdrop-blur-md sticky top-0 z-0">
+<span class="material-symbols-outlined text-[#3B7A57]" data-icon="menu">menu</span>
+<h1 class="font-['Plus_Jakarta_Sans'] font-bold tracking-tight text-xl text-[#3B7A57]">Fridge Manager</h1>
+<div class="w-8 h-8 rounded-full bg-surface-variant"></div>
+</header>
+<!-- Mock Inventory Content -->
+<main class="px-8 pt-6 space-y-8">
+<section>
+<h2 class="text-on-surface font-extrabold text-3xl tracking-tight mb-6">Pantry Fresh</h2>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl h-48 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="egg">egg</span>
+</div>
+<div>
+<p class="font-bold">Organic Eggs</p>
+<p class="text-on-secondary-container text-sm">12 count</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl h-40 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<p class="font-bold">Almond Milk</p>
+<p class="text-on-secondary-container text-sm">Half Gallon</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Scrim Overlay -->
+<div class="absolute inset-0 bg-[#1A1C1B] opacity-40 z-10"></div>
+</div>
+<!-- Bottom Sheet Container -->
+<div class="fixed inset-0 z-20 flex flex-col justify-end">
+<!-- Bottom Sheet Surface -->
+<div class="bg-white w-full rounded-t-[24px] flex flex-col max-h-[663px] overflow-hidden shadow-[0_-12px_48px_rgba(0,0,0,0.12)]">
+<!-- Drag Handle -->
+<div class="flex justify-center pt-4 pb-6">
+<div class="w-[40px] h-[4px] rounded-full bg-[#BFC9C0]"></div>
+</div>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-y-auto px-8 pb-4">
+<!-- Item Header -->
+<div class="flex justify-between items-center mb-8">
+<div>
+<h2 class="text-2xl font-bold text-on-surface leading-tight">Greek Yogurt</h2>
+<p class="text-on-secondary-container text-lg">1 container</p>
+</div>
+<div class="bg-error-container/30 px-3 py-1.5 rounded-full">
+<span class="text-[#8B4A00] font-bold text-sm">2 days left</span>
+</div>
+</div>
+<!-- Detail Rows -->
+<div class="space-y-6 mb-10">
+<!-- Category -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="category">category</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">Category</p>
+<p class="font-medium text-on-surface">Dairy</p>
+</div>
+</div>
+<!-- Location -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="kitchen">kitchen</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">Location</p>
+<p class="font-medium text-on-surface">Fridge</p>
+</div>
+</div>
+<!-- Expiration -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-error-container/20 rounded-lg">
+<span class="material-symbols-outlined text-error" data-icon="event_busy">event_busy</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">Expires</p>
+<p class="font-bold text-[#8B4A00]">April 29, 2026</p>
+</div>
+</div>
+<!-- Added -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="calendar_today">calendar_today</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">Added</p>
+<p class="font-medium text-on-surface">5 days ago</p>
+</div>
+</div>
+<!-- Added by -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+<div class="flex-1 flex items-center gap-3">
+<img alt="Avatar of user Teo" class="w-6 h-6 rounded-full object-cover" data-alt="portrait of a young man with a warm smile in natural outdoor light, professional headshot style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIvP3MqyNuRe68iAKryTbUJUQYNDOlo7ndRFM5jPAOcRXw9MIK2XxKA_Kiq2Jm_PASNWoP4ltec9eP44TKvoG9EZjbQeQPIOsPqKPsnkE2jtndWWnrjvV5qh882nbkpGL0VOo_CdakJCopvTQ8uS_F93-PgLmAVgZAqOGV5vovemWm4aLXLWovLpKpLFBzLNOErkfA3BZvLJRoiFfJgR5McN1ugJDoB_XUfW0dHCnY5QFdm6iTO-9J6Vn28v3TZ_cgJn5OGLyhI6sl"/>
+<div>
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">Added by</p>
+<p class="font-medium text-on-surface">Teo</p>
+</div>
+</div>
+</div>
+<!-- History -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 flex items-center justify-center bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container/60 uppercase tracking-widest">History</p>
+<p class="font-medium text-on-secondary-container">Bought 6 times in 3 months</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Area -->
+<div class="bg-surface-container-low px-8 pt-8 pb-12 space-y-6">
+<!-- Primary Action Buttons -->
+<div class="grid grid-cols-2 gap-4">
+<button class="h-[56px] flex items-center justify-center gap-2 bg-[#3B7A57] text-white rounded-full font-bold active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                        Used It
+                    </button>
+<button class="h-[56px] flex items-center justify-center gap-2 bg-[#EF4444] text-white rounded-full font-bold active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+                        Tossed It
+                    </button>
+</div>
+<!-- Secondary Ghost Buttons -->
+<div class="flex flex-col gap-2">
+<button class="h-[48px] flex items-center justify-center text-on-surface font-semibold hover:bg-surface-container transition-colors rounded-full">
+                        Edit Item
+                    </button>
+<button class="h-[48px] flex items-center justify-center text-on-surface font-semibold hover:bg-surface-container transition-colors rounded-full">
+                        Add to Grocery List
+                    </button>
+<button class="h-[48px] flex items-center justify-center text-on-surface font-semibold hover:bg-surface-container transition-colors rounded-full">
+                        View Purchase History
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Hidden Bottom Nav for Layout Reference -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 bg-[#F9F9F7]/80 backdrop-blur-xl invisible">
+<div class="flex flex-col items-center justify-center text-[#5E6572]"><span class="material-symbols-outlined" data-icon="kitchen">kitchen</span><span class="text-[10px]">Inventory</span></div>
+<div class="flex flex-col items-center justify-center text-[#5E6572]"><span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span><span class="text-[10px]">Shopping</span></div>
+<div class="flex flex-col items-center justify-center text-[#5E6572]"><span class="material-symbols-outlined" data-icon="menu_book">menu_book</span><span class="text-[10px]">Recipes</span></div>
+<div class="flex flex-col items-center justify-center text-[#5E6572]"><span class="material-symbols-outlined" data-icon="settings">settings</span><span class="text-[10px]">Settings</span></div>
+</nav>
+</body></html>

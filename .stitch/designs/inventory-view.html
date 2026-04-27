@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Digital Larder - Inventory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#707972",
+                        "tertiary-fixed": "#dae2ff",
+                        "surface-dim": "#dadad8",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f9f9f7",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#c0c7d6",
+                        "secondary-fixed": "#dce2f3",
+                        "error": "#ba1a1a",
+                        "secondary-container": "#dce2f3",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#3b7a57",
+                        "tertiary": "#405587",
+                        "surface-variant": "#e2e3e1",
+                        "primary": "#206140",
+                        "on-secondary-container": "#5e6572",
+                        "on-primary-container": "#c5ffd8",
+                        "tertiary-fixed-dim": "#b1c5ff",
+                        "surface-container-high": "#e8e8e6",
+                        "tertiary-container": "#596da1",
+                        "on-surface-variant": "#404942",
+                        "primary-fixed-dim": "#93d5ac",
+                        "surface": "#f9f9f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e2e3e1",
+                        "on-primary-fixed": "#002111",
+                        "on-tertiary-fixed-variant": "#314576",
+                        "on-secondary-fixed": "#151c27",
+                        "surface-container-low": "#f4f4f2",
+                        "on-tertiary-fixed": "#001947",
+                        "on-surface": "#1a1c1b",
+                        "outline-variant": "#bfc9c0",
+                        "inverse-surface": "#2f3130",
+                        "on-tertiary-container": "#f0f1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f1f1ef",
+                        "background": "#f9f9f7",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container": "#eeeeec",
+                        "inverse-primary": "#93d5ac",
+                        "surface-tint": "#2a6a48",
+                        "primary-fixed": "#aff1c6",
+                        "on-background": "#1a1c1b",
+                        "on-secondary-fixed-variant": "#404754",
+                        "on-primary-fixed-variant": "#0a5132",
+                        "secondary": "#585f6c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "display": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F9F9F7; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface mb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-[#F9F9F7]/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-b-[2rem] shadow-none">
+<div class="flex items-center gap-3">
+<img alt="Profile" class="w-10 h-10 rounded-full object-cover" data-alt="Close-up portrait of a woman with a gentle expression, soft natural indoor lighting, minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1JLgbRp3LmcBfiGX_wkpLaENBUlao-oftDDzEVwwMbXTbeHLa6176s5ms_j0W2Xd6vb7qPqJeJC4-ZNGKk4rSDx76yrRtY-3tjjXrebFApPuCKp8WYprSm0MXhcuHIJHQ4DDEutMkWivwc3RecJhpl7TtoJU7zGF8E0WBsYyFyp0eyYttLBVWfmsSQWg-OO2XCnd-3hVDWlUzo63cB8Drsqmw6jCerp-4zWGlVSKWHa4V2O27ZROyg3uUA7QDX3vGXKIA-UUQBOul"/>
+<div class="flex flex-col">
+<span class="font-['Plus_Jakarta_SANS'] font-extrabold text-[#1C1C1E] dark:text-[#F9F9F7] text-lg uppercase tracking-widest">Digital Larder</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
+<span class="material-symbols-outlined text-[#3B7A57] dark:text-[#4A936D] transition-opacity hover:opacity-80 active:scale-95 duration-200">sync</span>
+</div>
+</header>
+<main class="mt-28 px-8">
+<!-- Header Content -->
+<section class="mb-8">
+<h1 class="text-3xl font-bold tracking-tight text-on-surface">Inventory</h1>
+<p class="text-on-secondary-container font-medium">23 items in your kitchen</p>
+</section>
+<!-- Tabs -->
+<nav class="flex space-x-2 mb-8 overflow-x-auto no-scrollbar">
+<button class="bg-primary text-white px-6 py-2 rounded-full font-bold transition-all whitespace-nowrap">
+                Fridge <span class="ml-1 opacity-80 font-medium">14</span>
+</button>
+<button class="bg-surface-container-low text-secondary px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap">
+                Freezer <span class="ml-1 opacity-60 font-medium">5</span>
+</button>
+<button class="bg-surface-container-low text-secondary px-6 py-2 rounded-full font-semibold transition-all whitespace-nowrap">
+                Pantry <span class="ml-1 opacity-60 font-medium">4</span>
+</button>
+</nav>
+<!-- FEFO Sorted Content -->
+<div class="flex flex-col gap-[12px]">
+<!-- Item: Chicken breast (Expired) -->
+<div class="bg-surface-container-lowest p-5 rounded-3xl border-l-4 border-error shadow-[0px_12px_32px_rgba(26,28,27,0.06)] flex justify-between items-center group">
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-on-surface">Chicken breast</h3>
+<div class="flex items-center gap-2">
+<span class="bg-error-container text-on-error-container px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide">EXPIRED YESTERDAY</span>
+<span class="text-xs text-on-secondary-container">500g</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Portrait of a smiling young man in a clean casual shirt, professional photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0-WnFa1bldQH9Ah2p9B3r1VCFyr7Fcn3vU8SH4qRdjWtTx3e5tOFybfPt9WWBx7R7MU6UesCBp5wi5elH_8nwx0TwfJJJJH8p9jUXwqembn06oaFl08QMEHM-TgHPLbgwbom4hVNUF55ZcuuJkX0MgaQWjJZDmDzfXMu9TvabAN_jpOHbvOAS9LD06mxk676TOHAItC7VWTIpcMO25I941PW7uB6oHyL1F-WeuOyke1X7Pe6ZmXEm9_DkamO95G2MtcnkcT5KWS_3"/>
+<span class="text-[11px] text-on-secondary-container">Added by Marcus · 4d ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-active:scale-90 transition-transform">more_vert</span>
+</div>
+<!-- Item: Greek yogurt (2 days left) -->
+<div class="bg-surface-container-lowest p-5 rounded-3xl border-l-4 border-[#F59E0B] shadow-[0px_12px_32px_rgba(26,28,27,0.06)] flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-on-surface">Greek yogurt</h3>
+<div class="flex items-center gap-2">
+<span class="bg-[#FEF3C7] text-[#92400E] px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase">2 days left</span>
+<span class="text-xs text-on-secondary-container">1 tub</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Professional headshot of a woman with natural light, warm tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5NN0ZgIvN8DicxdF3DSPqAKyIHvCplCp1f7k33b0EZzo0YEpRG_uUzfAs0bhiT7nMxcSM6i-I0JIQkgDyXm-EFde92Kk5IXGIk6tUPK3_xhRrGIJtAFTF8J5WXVy_iHTst5iKGDoSGH25_Svg1R_pPm-LlZkYjysSmBDhePdlXFM80_OMAMnftHIAx1xRLInZOLfpqYVr-dvIAqV0c208fd9hBnbREMXJah39uXN_cbMjx6d871olAl5Aw5Hdh1-09pO_XGVZmYDP"/>
+<span class="text-[11px] text-on-secondary-container">Added by Sarah · 2d ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">more_vert</span>
+</div>
+<!-- Item: Whole milk (Tomorrow) -->
+<div class="bg-surface-container-lowest p-5 rounded-3xl border-l-4 border-[#F59E0B] shadow-[0px_12px_32px_rgba(26,28,27,0.06)] flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-on-surface">Whole milk</h3>
+<div class="flex items-center gap-2">
+<span class="bg-[#FEF3C7] text-[#92400E] px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase">Tomorrow</span>
+<span class="text-xs text-on-secondary-container">2L</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Portrait of a smiling young man in a clean casual shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi2jkw3QIQyI5v-9Mv447VXmZILbPLPwBOGdPzT1RQbKGEeOB1bkIwCnulongBK_NvP1mL0gb1fvnQzzr9UWQRxIhl7l318S1ZKJkZfTJ_-Y9kD9IVJjxV-IdO7kf0jTekZsSVy7TAplOcVo6AgupF8gdffqqJwOYgSF6KRga8ELnMCUfgdviQ48WQrsTUox2ihPXjGrjNGV0btjNNPh1k2qqABWgVfI1rm5L2vBaBtTfmcYqxuEKQ8Lu0ihcjidCoEZ6UnBfY7Z8x"/>
+<span class="text-[11px] text-on-secondary-container">Added by Marcus · 6d ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">more_vert</span>
+</div>
+<!-- Item: Spinach (4 days left) -->
+<div class="bg-surface-container-lowest p-5 rounded-3xl border-l-4 border-primary shadow-[0px_12px_32px_rgba(26,28,27,0.06)] flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-on-surface">Spinach</h3>
+<div class="flex items-center gap-2">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase">4 days left</span>
+<span class="text-xs text-on-secondary-container">250g</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Professional headshot of a woman with natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFOazXsNpPzCacnquzUxBvb_iKrVH9_hlfEGQkhCrWKt2mhQ6lRL3fETL4HWMa7j2yvrgxEPwWvldOffWRAmGFyjSfbFeW1m6DQ-RnpSRAgFNL1pQLMEsqSf4tR5VNRHOG5MNwpAC762l29QOkFfTo0CBYiVRVCXBkIXXzvVtTailDMY9fgfl0h7dPXjapbGeo6JTgPVBLG95YTa9wTKFg2Fwa4TW9EThYB9SyY-WjKluCjTgB5Cl-Wc_w9Wa1tMmoFhBlu0L80ScS"/>
+<span class="text-[11px] text-on-secondary-container">Added by Sarah · 1d ago</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">more_vert</span>
+</div>
+<!-- Item: Strawberries (5 days left) -->
+<div class="bg-surface-container-lowest p-5 rounded-3xl border-l-4 border-primary shadow-[0px_12px_32px_rgba(26,28,27,0.06)] flex justify-between items-center">
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-bold text-on-surface">Strawberries</h3>
+<div class="flex items-center gap-2">
+<span class="bg-primary-fixed text-on-primary-fixed-variant px-3 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase">5 days left</span>
+<span class="text-xs text-on-secondary-container">1 pack</span>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<img class="w-5 h-5 rounded-full object-cover" data-alt="Portrait of a woman, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAuCO_5NKz-Ka5dWgISHQL2OgGC1tB480vmLM0qmMk6uEpUexaoVQKmy6wikaTq0RoEleO6M70F7UOCyyUMWMT7NMEzXE83qy2ej6Q6uxRQ8K-9j5Yosm9t1RC_PtQZjyv2RLoqI6h78e3FeyxEXLYoR9CczcDzMRBrHxbLrbJ45kga9xS4OxF5GXeBXjL6TSEg2zEO5E01IDKuYsder5kbbeA_vfy3OmDIgF6Q8ksjqJOe41QMLUmaTifNM7uWZrDRGZT57Ok81rX"/>
+<span class="text-[11px] text-on-secondary-container">Added by Elena · Today</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline-variant">more_vert</span>
+</div>
+</div>
+<!-- Recently Removed -->
+<section class="mt-12 mb-12">
+<div class="flex justify-between items-end mb-4">
+<h2 class="text-xl font-bold text-on-surface">Recently Removed</h2>
+<span class="text-sm font-semibold text-primary">View History</span>
+</div>
+<div class="grid grid-cols-1 gap-3">
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl opacity-60">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-secondary-container">delete</span>
+<span class="font-bold text-sm">Large Eggs</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-secondary-container">Used 2h ago</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl opacity-60">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-secondary-container">delete</span>
+<span class="font-bold text-sm">Avocado</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-secondary-container">Used 5h ago</span>
+</div>
+</div>
+</section>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-28 right-8 w-16 h-16 bg-gradient-to-br from-primary to-primary-container text-white rounded-full flex items-center justify-center shadow-xl z-40 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-8 pt-4 bg-[#F9F9F7]/80 dark:bg-[#1C1C1E]/80 backdrop-blur-xl rounded-t-[2.5rem] shadow-[0px_-8px_24px_rgba(26,28,27,0.04)]">
+<!-- Inventory Active -->
+<div class="flex flex-col items-center justify-center bg-[#3B7A57] text-white rounded-full px-6 py-2 transition-all duration-300 active:scale-90 cubic-bezier(0.4, 0, 0.2, 1)">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold tracking-wide">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E6572] dark:text-[#8E95A2] px-6 py-2 hover:text-[#3B7A57] dark:hover:text-[#4A936D] transition-all duration-150 active:scale-90 cubic-bezier(0.4, 0, 0.2, 1)">
+<span class="material-symbols-outlined">shopping_basket</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold tracking-wide">Market</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E6572] dark:text-[#8E95A2] px-6 py-2 hover:text-[#3B7A57] dark:hover:text-[#4A936D] transition-all duration-150 active:scale-90 cubic-bezier(0.4, 0, 0.2, 1)">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold tracking-wide">Kitchen</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#5E6572] dark:text-[#8E95A2] px-6 py-2 hover:text-[#3B7A57] dark:hover:text-[#4A936D] transition-all duration-150 active:scale-90 cubic-bezier(0.4, 0, 0.2, 1)">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-semibold tracking-wide">Vault</span>
+</div>
+</nav>
+</body></html>
