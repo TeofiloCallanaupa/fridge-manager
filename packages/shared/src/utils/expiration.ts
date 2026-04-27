@@ -10,6 +10,8 @@
 
 import type { ExpirationColor, StorageLocation } from '../types/grocery.js';
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 /**
  * Calculate the expiration date for an item based on its category and storage location.
  *
@@ -20,34 +22,46 @@ import type { ExpirationColor, StorageLocation } from '../types/grocery.js';
  */
 export function calculateExpiration(
   _itemName: string,
-  _categoryHasExpiration: boolean,
+  categoryHasExpiration: boolean,
   _location: StorageLocation,
-  _addedAt: Date,
-  _defaultShelfDays: number | null,
+  addedAt: Date,
+  defaultShelfDays: number | null,
 ): Date | null {
-  // TODO: Implement — see tests for expected behavior
-  throw new Error('Not implemented');
+  if (!categoryHasExpiration) return null;
+  if (defaultShelfDays === null) return null;
+
+  const expiration = new Date(addedAt);
+  expiration.setDate(expiration.getDate() + defaultShelfDays);
+  return expiration;
 }
 
 /**
  * Returns the number of whole days since the given date.
  * Always returns 0 for today, regardless of time.
  */
-export function getDaysSince(_date: Date): number {
-  // TODO: Implement
-  throw new Error('Not implemented');
+export function getDaysSince(date: Date): number {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  return Math.floor(diffMs / MS_PER_DAY);
 }
 
 /**
  * Returns the expiration color for an inventory item.
  *   green  = >3 days remaining
  *   yellow = 1-3 days remaining
- *   red    = expired
+ *   red    = expired or expiring today
  *   null   = no expiration date
  */
 export function getExpirationColor(
-  _expirationDate: Date | null,
+  expirationDate: Date | null,
 ): ExpirationColor | null {
-  // TODO: Implement
-  throw new Error('Not implemented');
+  if (expirationDate === null) return null;
+
+  const now = new Date();
+  const diffMs = expirationDate.getTime() - now.getTime();
+  const daysRemaining = Math.ceil(diffMs / MS_PER_DAY);
+
+  if (daysRemaining <= 0) return 'red';
+  if (daysRemaining <= 3) return 'yellow';
+  return 'green';
 }

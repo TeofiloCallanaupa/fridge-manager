@@ -1,0 +1,266 @@
+# Fridge Manager — Prompt Playbook
+
+> Sequential prompts to build the project from scaffold to production.
+> Run these in the **fridge-manager workspace** in Antigravity.
+> Each prompt assumes the previous one completed successfully.
+
+---
+
+## Phase 0: Design & Architecture ✅ DONE
+
+These were already run:
+
+- [x] `/designer` — Create Stitch project, generate Grocery List screen
+- [x] `/designer` — Inventory View screen
+- [x] `/designer` — Item Detail bottom sheet
+- [x] `/architect` — Architecture review
+- [x] `/security-architect` — OWASP compliance review
+
+---
+
+## Phase 1: Shared Logic (TDD)
+
+### 1.1 — Commit the red phase
+
+> Run this as a git command, not an Antigravity prompt.
+
+```bash
+git add -A && git commit -m "test: add 28 unit tests for shared utils (TDD red phase)"
+```
+
+### 1.2 — Implement shared utils (green phase)
+
+```
+Using /coder and /tester, implement the shared utility functions in packages/shared/src/utils/ to make all 24 failing tests pass. Run pnpm --filter shared test after each function to verify green. Do not modify any tests — only write implementation code.
+```
+
+### 1.3 — Commit the green phase
+
+```bash
+git add -A && git commit -m "feat: implement shared utils — all 28 tests passing (TDD green phase)"
+```
+
+---
+
+## Phase 2: Database
+
+### 2.1 — Create the initial migration
+
+```
+Using /coder, create supabase/migrations/001_initial_schema.sql from docs/architecture.md. Include all core tables (profiles, households, household_members, household_invites, categories, grocery_items, inventory_items, default_shelf_days), all CHECK constraints, the updated_at auto-trigger, and RLS policies for every table. Categories and default_shelf_days are global (public SELECT, no client writes). All other tables enforce household isolation.
+```
+
+### 2.2 — Security review the migration
+
+```
+Using /security-architect, review supabase/migrations/001_initial_schema.sql for OWASP compliance. Check: RLS on every table, no missing policies, no SQL injection vectors, proper CHECK constraints on all enum columns, household isolation is enforced.
+```
+
+### 2.3 — Create seed data migration
+
+```
+Using /coder, create supabase/migrations/002_seed_categories.sql to insert the category seed data and default_shelf_days data from docs/architecture.md. Use ON CONFLICT DO NOTHING for idempotent re-runs.
+```
+
+### 2.4 — Apply migrations to Supabase
+
+```
+Apply supabase/migrations/001_initial_schema.sql and 002_seed_categories.sql to the Supabase project. Then verify the schema by listing all tables and running a SELECT on categories to confirm seed data.
+```
+
+### 2.5 — Generate TypeScript types
+
+```
+Generate TypeScript types from the Supabase schema and save them to packages/shared/src/types/database.ts. Then update the existing type files in packages/shared/src/types/ to use these generated types as their source of truth.
+```
+
+---
+
+## Phase 3: Auth & Onboarding
+
+### 3.1 — Web auth setup
+
+```
+Using /coder, set up Supabase Auth in apps/web. Install @supabase/ssr, create the Supabase client utilities (server + browser clients), add middleware for session management, and create the auth pages: /login (email/password + magic link), /signup, and /auth/callback. Follow Next.js App Router patterns.
+```
+
+### 3.2 — Onboarding flow (web)
+
+```
+Using /coder, create the onboarding flow in apps/web: after signup, redirect to /onboarding/profile (set display name), then /onboarding/avatar (DiceBear Pixel Art creator with hair/accessories/skin picker), then /onboarding/household (create or join). Save avatar_config as JSONB to profiles table.
+```
+
+### 3.3 — Invite system
+
+```
+Using /coder, create the household invite flow. Create a Supabase Edge Function that: receives an email address, creates a household_invites row, and sends an invite email with a deep link. On the web, create /invite/[token] that auto-joins the invited user to the household when they sign up or log in. Invites expire after 7 days.
+```
+
+### 3.4 — Mobile auth setup
+
+```
+Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
+```
+
+---
+
+## Phase 4: Core Features (Web First)
+
+### 4.1 — Grocery list (web)
+
+```
+Using /coder, build the grocery list page in apps/web. Reference the Stitch design in .stitch/designs/ for visual direction. Features: category-grouped layout sorted by categories.display_order, add item with category picker and destination selector, real-time sync via Supabase Realtime, check-off animation that auto-creates an inventory_item (checkout flow from architecture.md). Use TanStack Query for data fetching and shadcn/ui components.
+```
+
+### 4.2 — Inventory view (web)
+
+```
+Using /coder, build the inventory page in apps/web. Reference the Stitch design. Features: tabs for fridge/freezer/pantry, color-coded expiration badges (green >3 days, yellow 1-3 days, red expired), "added X days ago" counter on every item, FEFO sorting (closest to expiry first), long-press/click opens item detail sheet. Use shared utils from packages/shared for expiration calculations.
+```
+
+### 4.3 — Item detail sheet (web)
+
+```
+Using /coder, build the item detail bottom sheet in apps/web. Reference the Stitch design. Shows: item name, category emoji, location, expiration with color + days remaining, "added X days ago", added by (display name + avatar), purchase history count. Actions: edit, mark as used, mark as tossed (triggers discard flow), add to grocery list.
+```
+
+### 4.4 — Discard flow + recently removed (web)
+
+```
+Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality.
+```
+
+### 4.5 — Write tests for core features
+
+```
+Using /tester, write component tests for the grocery list, inventory view, item detail sheet, and discard flow in apps/web/__tests__/components/. Test: category grouping renders correctly, expiration colors match thresholds, checkout flow creates inventory items, discard flow sets correct reasons. Run pnpm --filter web test to verify.
+```
+
+---
+
+## Phase 5: Core Features (Mobile)
+
+### 5.1 — Grocery list (mobile)
+
+```
+Using /coder, build the grocery list screen in apps/mobile. Same features as web (category-grouped, check-off, real-time sync) but using React Native Paper components (List.Section, Checkbox, FAB for add). Implement WatermelonDB local storage for offline support. Sync with Supabase when online.
+```
+
+### 5.2 — Inventory view (mobile)
+
+```
+Using /coder, build the inventory screen in apps/mobile. Tabs for fridge/freezer/pantry using React Native Paper SegmentedButtons. Color-coded expiration badges, "added X days ago" counter, FEFO sorting. Long-press opens item detail bottom sheet (React Native Paper BottomSheet).
+```
+
+### 5.3 — Discard flow + recently removed (mobile)
+
+```
+Using /coder, build the discard flow and Recently Removed screen in apps/mobile. Same logic as web but using React Native Paper components. Swipe-to-discard gesture on inventory items. Undo via Snackbar.
+```
+
+---
+
+## Phase 6: Notifications
+
+### 6.1 — Notification Edge Function
+
+```
+Using /coder, create the Supabase Edge Function for notifications. It should: query inventory_items hitting expiration thresholds today (halfway, 2-day, 1-day, day-of, post-expiration), check notification_log to skip duplicates, check each user's notification_preferences and quiet hours, send FCM push to Android devices and Web Push to browsers, log to notification_log and system_logs.
+```
+
+### 6.2 — Notification tables migration
+
+```
+Using /coder, create supabase/migrations/003_notification_tables.sql with notification_preferences, push_subscriptions, notification_log, and system_logs tables. Include RLS policies and CHECK constraints.
+```
+
+### 6.3 — pg_cron setup
+
+```
+Using /coder, set up the pg_cron job in Supabase to trigger the notification Edge Function daily at 1pm UTC (9am ET). Create a migration for enabling pg_cron and scheduling the job.
+```
+
+### 6.4 — Mobile push setup
+
+```
+Using /coder, set up Firebase Cloud Messaging in apps/mobile (Expo). Register for push notifications on app launch, save the FCM token to push_subscriptions table, handle incoming push notifications with proper navigation to the relevant inventory item.
+```
+
+---
+
+## Phase 7: Analytics
+
+### 7.1 — Analytics queries
+
+```
+Using /coder, create the analytics query functions in packages/shared. Calculate: waste rate (items wasted / total discarded), items consumed vs wasted by month, top wasted categories, shopping frequency, average shelf life by category. Use TanStack Query for caching.
+```
+
+### 7.2 — Analytics page (web)
+
+```
+Using /coder, build the analytics page in apps/web with two tabs. "At a Glance" tab: text stats (waste rate, items consumed, top wasted category, shopping trips, streaks). "Charts" tab: Victory charts (waste rate over time, items wasted by category, most purchased items, shopping frequency). Reference the Stitch design.
+```
+
+### 7.3 — Analytics screen (mobile)
+
+```
+Using /coder, build the analytics screen in apps/mobile using victory-native for charts. Same two-tab layout as web. Use shared query functions from packages/shared.
+```
+
+---
+
+## Phase 8: Polish & Deploy
+
+### 8.1 — E2E tests
+
+```
+Using /tester, write Playwright E2E tests in apps/web/__tests__/e2e/ for the 5 critical paths: auth flow (signup → profile → household), grocery flow (add → check off → verify in inventory), inventory flow (view → expiration colors → detail sheet), discard flow (mark used → recently removed → undo), restock flow (discard → add to grocery list). Run pnpm --filter web test:e2e.
+```
+
+### 8.2 — Error tracking
+
+```
+Using /coder, set up Sentry in both apps/web and apps/mobile. Install @sentry/nextjs and @sentry/react-native. Configure error boundaries, performance monitoring, and source maps. Add Sentry DSN to environment variables.
+```
+
+### 8.3 — Security final review
+
+```
+Using /security-architect, do a final OWASP compliance review of the entire codebase. Check: all RLS policies are enforced, no SQL injection vectors, auth tokens handled properly, Edge Functions validate inputs, no secrets in client code, CORS configured correctly.
+```
+
+### 8.4 — Deploy web
+
+```
+Using /coder, prepare apps/web for Vercel deployment. Set up environment variables (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY), verify the build passes with pnpm --filter web build, and configure the Vercel project settings.
+```
+
+### 8.5 — Build mobile APK
+
+```
+Using /coder, configure the Expo build for Android. Set up app.json with the correct package name, permissions (INTERNET, RECEIVE_BOOT_COMPLETED for FCM), and create the EAS build profile. Run eas build --platform android --profile preview for a test APK.
+```
+
+---
+
+## Quick Reference: Workflow Cheat Sheet
+
+| Prompt prefix | When to use |
+|---|---|
+| `Using /architect` | Before major structural changes |
+| `Using /security-architect` | Before applying any migration or auth change |
+| `Using /coder` | For all implementation work |
+| `Using /tester` | When writing tests (always before implementation) |
+| `Using /reviewer` | After completing a phase, before merging |
+| `Using /designer` | When creating new screens or iterating on UI |
+
+---
+
+## Tips
+
+- **Always commit between phases.** Each section above should be 1-3 commits.
+- **Run tests after every implementation prompt.** If tests fail, fix before moving on.
+- **If a prompt produces too much at once,** break it up: "just do the types first", "now the queries", "now the UI".
+- **If you deviate from the architecture,** run `/architect` to update docs/architecture.md immediately.
+- **The Supabase MCP is connected.** You can ask to run queries, check schema, or apply migrations directly.
