@@ -17,11 +17,15 @@ description: Use Stitch MCP to design and iterate on UI screens. Use before impl
 | **taste-design** | `.agents/skills/taste-design/SKILL.md` | First screen — anti-generic design rules, color calibration, typography architecture |
 | **stitch-loop** | `.agents/skills/stitch-loop/SKILL.md` | Multi-page generation — baton-passing pattern for iterating through screens |
 | **design-md** | `.agents/skills/design-md/SKILL.md` | After first screen — extract design system from generated screen into `.stitch/DESIGN.md` |
+| **react-components** | `.agents/skills/react-components/SKILL.md` | Design-to-code — convert Stitch HTML to modular React components with AST validation |
+| **shadcn-ui** | `.agents/skills/shadcn-ui/SKILL.md` | Web implementation — component discovery, theming, dark mode, design tokens for Next.js |
 
 ### Supporting references
 - `.agents/skills/stitch-design/references/design-mappings.md` — translate vague terms to UI/UX keywords
 - `.agents/skills/stitch-design/references/prompt-keywords.md` — component vocabulary and adjective palettes
 - `.agents/skills/stitch-design/examples/` — example DESIGN.md, enhanced prompts, metadata.json
+- `.agents/skills/shadcn-ui/resources/customization-guide.md` — CSS variables, cva variants, design tokens
+- `.agents/skills/react-components/resources/architecture-checklist.md` — quality gate for Stitch→React conversion
 
 ## Design system
 - **Mobile:** React Native Paper (Material Design 3) — follows Android conventions
