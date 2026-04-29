@@ -1,36 +1,30 @@
 /**
- * Household and membership types matching the Supabase schema.
- * See docs/architecture.md for the full schema definition.
+ * Household and membership types — derived from Supabase generated types.
+ * Source of truth: database.ts (auto-generated from Supabase schema).
  */
 
-export type HouseholdRole = 'owner' | 'member';
+import type { Tables } from './database.js';
 
+// ---------------------------------------------------------------------------
+// Enum-like union types (narrower than the generated `string`)
+// ---------------------------------------------------------------------------
+
+export type HouseholdRole = 'owner' | 'member';
 export type InviteStatus = 'pending' | 'accepted' | 'expired';
 
-export interface Household {
-  id: string;
-  name: string;
-  timezone: string;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-}
+// ---------------------------------------------------------------------------
+// Row types — derived from database.ts, narrowed where needed
+// ---------------------------------------------------------------------------
 
-export interface HouseholdMember {
-  id: string;
-  household_id: string;
-  user_id: string;
+/** A household (apartment, house, etc.). */
+export type Household = Tables<'households'>;
+
+/** A user ↔ household membership. */
+export type HouseholdMember = Omit<Tables<'household_members'>, 'role'> & {
   role: HouseholdRole;
-  joined_at: string;
-  updated_at: string;
-}
+};
 
-export interface HouseholdInvite {
-  id: string;
-  household_id: string;
-  invited_by: string;
-  invited_email: string;
+/** An invite to join a household. */
+export type HouseholdInvite = Omit<Tables<'household_invites'>, 'status'> & {
   status: InviteStatus;
-  created_at: string;
-  expires_at: string;
-}
+};

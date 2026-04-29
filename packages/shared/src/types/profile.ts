@@ -1,29 +1,26 @@
 /**
- * User profile and notification preference types matching the Supabase schema.
- * See docs/architecture.md for the full schema definition.
+ * User profile types — derived from Supabase generated types.
+ * Source of truth: database.ts (auto-generated from Supabase schema).
+ *
+ * NotificationPreferences and PushSubscription are defined here manually
+ * because their tables haven't been created yet (Phase 4 migration).
  */
 
-/** DiceBear Avataaars config stored as JSONB — rendered on demand, no image storage. */
-export interface AvatarConfig {
-  style: 'avataaars';
-  hair: string;
-  hairColor: string;
-  eyes: string;
-  eyeColor: string;
-  skin: string;
-  facialHair: string;
-  accessories: string;
-  clothing: string;
-}
+import type { Tables } from './database.js';
 
-export interface Profile {
-  id: string;
-  display_name: string | null;
-  avatar_config: AvatarConfig | null;
-  created_at: string;
-  updated_at: string;
-}
+// ---------------------------------------------------------------------------
+// Row types — derived from database.ts
+// ---------------------------------------------------------------------------
 
+/** User profile (auto-created on signup via trigger). */
+export type Profile = Tables<'profiles'>;
+
+// ---------------------------------------------------------------------------
+// Application-level types (not in database.ts yet)
+// ---------------------------------------------------------------------------
+
+
+/** Notification preferences — per user per household (Phase 4 table). */
 export interface NotificationPreferences {
   id: string;
   user_id: string;
@@ -41,6 +38,7 @@ export interface NotificationPreferences {
 
 export type PushPlatform = 'android' | 'web';
 
+/** Push notification subscription — per device per household (Phase 4 table). */
 export interface PushSubscription {
   id: string;
   user_id: string;

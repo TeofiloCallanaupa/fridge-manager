@@ -5,6 +5,9 @@
  * Import from '@fridge-manager/shared' in apps/web and apps/mobile.
  */
 
+// Database (generated types — source of truth)
+export type { Database, Tables, TablesInsert, TablesUpdate } from './types/database.js';
+
 // Types
 export type {
   Category,
@@ -28,11 +31,12 @@ export type {
 
 export type {
   Profile,
-  AvatarConfig,
   NotificationPreferences,
   PushSubscription,
   PushPlatform,
 } from './types/profile.js';
+
+export type { AvatarConfig } from './types/avatar.js';
 
 export type {
   NotificationType,
@@ -45,6 +49,7 @@ export type {
 export { calculateExpiration, getDaysSince, getExpirationColor } from './utils/expiration.js';
 export { getCategoryEmoji, getDefaultShelfDays } from './utils/categories.js';
 export { formatRelativeTime, formatQuantity } from './utils/formatting.js';
+export { buildAvatarUrl, DEFAULT_AVATAR_CONFIG } from './utils/avatar.js';
 
 // Constants
 export {

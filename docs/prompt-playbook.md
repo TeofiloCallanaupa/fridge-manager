@@ -74,6 +74,14 @@ Apply supabase/migrations/001_initial_schema.sql and 002_seed_categories.sql to 
 Generate TypeScript types from the Supabase schema and save them to packages/shared/src/types/database.ts. Then update the existing type files in packages/shared/src/types/ to use these generated types as their source of truth.
 ```
 
+### 2.6 — Commit Database Phase
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete database schema and migrations" && git push
+```
+
 ---
 
 ## Phase 3: Auth & Onboarding
@@ -100,6 +108,18 @@ Using /coder, create the household invite flow. Create a Supabase Edge Function 
 
 ```
 Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
+```
+
+### 3.5 — E2E test & Commit Auth Phase
+
+```
+Using /e2e, verify the web auth and onboarding flows manually, then write Playwright tests in apps/web/__tests__/e2e/ to ensure all signup, login, and onboarding paths are green.
+```
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete auth & onboarding flows" && git push
 ```
 
 ---
@@ -130,10 +150,22 @@ Using /coder, build the item detail bottom sheet in apps/web. Reference the Stit
 Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality.
 ```
 
-### 4.5 — Write tests for core features
+### 4.5 — Write component tests
 
 ```
 Using /tester, write component tests for the grocery list, inventory view, item detail sheet, and discard flow in apps/web/__tests__/components/. Test: category grouping renders correctly, expiration colors match thresholds, checkout flow creates inventory items, discard flow sets correct reasons. Run pnpm --filter web test to verify.
+```
+
+### 4.6 — E2E test & Commit Web Features
+
+```
+Using /e2e, manually verify the web core features (grocery list, inventory, discard flow). Then write Playwright tests covering the happy paths and edge cases for these flows.
+```
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete core web features" && git push
 ```
 
 ---
@@ -156,6 +188,14 @@ Using /coder, build the inventory screen in apps/mobile. Tabs for fridge/freezer
 
 ```
 Using /coder, build the discard flow and Recently Removed screen in apps/mobile. Same logic as web but using React Native Paper components. Swipe-to-discard gesture on inventory items. Undo via Snackbar.
+```
+
+### 5.4 — Commit Mobile Features
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete core mobile features" && git push
 ```
 
 ---
@@ -186,6 +226,14 @@ Using /coder, set up the pg_cron job in Supabase to trigger the notification Edg
 Using /coder, set up Firebase Cloud Messaging in apps/mobile (Expo). Register for push notifications on app launch, save the FCM token to push_subscriptions table, handle incoming push notifications with proper navigation to the relevant inventory item.
 ```
 
+### 6.5 — Commit Notifications
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete push notifications" && git push
+```
+
 ---
 
 ## Phase 7: Analytics
@@ -208,14 +256,26 @@ Using /coder, build the analytics page in apps/web with two tabs. "At a Glance" 
 Using /coder, build the analytics screen in apps/mobile using victory-native for charts. Same two-tab layout as web. Use shared query functions from packages/shared.
 ```
 
+### 7.4 — E2E test & Commit Analytics
+
+```
+Using /e2e, verify the analytics views and data fetching. Add Playwright tests to ensure the web analytics page charts and stats render correctly.
+```
+
+> Run this as a git command.
+
+```bash
+git add -A && git commit -m "feat: complete analytics dashboards" && git push
+```
+
 ---
 
 ## Phase 8: Polish & Deploy
 
-### 8.1 — E2E tests
+### 8.1 — Final E2E Polish
 
 ```
-Using /tester, write Playwright E2E tests in apps/web/__tests__/e2e/ for the 5 critical paths: auth flow (signup → profile → household), grocery flow (add → check off → verify in inventory), inventory flow (view → expiration colors → detail sheet), discard flow (mark used → recently removed → undo), restock flow (discard → add to grocery list). Run pnpm --filter web test:e2e.
+Using /e2e, do a final review of all Playwright E2E tests across the 5 critical paths. Ensure all tests are resilient, fast, and pass reliably without flaky behavior. Run pnpm --filter web test:e2e.
 ```
 
 ### 8.2 — Error tracking
@@ -254,6 +314,7 @@ Using /coder, configure the Expo build for Android. Set up app.json with the cor
 | `Using /tester` | When writing tests (always before implementation) |
 | `Using /reviewer` | After completing a phase, before merging |
 | `Using /designer` | When creating new screens or iterating on UI |
+| `Using /e2e` | After a feature is completed to verify end-to-end and write Playwright tests |
 
 ---
 

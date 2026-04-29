@@ -867,18 +867,18 @@ Each user creates a customizable sprite avatar during onboarding. Makes the app 
 ## Next Steps (Phased)
 
 ### Phase 0: UI Design
-- [ ] Create Stitch project with design system (colors, fonts, shapes)
-- [ ] Generate screen mockups for all core views (grocery list, inventory, detail sheet, discard, settings)
-- [ ] Iterate on designs based on competitive analysis patterns
-- [ ] Finalize designs as reference for implementation
+- [x] Create Stitch project with design system (colors, fonts, shapes)
+- [ ] Generate screen mockups for all core views (grocery list, inventory, detail sheet, discard, settings) — **3/8 done** (grocery list, inventory, item detail sheet)
+- [x] Iterate on designs based on competitive analysis patterns
+- [x] Finalize designs as reference for implementation
 
 ### Phase 1: Scaffold & Schema
-- [ ] Set up monorepo structure with pnpm workspaces (apps/mobile, apps/web, packages/shared)
-- [ ] Scaffold Expo project (apps/mobile) with TypeScript
-- [ ] Scaffold Next.js project (apps/web) with App Router + TypeScript
-- [ ] Set up `packages/shared` with types, utils, constants
-- [ ] Write unit tests for shared utils (TDD)
-- [ ] Create `supabase/migrations/` with full schema + seed data
+- [x] Set up monorepo structure with pnpm workspaces (apps/mobile, apps/web, packages/shared)
+- [x] Scaffold Expo project (apps/mobile) with TypeScript
+- [x] Scaffold Next.js project (apps/web) with App Router + TypeScript
+- [x] Set up `packages/shared` with types, utils, constants
+- [x] Write unit tests for shared utils (TDD) — **28/28 passing**
+- [x] Create `supabase/migrations/` with full schema + seed data
 - [ ] Write README with setup instructions
 
 ### Phase 2: Auth & Households

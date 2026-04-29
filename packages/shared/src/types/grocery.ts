@@ -1,63 +1,47 @@
 /**
- * Grocery and inventory item types matching the Supabase schema.
- * See docs/architecture.md for the full schema definition.
+ * Grocery and inventory item types — derived from Supabase generated types.
+ * Source of truth: database.ts (auto-generated from Supabase schema).
+ *
+ * This file adds narrower union types for enum-like columns that Supabase
+ * generates as plain `string`. App code should use these types for type safety.
  */
 
-export interface Category {
-  id: string;
-  name: string;
-  emoji: string | null;
-  display_order: number;
-  default_destination: 'fridge' | 'freezer' | 'pantry' | 'none';
-  has_expiration: boolean;
-}
+import type { Tables } from './database.js';
 
-export interface GroceryItem {
-  id: string;
-  household_id: string;
-  name: string;
-  quantity: string | null;
-  category_id: string;
-  destination: 'fridge' | 'freezer' | 'pantry' | 'none';
-  checked: boolean;
-  added_by: string;
-  checked_by: string | null;
-  created_at: string;
-  updated_at: string;
-  checked_at: string | null;
-  completed_at: string | null;
-}
+// ---------------------------------------------------------------------------
+// Enum-like union types (narrower than the generated `string`)
+// ---------------------------------------------------------------------------
 
 export type StorageLocation = 'fridge' | 'freezer' | 'pantry';
-
 export type DiscardReason = 'consumed' | 'expired' | 'wasted';
-
 export type InventorySource = 'manual' | 'grocery_checkout';
-
 export type ExpirationSource = 'user' | 'default';
+export type ExpirationColor = 'green' | 'yellow' | 'red';
 
-export interface InventoryItem {
-  id: string;
-  household_id: string;
-  name: string;
-  quantity: string | null;
-  category_id: string;
+// ---------------------------------------------------------------------------
+// Row types — derived from database.ts, narrowed where needed
+// ---------------------------------------------------------------------------
+
+/** A food category (global reference data). */
+export type Category = Omit<Tables<'categories'>, 'default_destination'> & {
+  default_destination: 'fridge' | 'freezer' | 'pantry' | 'none' | null;
+};
+
+/** A grocery list item. */
+export type GroceryItem = Omit<Tables<'grocery_items'>, 'destination'> & {
+  destination: 'fridge' | 'freezer' | 'pantry' | 'none' | null;
+};
+
+/** An inventory item (in the fridge, freezer, or pantry). */
+export type InventoryItem = Omit<
+  Tables<'inventory_items'>,
+  'location' | 'discard_reason' | 'source' | 'expiration_source'
+> & {
   location: StorageLocation;
-  expiration_date: string | null;
-  expiration_source: ExpirationSource | null;
-  added_by: string;
-  added_at: string;
-  updated_at: string;
-  discarded_at: string | null;
   discard_reason: DiscardReason | null;
   source: InventorySource;
-}
+  expiration_source: ExpirationSource | null;
+};
 
-export interface DefaultShelfDays {
-  id: string;
-  category_id: string;
-  location: StorageLocation;
-  shelf_days: number;
-}
-
-export type ExpirationColor = 'green' | 'yellow' | 'red';
+/** Default shelf life by category + storage location (global reference data). */
+export type DefaultShelfDays = Tables<'default_shelf_days'>;
