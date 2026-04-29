@@ -92,25 +92,37 @@ git add -A && git commit -m "feat: complete database schema and migrations" && g
 Using /coder, set up Supabase Auth in apps/web. Install @supabase/ssr, create the Supabase client utilities (server + browser clients), add middleware for session management, and create the auth pages: /login (email/password + magic link), /signup, and /auth/callback. Follow Next.js App Router patterns.
 ```
 
-### 3.2 — Onboarding flow (web)
+### 3.2 — Design auth & onboarding flows
 
 ```
-Using /coder, create the onboarding flow in apps/web: after signup, redirect to /onboarding/profile (set display name), then /onboarding/avatar (DiceBear Pixel Art creator with hair/accessories/skin picker), then /onboarding/household (create or join). Save avatar_config as JSONB to profiles table.
+Using /designer, design the authentication pages (Login, Signup) and the onboarding flow (Profile Setup, Avatar Creator, Household Creation). Sync these to the Stitch design system.
 ```
 
-### 3.3 — Invite system
+### 3.3 — Apply onboarding designs (web)
+
+```
+Using /coder, update the existing auth pages and onboarding flow in apps/web to match the new Stitch designs. Ensure that the existing logic and tests are preserved while updating the UI, styling, and layout.
+```
+
+### 3.4 — Invite system
 
 ```
 Using /coder, create the household invite flow. Create a Supabase Edge Function that: receives an email address, creates a household_invites row, and sends an invite email with a deep link. On the web, create /invite/[token] that auto-joins the invited user to the household when they sign up or log in. Invites expire after 7 days.
 ```
 
-### 3.4 — Mobile auth setup
+### 3.5 — Mobile auth setup
 
 ```
 Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
 ```
 
-### 3.5 — E2E test & Commit Auth Phase
+### 3.6 — Write component tests (Auth)
+
+```
+Using /tester, write component tests for the web and mobile auth components, onboarding forms, and invite logic.
+```
+
+### 3.7 — E2E test & Commit Auth Phase
 
 ```
 Using /e2e, verify the web auth and onboarding flows manually, then write Playwright tests in apps/web/__tests__/e2e/ to ensure all signup, login, and onboarding paths are green.
@@ -144,19 +156,25 @@ Using /coder, build the inventory page in apps/web. Reference the Stitch design.
 Using /coder, build the item detail bottom sheet in apps/web. Reference the Stitch design. Shows: item name, category emoji, location, expiration with color + days remaining, "added X days ago", added by (display name + avatar), purchase history count. Actions: edit, mark as used, mark as tossed (triggers discard flow), add to grocery list.
 ```
 
-### 4.4 — Discard flow + recently removed (web)
+### 4.4 — Design discard flow
+
+```
+Using /designer, design the Discard Flow modals/prompts and the "Recently Removed" page for the web app.
+```
+
+### 4.5 — Discard flow + recently removed (web)
 
 ```
 Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality.
 ```
 
-### 4.5 — Write component tests
+### 4.6 — Write component tests
 
 ```
 Using /tester, write component tests for the grocery list, inventory view, item detail sheet, and discard flow in apps/web/__tests__/components/. Test: category grouping renders correctly, expiration colors match thresholds, checkout flow creates inventory items, discard flow sets correct reasons. Run pnpm --filter web test to verify.
 ```
 
-### 4.6 — E2E test & Commit Web Features
+### 4.7 — E2E test & Commit Web Features
 
 ```
 Using /e2e, manually verify the web core features (grocery list, inventory, discard flow). Then write Playwright tests covering the happy paths and edge cases for these flows.
@@ -190,7 +208,13 @@ Using /coder, build the inventory screen in apps/mobile. Tabs for fridge/freezer
 Using /coder, build the discard flow and Recently Removed screen in apps/mobile. Same logic as web but using React Native Paper components. Swipe-to-discard gesture on inventory items. Undo via Snackbar.
 ```
 
-### 5.4 — Commit Mobile Features
+### 5.4 — Write component tests (mobile)
+
+```
+Using /tester, write component tests for the mobile grocery list, inventory view, and discard flow in apps/mobile/__tests__/components/ using React Native Testing Library.
+```
+
+### 5.5 — Manual E2E test & Commit Mobile Features
 
 > Run this as a git command.
 
@@ -226,7 +250,13 @@ Using /coder, set up the pg_cron job in Supabase to trigger the notification Edg
 Using /coder, set up Firebase Cloud Messaging in apps/mobile (Expo). Register for push notifications on app launch, save the FCM token to push_subscriptions table, handle incoming push notifications with proper navigation to the relevant inventory item.
 ```
 
-### 6.5 — Commit Notifications
+### 6.5 — Test Notifications
+
+```
+Using /tester, write unit tests for the notification query logic in packages/shared and verify the Edge Function behavior.
+```
+
+### 6.6 — Commit Notifications
 
 > Run this as a git command.
 
@@ -244,19 +274,31 @@ git add -A && git commit -m "feat: complete push notifications" && git push
 Using /coder, create the analytics query functions in packages/shared. Calculate: waste rate (items wasted / total discarded), items consumed vs wasted by month, top wasted categories, shopping frequency, average shelf life by category. Use TanStack Query for caching.
 ```
 
-### 7.2 — Analytics page (web)
+### 7.2 — Design analytics dashboard
+
+```
+Using /designer, design the Analytics page layout (At a Glance stats + Charts tabs). Sync with the Stitch design system.
+```
+
+### 7.3 — Analytics page (web)
 
 ```
 Using /coder, build the analytics page in apps/web with two tabs. "At a Glance" tab: text stats (waste rate, items consumed, top wasted category, shopping trips, streaks). "Charts" tab: Victory charts (waste rate over time, items wasted by category, most purchased items, shopping frequency). Reference the Stitch design.
 ```
 
-### 7.3 — Analytics screen (mobile)
+### 7.4 — Analytics screen (mobile)
 
 ```
 Using /coder, build the analytics screen in apps/mobile using victory-native for charts. Same two-tab layout as web. Use shared query functions from packages/shared.
 ```
 
-### 7.4 — E2E test & Commit Analytics
+### 7.5 — Write component tests (Analytics)
+
+```
+Using /tester, write component tests for the analytics charts and stat displays.
+```
+
+### 7.6 — E2E test & Commit Analytics
 
 ```
 Using /e2e, verify the analytics views and data fetching. Add Playwright tests to ensure the web analytics page charts and stats render correctly.

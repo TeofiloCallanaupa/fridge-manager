@@ -1,26 +1,101 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f9f9f7;
+  --foreground: #1a1c1b;
 }
 
 @theme inline {
+  /* Layout colors from Heirloom Pantry design system */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plus-jakarta-sans);
+  
+  /* Core brand colors */
+  --color-primary: #206140;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #3b7a57;
+  --color-on-primary-container: #c5ffd8;
+  --color-primary-fixed: #aff1c6;
+  --color-on-primary-fixed: #002111;
+  --color-primary-fixed-dim: #93d5ac;
+  --color-on-primary-fixed-variant: #0a5132;
+  --color-inverse-primary: #93d5ac;
+  
+  /* Secondary */
+  --color-secondary: #585f6c;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #dce2f3;
+  --color-on-secondary-container: #5e6572;
+  --color-secondary-fixed: #dce2f3;
+  --color-on-secondary-fixed: #151c27;
+  --color-secondary-fixed-dim: #c0c7d6;
+  --color-on-secondary-fixed-variant: #404754;
+
+  /* Tertiary */
+  --color-tertiary: #405587;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #596da1;
+  --color-on-tertiary-container: #f0f1ff;
+  --color-tertiary-fixed: #dae2ff;
+  --color-on-tertiary-fixed: #001947;
+  --color-tertiary-fixed-dim: #b1c5ff;
+  --color-on-tertiary-fixed-variant: #314576;
+
+  /* Error */
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* Surface and Backgrounds */
+  --color-surface: #f9f9f7;
+  --color-on-surface: #1a1c1b;
+  --color-on-background: #1a1c1b;
+  --color-surface-variant: #e2e3e1;
+  --color-on-surface-variant: #404942;
+  --color-surface-bright: #f9f9f7;
+  --color-surface-dim: #dadad8;
+  --color-surface-tint: #2a6a48;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f4f4f2;
+  --color-surface-container: #eeeeec;
+  --color-surface-container-high: #e8e8e6;
+  --color-surface-container-highest: #e2e3e1;
+  --color-inverse-surface: #2f3130;
+  --color-inverse-on-surface: #f1f1ef;
+  
+  /* Outline */
+  --color-outline: #707972;
+  --color-outline-variant: #bfc9c0;
+
+  /* Typography mapping */
+  --font-headline: var(--font-plus-jakarta-sans);
+  --font-display: var(--font-plus-jakarta-sans);
+  --font-body: var(--font-plus-jakarta-sans);
+  --font-label: var(--font-plus-jakarta-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Base custom utility classes from Stitch */
+@layer utilities {
+  .forest-gradient {
+    background-image: linear-gradient(135deg, var(--color-primary-container) 0%, var(--color-primary) 100%);
+  }
+  
+  .soft-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  .no-border {
+    border: none;
+  }
 }

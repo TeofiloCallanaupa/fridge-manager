@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#a15960",
+                    "secondary-container": "#fed65b",
+                    "on-secondary-fixed-variant": "#574500",
+                    "surface-variant": "#e1e3de",
+                    "inverse-surface": "#2e312e",
+                    "on-secondary-fixed": "#241a00",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#bfc9c0",
+                    "on-surface": "#191c1a",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#93d5ac",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#ecefe9",
+                    "primary-fixed": "#aff1c6",
+                    "on-surface-variant": "#404942",
+                    "tertiary": "#844149",
+                    "primary-container": "#3b7a57",
+                    "inverse-on-surface": "#eff1ec",
+                    "primary-fixed-dim": "#93d5ac",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#72333a",
+                    "tertiary-fixed-dim": "#ffb2b8",
+                    "tertiary-fixed": "#ffdadb",
+                    "surface-bright": "#f8faf5",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#e9c349",
+                    "surface-container-low": "#f2f4ef",
+                    "outline": "#707972",
+                    "background": "#f8faf5",
+                    "surface-tint": "#2a6a48",
+                    "primary": "#206140",
+                    "secondary-fixed": "#ffe088",
+                    "on-background": "#191c1a",
+                    "on-primary-container": "#c5ffd8",
+                    "on-tertiary-fixed": "#3a0811",
+                    "surface-dim": "#d8dbd6",
+                    "secondary": "#735c00",
+                    "on-tertiary-container": "#ffeeee",
+                    "on-primary-fixed-variant": "#0a5132",
+                    "on-error-container": "#93000a",
+                    "on-primary-fixed": "#002111",
+                    "surface-container-highest": "#e1e3de",
+                    "on-secondary-container": "#745c00",
+                    "surface": "#f8faf5",
+                    "surface-container-high": "#e6e9e4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "lg": "48px",
+                    "margin-safe": "32px",
+                    "sm": "12px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "xs": "4px",
+                    "xl": "80px"
+            },
+            "fontFamily": {
+                    "display": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "h1": ["Plus Jakarta Sans"],
+                    "h2": ["Plus Jakarta Sans"],
+                    "label-caps": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "h2": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- TopAppBar -->
+<nav class="fixed top-0 z-50 w-full h-20 px-8 py-4 flex items-center justify-between bg-white/80 dark:bg-stone-900/80 backdrop-blur-xl shadow-[0_20px_40px_rgba(59,122,87,0.08)]">
+<button class="scale-95 transition-all hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-900 dark:text-emerald-50" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-emerald-900 dark:text-emerald-50 text-lg">Step 2 of 3</h1>
+<div class="w-10"></div> <!-- Spacer for symmetry -->
+</nav>
+<main class="max-w-7xl mx-auto px-6 pt-28 grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Side: Avatar Preview (Sticky) -->
+<section class="lg:col-span-5 lg:sticky lg:top-28 h-fit">
+<div class="relative bg-surface-container-lowest rounded-xl shadow-[0_40px_80px_rgba(32,97,64,0.05)] aspect-[4/5] flex items-center justify-center overflow-hidden group">
+<!-- Background Gradient Subtle Overlay -->
+<div class="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent"></div>
+<img class="relative z-10 w-full h-full object-cover transform scale-105 group-hover:scale-110 transition-transform duration-700" data-alt="Abstract minimalist high-end 3D character bust, soft forest green studio lighting, cinematic clay texture, sophisticated artistic digital art style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvxnCjB3DBqADkxKJ2nlHYjTNiTPl7zXyRbuzaSj5ZqVFinIxYxmK61c6O4gdVGov1bVT1x-24R_uLRIUXWRaTStmbHP13_xwbRrmsbuDQEFcuHaPg7ETY_gXlpvyNcnr4MZ7HbaVES79vkzEFWnztJGlmXAz9c_Ch8u-fwE_6qoOUojvdi_AZJsHMVoo96NkDh2PfUhFpa1olR6db73Fxvb6XcD-5G6s-zs31N5G5ZHvQ0QJ9h-kW7Cp6bzw9LgXresmVrHWBYAHb"/>
+<!-- Randomize FAB (Glassmorphism) -->
+<button class="absolute bottom-md right-md z-20 flex items-center gap-2 px-md py-sm bg-white/70 backdrop-blur-xl rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.05)] hover:scale-105 transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="casino" style="font-variation-settings: 'FILL' 1;">casino</span>
+<span class="font-label-caps text-primary">RANDOMIZE</span>
+</button>
+</div>
+<div class="mt-md p-md bg-surface-container-low rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.03)]">
+<p class="font-label-caps text-primary opacity-60 mb-base">CHEF'S SIGNATURE</p>
+<h2 class="font-h2 text-primary mb-xs">Matcha Patissier</h2>
+<p class="text-on-surface-variant text-sm italic">"A delicate balance of earthly textures and refined attire."</p>
+</div>
+</section>
+<!-- Right Side: Customization Controls -->
+<section class="lg:col-span-7 space-y-md">
+<!-- Category Tabs -->
+<div class="sticky top-20 z-40 bg-background/90 backdrop-blur-md -mx-6 px-6 py-4">
+<div class="flex gap-md overflow-x-auto pb-2 no-scrollbar border-none">
+<button class="flex-none px-md py-sm rounded-full bg-primary text-white shadow-lg shadow-primary/20 font-label-caps">Face</button>
+<button class="flex-none px-md py-sm rounded-full bg-white text-on-surface-variant font-label-caps hover:bg-surface-container transition-colors">Hair</button>
+<button class="flex-none px-md py-sm rounded-full bg-white text-on-surface-variant font-label-caps hover:bg-surface-container transition-colors">Clothing</button>
+<button class="flex-none px-md py-sm rounded-full bg-white text-on-surface-variant font-label-caps hover:bg-surface-container transition-colors">Accessories</button>
+</div>
+</div>
+<!-- Customization Grid -->
+<div class="space-y-lg">
+<!-- Hair Section -->
+<div>
+<h3 class="font-h2 text-on-surface mb-md">Hairstyle Selection</h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-md">
+<!-- Options -->
+<div class="aspect-square bg-white rounded-lg p-sm shadow-[0_15px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer ring-inset ring-primary ring-0 hover:ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="face_retouching_natural">face_retouching_natural</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">THE NATURAL</span>
+</div>
+<div class="aspect-square bg-primary/5 rounded-lg p-sm shadow-inner cursor-pointer ring-inset ring-primary ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-primary" data-icon="face_6" style="font-variation-settings: 'FILL' 1;">face_6</span>
+<span class="font-label-caps text-[10px] text-primary">THE CULINARIAN</span>
+</div>
+<div class="aspect-square bg-white rounded-lg p-sm shadow-[0_15px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer ring-inset ring-primary ring-0 hover:ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="face_5">face_5</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">THE MODERNIST</span>
+</div>
+<div class="aspect-square bg-white rounded-lg p-sm shadow-[0_15px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer ring-inset ring-primary ring-0 hover:ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="face_2">face_2</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">THE CLASSIC</span>
+</div>
+<div class="aspect-square bg-white rounded-lg p-sm shadow-[0_15px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer ring-inset ring-primary ring-0 hover:ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="face_4">face_4</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">THE ARTISAN</span>
+</div>
+<div class="aspect-square bg-white rounded-lg p-sm shadow-[0_15px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] transition-all cursor-pointer ring-inset ring-primary ring-0 hover:ring-2 flex flex-col items-center justify-center gap-base group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="face_3">face_3</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant">THE VOYAGER</span>
+</div>
+</div>
+</div>
+<!-- Palette Section -->
+<div>
+<h3 class="font-h2 text-on-surface mb-md">Ingredient Tones</h3>
+<div class="flex flex-wrap gap-md">
+<button class="w-12 h-12 rounded-full bg-[#206140] ring-4 ring-offset-4 ring-primary shadow-lg"></button>
+<button class="w-12 h-12 rounded-full bg-[#3b7a57] hover:scale-110 transition-transform"></button>
+<button class="w-12 h-12 rounded-full bg-[#f2f4ef] border border-surface-variant hover:scale-110 transition-transform"></button>
+<button class="w-12 h-12 rounded-full bg-[#735c00] hover:scale-110 transition-transform"></button>
+<button class="w-12 h-12 rounded-full bg-[#844149] hover:scale-110 transition-transform"></button>
+<button class="w-12 h-12 rounded-full bg-[#2e312e] hover:scale-110 transition-transform"></button>
+</div>
+</div>
+<!-- Feature Section (Bento Style) -->
+<div>
+<h3 class="font-h2 text-on-surface mb-md">Signature Accents</h3>
+<div class="grid grid-cols-4 gap-sm">
+<div class="col-span-2 row-span-2 bg-white rounded-lg p-md shadow-[0_15px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between">
+<span class="font-label-caps text-primary">Eyewear</span>
+<img class="w-full h-24 object-contain my-sm" data-alt="Luxury tortoiseshell eyewear on marble background, high-end editorial product photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIf9y4dKgRhc2yPKue6nXbfhwVY6NMbeiyS_-drpAzfEesWY50Uz555CBGAgA4mV8xEwXSuf3hNDYdg--T_YMdgJL4xBsQ3cATsORST3AsgWFzV4j2c159PFW-wtrBpUVAMGnrfw14u5kSnYSKKb24OcOmS_8W9gUir5Q1Y6K545QMJf7THxidNdDEkkE-ZkkVwPG_1tht8xAabDpi81lmg4AkJ982hXeIEEppbbsTR7vvzYBBHMmgQDFuXCrMHo1Trr0G8DDRvcde"/>
+<span class="text-xs text-on-surface-variant">Gourmet Frames</span>
+</div>
+<div class="col-span-2 bg-white rounded-lg p-md shadow-[0_15px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
+<span class="font-label-caps text-primary">Hat</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="cooking">cooking</span>
+</div>
+<div class="col-span-2 bg-white rounded-lg p-md shadow-[0_15px_30px_rgba(0,0,0,0.03)] flex items-center justify-between">
+<span class="font-label-caps text-primary">Jewelry</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="diamond">diamond</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-center items-center px-6 py-8 bg-white/70 dark:bg-stone-900/70 backdrop-blur-2xl shadow-[0_-20px_40px_rgba(59,122,87,0.1)] rounded-t-[40px]">
+<button class="bg-emerald-800 dark:bg-emerald-600 text-white rounded-full px-12 py-4 flex items-center gap-2 shadow-lg shadow-emerald-900/20 active:scale-98 transition-transform hover:bg-emerald-700 transition-colors duration-300">
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-sm uppercase tracking-widest text-white">Next Step</span>
+<span class="material-symbols-outlined text-white" data-icon="chevron_right">chevron_right</span>
+</button>
+</footer>
+</body></html>

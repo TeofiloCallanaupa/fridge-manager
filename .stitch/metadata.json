@@ -33,6 +33,66 @@
         "screenshot": ".stitch/designs/item-detail-sheet-screenshot.png",
         "html": ".stitch/designs/item-detail-sheet.html"
       }
+    },
+    "login": {
+      "screenId": "aaff8ca20b854b16b80816ed8f160a14",
+      "title": "Login Screen",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/login-screenshot.png",
+        "html": ".stitch/designs/login.html"
+      }
+    },
+    "signup": {
+      "screenId": "bdc6ec5fc1664956aa79798583a293b1",
+      "title": "Signup Screen",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/signup-screenshot.png",
+        "html": ".stitch/designs/signup.html"
+      }
+    },
+    "onboarding-profile": {
+      "screenId": "2acb8d624a4f41ffa3c134d8cd58395e",
+      "title": "Profile Setup - Step 1",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/onboarding-profile-screenshot.png",
+        "html": ".stitch/designs/onboarding-profile.html"
+      }
+    },
+    "onboarding-avatar": {
+      "screenId": "7a26397f7e354b20aa211982eae03af8",
+      "title": "Avatar Creator",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/onboarding-avatar-screenshot.png",
+        "html": ".stitch/designs/onboarding-avatar.html"
+      }
+    },
+    "onboarding-household": {
+      "screenId": "3437bbbc279d41eb9d027c94a2276692",
+      "title": "Household Setup",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/onboarding-household-screenshot.png",
+        "html": ".stitch/designs/onboarding-household.html"
+      }
+    },
+    "onboarding-avatar-v2": {
+      "screenId": "74e82c834d2e469494bccd0bf5db545e",
+      "title": "Avatar Customization Studio",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/onboarding-avatar-v2-screenshot.png",
+        "html": ".stitch/designs/onboarding-avatar-v2.html"
+      }
     }
   },
   "createdAt": "2026-04-27T11:23:00-04:00"

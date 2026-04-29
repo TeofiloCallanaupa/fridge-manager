@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Household Setup - The Digital Larder</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "primary": "#206140",
+                      "error": "#ba1a1a",
+                      "secondary-container": "#dce2f3",
+                      "surface-container-low": "#f4f4f2",
+                      "primary-fixed": "#aff1c6",
+                      "secondary-fixed": "#dce2f3",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#dae2ff",
+                      "surface-variant": "#e2e3e1",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#dadad8",
+                      "surface-container-high": "#e8e8e6",
+                      "primary-fixed-dim": "#93d5ac",
+                      "on-primary-fixed": "#002111",
+                      "on-tertiary-fixed-variant": "#314576",
+                      "on-secondary-fixed": "#151c27",
+                      "surface-tint": "#2a6a48",
+                      "tertiary-container": "#596da1",
+                      "surface": "#f9f9f7",
+                      "secondary": "#585f6c",
+                      "inverse-primary": "#93d5ac",
+                      "secondary-fixed-dim": "#c0c7d6",
+                      "on-secondary-fixed-variant": "#404754",
+                      "on-surface": "#1a1c1b",
+                      "on-tertiary-fixed": "#001947",
+                      "on-primary-fixed-variant": "#0a5132",
+                      "surface-container-highest": "#e2e3e1",
+                      "inverse-surface": "#2f3130",
+                      "primary-container": "#3b7a57",
+                      "on-primary-container": "#c5ffd8",
+                      "on-primary": "#ffffff",
+                      "tertiary": "#405587",
+                      "surface-bright": "#f9f9f7",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#eeeeec",
+                      "tertiary-fixed-dim": "#b1c5ff",
+                      "on-secondary-container": "#5e6572",
+                      "background": "#f9f9f7",
+                      "on-background": "#1a1c1b",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#f0f1ff",
+                      "inverse-on-surface": "#f1f1ef",
+                      "outline-variant": "#bfc9c0",
+                      "on-surface-variant": "#404942",
+                      "outline": "#707972"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Plus Jakarta Sans"],
+                      "display": ["Plus Jakarta Sans"],
+                      "body": ["Plus Jakarta Sans"],
+                      "label": ["Plus Jakarta Sans"]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col items-center">
+<!-- TopAppBar as Progress Header -->
+<header class="bg-stone-50/80 backdrop-blur-lg docked full-width top-0 flex items-center justify-between px-6 py-4 w-full z-50">
+<div class="flex items-center gap-4">
+<button class="text-emerald-800 p-2 hover:bg-stone-200/50 transition-colors rounded-full Active: scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<span class="font-plus-jakarta text-lg font-semibold tracking-tight text-emerald-800">The Digital Larder</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-stone-500 font-plus-jakarta text-[11px] font-medium tracking-wide uppercase">Step 3 of 3</span>
+<div class="flex gap-1 mt-1">
+<div class="w-8 h-1 bg-primary-container rounded-full"></div>
+<div class="w-8 h-1 bg-primary-container rounded-full"></div>
+<div class="w-8 h-1 bg-primary-container rounded-full"></div>
+</div>
+</div>
+</header>
+<main class="max-w-4xl w-full px-8 py-16 flex flex-col gap-12 md:gap-20">
+<!-- Hero Section -->
+<section class="flex flex-col md:flex-row items-end justify-between gap-8 border-none">
+<div class="max-w-xl">
+<h1 class="font-display font-extrabold text-5xl md:text-6xl text-on-background tracking-tighter leading-[1.1]">
+                    Set up your <br/><span class="text-primary italic font-serif">household</span>
+</h1>
+<p class="mt-6 text-on-surface-variant text-lg md:text-xl font-body leading-relaxed max-w-md">
+                    Every great recipe starts with a well-stocked pantry. Let's create the space where your culinary journey begins together.
+                </p>
+</div>
+<div class="hidden md:block w-48 h-48 rounded-[3rem] bg-surface-container-low overflow-hidden rotate-3 flex-shrink-0">
+<img alt="Artisanal glass jars filled with dry grains and pasta on a clean wooden shelf" class="w-full h-full object-cover" data-alt="Close up of organized pantry shelf with glass jars of pasta and grains, soft natural morning light, warm tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2BFNzWMvnkRuqQ0aguKHWP9Xfp6xSkD9EvMMBdpluQyc6RQanABdOCRm3uhNaot24UNNgGbXsN8w1KmbR4AgvdxjxloYY5ujJ8mh7pjWrWGhGtSMpGBxLiZJvlWuPM7uIYcGek-f2HCtP2_buPxzj05MQlA-Am-apPrdflw92cvcJ61QvaeCqdRqREOSr6PaVogqAOKB9uex8KkABwwxea7pN1JGtwwiwfUV3t1X_1agevY-Pi6XNEMZPz_BBbrGeUGDTaA0J7tAo"/>
+</div>
+</section>
+<!-- Content Area: Asymmetric Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+<!-- Card 1: Create -->
+<div class="bg-surface-container-lowest rounded-[1.5rem] p-8 shadow-[0_12px_32px_rgba(26,28,27,0.06)] flex flex-col gap-6 relative overflow-hidden transition-transform hover:-translate-y-1">
+<div class="flex items-center justify-between">
+<div class="w-14 h-14 bg-primary-container/10 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="home">home</span>
+</div>
+</div>
+<div>
+<h3 class="text-2xl font-bold font-headline text-on-background">Create new household</h3>
+<p class="mt-2 text-on-secondary-container text-sm leading-relaxed">
+                        Start fresh and invite family members or roommates to manage your kitchen inventory in real-time.
+                    </p>
+</div>
+<div class="mt-4">
+<label class="block text-[11px] font-medium tracking-wide uppercase text-stone-500 mb-2 ml-1">Household Name</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary/20 text-on-surface font-medium placeholder:text-stone-400" placeholder="e.g. The Smith Kitchen" type="text"/>
+</div>
+</div>
+<!-- Card 2: Join -->
+<div class="bg-surface-container-lowest rounded-[1.5rem] p-8 shadow-[0_12px_32px_rgba(26,28,27,0.06)] flex flex-col gap-6 mt-0 md:mt-12 transition-transform hover:-translate-y-1">
+<div class="flex items-center justify-between">
+<div class="w-14 h-14 bg-secondary-container/50 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary text-3xl" data-icon="group_add">group_add</span>
+</div>
+</div>
+<div>
+<h3 class="text-2xl font-bold font-headline text-on-background">Join existing household</h3>
+<p class="mt-2 text-on-secondary-container text-sm leading-relaxed">
+                        Already have a household setup? Enter the 6-digit code shared by your household administrator.
+                    </p>
+</div>
+<div class="mt-4">
+<label class="block text-[11px] font-medium tracking-wide uppercase text-stone-500 mb-2 ml-1">Invite Code</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-4 focus:ring-2 focus:ring-primary/20 text-on-surface font-medium placeholder:text-stone-400 uppercase tracking-widest text-center" placeholder="X-77-YZ" type="text"/>
+</div>
+</div>
+</section>
+<!-- Decorative Element -->
+<div class="flex justify-center md:justify-start">
+<div class="flex -space-x-4">
+<div class="w-10 h-10 rounded-full border-4 border-background bg-stone-200 overflow-hidden">
+<img alt="Avatar" data-alt="Portrait of a woman smiling, warm cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU3twj_X97DWxtGiYibYkWEutzz9ihF3W79At8aX1WZ5JnSdHQ_v1yGZl8l-ekCXtKXyKmUhS6WO2uFbwQZdiQejQzzfg0gRsXEwZLKw8UWKfOqk2ZBcAyMHRV_HQV7Lr6mamf0h0JP3JTowF6hpr2xrfT-eM2cxmlDBA6Fj8o3sh59_gkYrLPwAx0csWHIWqBvehAvf9V0M1Hgx_eD_MHwNLYrUCObjxT4TGPmBRW7oaeDTFI58x5ZJuBzV812tOl-OHlEss6CEGv"/>
+</div>
+<div class="w-10 h-10 rounded-full border-4 border-background bg-stone-300 overflow-hidden">
+<img alt="Avatar" data-alt="Portrait of a man smiling, soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB36mCHVtE7g2ur1Lmr103vE4s5d4BqyOSY5dt22gJb0pgB9oOZKgRQwFr_CrgdVZqUTutzUAUSOPnOsAQKVJ9XesOfQD_TnUICvNFS8f-0P_USCWVXIrVgdAC7cVqb9AJP70rpIEBundJEE-ONOrN0BRrF0aeIcoKriyipcKmMqGbI1_aFC0dGhumyVZF_DQA4RMNWycupTbZPUQNAC0ijGhkT3ynnX13_DjwWECFwRlT434h9OgdL-KYN_YHialfm4R1OmNqVTI7B"/>
+</div>
+<div class="w-10 h-10 rounded-full border-4 border-background bg-primary-fixed flex items-center justify-center text-[10px] font-bold text-on-primary-fixed">
+                    +12k
+                </div>
+</div>
+<p class="ml-8 text-sm text-stone-400 self-center">Join 12,000+ happy households</p>
+</div>
+</main>
+<!-- Footer Action -->
+<footer class="w-full max-w-4xl px-8 pb-16 flex justify-end items-center">
+<button class="group relative bg-gradient-to-br from-primary to-primary-container text-on-primary px-10 py-5 rounded-full font-bold text-lg shadow-lg hover:shadow-primary/20 transition-all active:scale-95 overflow-hidden">
+<span class="relative z-10 flex items-center gap-3">
+                Complete Setup
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</span>
+<div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+</footer>
+<!-- Bottom Spacing for Mobile -->
+<div class="h-8 w-full md:hidden"></div>
+</body></html>

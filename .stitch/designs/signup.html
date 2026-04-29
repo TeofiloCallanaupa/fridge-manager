@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up - Fridge Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-surface": "#2f3130",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002111",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e2e3e1",
+                    "tertiary-container": "#596da1",
+                    "tertiary-fixed-dim": "#b1c5ff",
+                    "on-primary-fixed-variant": "#0a5132",
+                    "error": "#ba1a1a",
+                    "outline": "#707972",
+                    "surface-container-low": "#f4f4f2",
+                    "primary-fixed": "#aff1c6",
+                    "on-surface": "#1a1c1b",
+                    "on-tertiary-container": "#f0f1ff",
+                    "surface-variant": "#e2e3e1",
+                    "on-tertiary-fixed-variant": "#314576",
+                    "tertiary-fixed": "#dae2ff",
+                    "on-primary-container": "#c5ffd8",
+                    "on-secondary-fixed": "#151c27",
+                    "background": "#f9f9f7",
+                    "surface-tint": "#2a6a48",
+                    "secondary-fixed": "#dce2f3",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#93d5ac",
+                    "inverse-on-surface": "#f1f1ef",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#3b7a57",
+                    "surface-dim": "#dadad8",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#c0c7d6",
+                    "surface-bright": "#f9f9f7",
+                    "outline-variant": "#bfc9c0",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#585f6c",
+                    "on-secondary-container": "#5e6572",
+                    "secondary-container": "#dce2f3",
+                    "on-background": "#1a1c1b",
+                    "surface-container-high": "#e8e8e6",
+                    "on-surface-variant": "#404942",
+                    "tertiary": "#405587",
+                    "primary": "#206140",
+                    "surface-container": "#eeeeec",
+                    "on-secondary-fixed-variant": "#404754",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#93d5ac",
+                    "on-tertiary-fixed": "#001947",
+                    "surface": "#f9f9f7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f9f9f7;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+<!-- Top Navigation Anchor (Manual suppression of Shell for Login/Signup) -->
+<header class="fixed top-0 w-full z-50 bg-[#F9F9F7]/80 backdrop-blur-xl">
+<div class="flex items-center justify-between px-8 py-6 w-full max-w-7xl mx-auto">
+<div class="text-lg font-bold tracking-tighter text-primary-container">
+                Fridge Manager
+            </div>
+<a class="text-on-secondary-container font-semibold text-sm hover:opacity-80 transition-opacity" href="#">
+                About the Larder
+            </a>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row items-stretch pt-24 px-6 md:px-12 max-w-7xl mx-auto w-full gap-12 md:gap-24 mb-12">
+<!-- Hero Editorial Section -->
+<section class="flex-1 flex flex-col justify-center space-y-8">
+<div class="space-y-4">
+<span class="inline-block px-4 py-1.5 bg-secondary-fixed text-on-secondary-fixed-variant rounded-full text-[12px] font-bold tracking-widest uppercase">
+                    Your Digital Kitchen
+                </span>
+<h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter text-on-surface leading-[1.1]">
+                    Start tracking your groceries
+                </h1>
+<p class="text-lg md:text-xl text-on-secondary-container max-w-md leading-relaxed">
+                    Elevate your kitchen experience with a beautifully curated inventory system designed for the modern home chef.
+                </p>
+</div>
+<!-- Asymmetric Visual Element -->
+<div class="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover grayscale-[0.2] hover:scale-105 transition-transform duration-700" data-alt="Modern minimalist wooden pantry shelf with glass jars of grain, fresh herbs, and artisan ceramic bowls in warm soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5ws2RD84N7FG9VWx1Oze-Be3pENLiLhMiF2z68XbPV_IsTpj_fwSsuNwin7kaTwN0QgaRVpnuUh6Eqaf3uw1s5ugUDhVupto1VXapDViO7RbDFb4MwVAZamVPejIx8ZX5IoRRRIVcGEQUNkzOzyOxBifWskTzwJZJzEpGtYhrdgDvGzNT19f5mPE9xkbJAw0hFI4MbJmLs9Hb-6Fsg3ujNeabyNec3DAsDTvircBLW0lwGNoRo7eRaTPfa89Sg--E8amhiIRZ7yBi"/>
+<div class="absolute bottom-6 right-6 p-4 bg-white/80 backdrop-blur-md rounded-xl text-xs font-medium text-primary-container shadow-sm">
+                    Est. Freshness: 98%
+                </div>
+</div>
+</section>
+<!-- Form Section -->
+<section class="flex-1 flex flex-col justify-center">
+<div class="bg-surface-container-lowest p-8 md:p-12 rounded-[2rem] shadow-[0_12px_32px_rgba(26,28,27,0.04)]">
+<div class="mb-10">
+<h2 class="text-2xl font-bold text-on-surface mb-2">Create Account</h2>
+<p class="text-on-secondary-container text-sm">Join the community of organized foodies today.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-[13px] font-bold text-on-surface-variant ml-1" for="email">Email Address</label>
+<input class="w-full h-14 px-6 bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary-container text-on-surface placeholder:text-outline/60" id="email" placeholder="hello@kitchen.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="block text-[13px] font-bold text-on-surface-variant ml-1" for="password">Password</label>
+<div class="relative">
+<input class="w-full h-14 px-6 bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary-container text-on-surface placeholder:text-outline/60" id="password" placeholder="••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-4 top-4 text-outline cursor-pointer select-none">
+                                visibility_off
+                            </span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block text-[13px] font-bold text-on-surface-variant ml-1" for="confirm-password">Confirm Password</label>
+<input class="w-full h-14 px-6 bg-surface-container-highest border-none rounded-xl focus:ring-2 focus:ring-primary-container text-on-surface placeholder:text-outline/60" id="confirm-password" placeholder="••••••••" type="password"/>
+</div>
+<div class="pt-4">
+<button class="w-full h-14 bg-gradient-to-br from-primary to-primary-container text-white font-bold rounded-full active:scale-95 transition-all duration-200 shadow-md" type="submit">
+                            Create Account
+                        </button>
+</div>
+<div class="flex items-center gap-4 py-4">
+<div class="h-px flex-grow bg-outline-variant/30"></div>
+<span class="text-[11px] font-bold text-outline uppercase tracking-widest">or continue with</span>
+<div class="h-px flex-grow bg-outline-variant/30"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="h-12 flex items-center justify-center gap-2 bg-surface-container-low hover:bg-surface-container-high transition-colors rounded-xl font-semibold text-sm text-on-surface" type="button">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeyLrO_g8ZkzfNRIR2ybYZOE27Yx1Xaw43yc6siB8Afq0j1gi-MxItQAs7pR3myT0-2MjuciPJs2J9KwNC_g6i9y665lYVF1_fhQhoFHu32hP9PsaUQ3fzCJdoGkRocfmcy9kpmHzXYYNv8FJLIogEC1eTrw94z7XAnWoxWAF3PdKKRAi7Re__--P_nPuQOzQ5mQBDNc0VDCF93PvUiGwehJoaDYmKyGbRJxBi5WlbskTkSGhw2xcsXRWzE-Llg4lB9iHOoxuSI4U9"/>
+                            Google
+                        </button>
+<button class="h-12 flex items-center justify-center gap-2 bg-surface-container-low hover:bg-surface-container-high transition-colors rounded-xl font-semibold text-sm text-on-surface" type="button">
+<span class="material-symbols-outlined text-on-surface" style="font-variation-settings: 'FILL' 1;">ios</span>
+                            Apple
+                        </button>
+</div>
+</form>
+<div class="mt-10 text-center">
+<p class="text-sm text-on-secondary-container">
+                        Already have an account? 
+                        <a class="text-primary-container font-bold ml-1 hover:underline underline-offset-4 transition-all" href="#">
+                            Log in
+                        </a>
+</p>
+</div>
+</div>
+<!-- Footer Small Print -->
+<div class="mt-8 px-4 text-center">
+<p class="text-[11px] text-outline leading-relaxed">
+                    By joining, you agree to our Terms of Service and Privacy Policy. <br/>
+                    We promise to keep your data as fresh as your groceries.
+                </p>
+</div>
+</section>
+</main>
+<!-- Bottom Margin for breathing room -->
+<div class="h-12"></div>
+</body></html>

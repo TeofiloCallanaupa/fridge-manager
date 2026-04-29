@@ -58,3 +58,17 @@ npx supabase start
 npx supabase db reset
 ```
 *(Tip: You can chain them together with `npx supabase start && npx supabase db reset`)*
+
+## Testing
+
+This project uses Playwright for End-to-End (E2E) testing. The tests automatically start a Next.js server on port 3001 and interact with the local Supabase environment.
+
+To run the E2E tests:
+```bash
+pnpm --filter @fridge-manager/web test:e2e
+```
+
+To view the HTML report after running tests:
+```bash
+pnpm --filter @fridge-manager/web exec playwright show-report
+```
