@@ -18,7 +18,7 @@ These were already run:
 
 ---
 
-## Phase 1: Shared Logic (TDD)
+## Phase 1: Shared Logic (TDD) ✅ DONE
 
 ### 1.1 — Commit the red phase
 
@@ -42,7 +42,7 @@ git add -A && git commit -m "feat: implement shared utils — all 28 tests passi
 
 ---
 
-## Phase 2: Database
+## Phase 2: Database ✅ DONE
 
 ### 2.1 — Create the initial migration
 
@@ -84,7 +84,7 @@ git add -A && git commit -m "feat: complete database schema and migrations" && g
 
 ---
 
-## Phase 3: Auth & Onboarding
+## Phase 3: Auth & Onboarding ✅ DONE
 
 ### 3.1 — Web auth setup
 
@@ -110,11 +110,9 @@ Using /coder, update the existing auth pages and onboarding flow in apps/web to 
 Using /coder, create the household invite flow. Create a Supabase Edge Function that: receives an email address, creates a household_invites row, and sends an invite email with a deep link. On the web, create /invite/[token] that auto-joins the invited user to the household when they sign up or log in. Invites expire after 7 days.
 ```
 
-### 3.5 — Mobile auth setup
+### 3.5 — Mobile auth setup → Moved to Phase 5
 
-```
-Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
-```
+> Mobile auth was moved to Phase 5 (Mobile) to keep web-first focus.
 
 ### 3.6 — Write component tests (Auth)
 
@@ -138,23 +136,67 @@ git add -A && git commit -m "feat: complete auth & onboarding flows" && git push
 
 ## Phase 4: Core Features (Web First)
 
-### 4.1 — Grocery list (web)
+> **Pattern learned from 4.1:** Every feature follows Build → Test → Review → Fix → Commit.
+> Never batch tests or reviews to the end — bugs compound silently.
+
+### 4.1 — Grocery list (web) ✅ DONE
 
 ```
 Using /coder, build the grocery list page in apps/web. Reference the Stitch design in .stitch/designs/ for visual direction. Features: category-grouped layout sorted by categories.display_order, add item with category picker and destination selector, real-time sync via Supabase Realtime, check-off animation that auto-creates an inventory_item (checkout flow from architecture.md). Use TanStack Query for data fetching and shadcn/ui components.
 ```
 
+```
+Using /tester and /e2e, write tests for the grocery list: hook unit tests (validation, checkout logic, delete), component tests (category section, add-item sheet, loading/empty states), and E2E Playwright tests (add item, check-off creates inventory, delete, sync badge). Run all tests.
+```
+
+```
+Using /architect and /security-architect, review the grocery list implementation. Check: Realtime publication exists, checkout atomicity, error handling on mutations, input validation, accessibility on touch devices.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: grocery list page — all review fixes + tests" && git push
+```
+
+---
+
 ### 4.2 — Inventory view (web)
 
 ```
-Using /coder, build the inventory page in apps/web. Reference the Stitch design. Features: tabs for fridge/freezer/pantry, color-coded expiration badges (green >3 days, yellow 1-3 days, red expired), "added X days ago" counter on every item, FEFO sorting (closest to expiry first), long-press/click opens item detail sheet. Use shared utils from packages/shared for expiration calculations.
+Using /coder, build the inventory page in apps/web. Reference the Stitch design. Features: tabs for fridge/freezer/pantry, color-coded expiration badges (green >3 days, yellow 1-3 days, red expired), "added X days ago" counter on every item, FEFO sorting (closest to expiry first), long-press/click opens item detail sheet. Use shared utils from packages/shared for expiration calculations. Requirements: toast error handling on all mutations, maxLength on text inputs, aria-labels on interactive elements.
 ```
+
+```
+Using /tester, write component + hook tests for the inventory view: expiration color thresholds match shared util outputs, FEFO sort order is correct, tab switching works, empty state renders. Run pnpm --filter web test to verify.
+```
+
+```
+Using /architect and /reviewer, review the inventory view. Check: uses shared expiration utils (no duplication), proper error boundaries, no non-null assertions, tab state persists correctly.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: inventory view with expiration badges and FEFO sorting" && git push
+```
+
+---
 
 ### 4.3 — Item detail sheet (web)
 
 ```
-Using /coder, build the item detail bottom sheet in apps/web. Reference the Stitch design. Shows: item name, category emoji, location, expiration with color + days remaining, "added X days ago", added by (display name + avatar), purchase history count. Actions: edit, mark as used, mark as tossed (triggers discard flow), add to grocery list.
+Using /coder, build the item detail bottom sheet in apps/web. Reference the Stitch design. Shows: item name, category emoji, location, expiration with color + days remaining, "added X days ago", added by (display name + avatar), purchase history count. Actions: edit, mark as used, mark as tossed (triggers discard flow), add to grocery list. Requirements: toast on mutation errors, loading states for async actions, accessible close button.
 ```
+
+```
+Using /tester, write component tests for the item detail sheet: renders all fields, edit mutation calls supabase, discard action sets correct reason, "add to grocery list" creates grocery_item. Run tests.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: item detail sheet with edit, discard, and re-add actions" && git push
+```
+
+---
 
 ### 4.4 — Design discard flow
 
@@ -165,30 +207,55 @@ Using /designer, design the Discard Flow modals/prompts and the "Recently Remove
 ### 4.5 — Discard flow + recently removed (web)
 
 ```
-Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality.
+Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality. Requirements: toast error handling, optimistic updates with rollback, accessible modal controls.
 ```
 
-### 4.6 — Write component tests
-
 ```
-Using /tester, write component tests for the grocery list, inventory view, item detail sheet, and discard flow in apps/web/__tests__/components/. Test: category grouping renders correctly, expiration colors match thresholds, checkout flow creates inventory items, discard flow sets correct reasons. Run pnpm --filter web test to verify.
+Using /tester, write tests for the discard flow: "Used" vs "Tossed" sets correct reason, auto-detect logic matches expiration_date, undo restores item, re-add creates grocery_item. Run tests.
 ```
 
-### 4.7 — E2E test & Commit Web Features
-
 ```
-Using /e2e, manually verify the web core features (grocery list, inventory, discard flow). Then write Playwright tests covering the happy paths and edge cases for these flows.
+Using /security-architect, review the discard flow. Check: RLS enforces household isolation on discards, undo doesn't bypass permissions, notification triggers won't fire for already-discarded items.
 ```
 
-> Run this as a git command.
-
+> Commit:
 ```bash
-git add -A && git commit -m "feat: complete core web features" && git push
+git add -A && git commit -m "feat: discard flow with undo and recently removed" && git push
+```
+
+---
+
+### 4.6 — Phase 4 E2E integration test
+
+```
+Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → open detail sheet → discard → verify in recently removed → undo → verify restored. Run pnpm --filter web test:e2e.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "test: phase 4 E2E integration tests" && git push
 ```
 
 ---
 
 ## Phase 5: Core Features (Mobile)
+
+### 5.0 — Mobile auth setup (moved from Phase 3)
+
+```
+Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
+```
+
+```
+Using /tester, write component tests for the mobile auth screens and onboarding forms using React Native Testing Library.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: mobile auth and onboarding" && git push
+```
+
+---
 
 ### 5.1 — Grocery list (mobile)
 
