@@ -160,7 +160,7 @@ git add -A && git commit -m "feat: grocery list page — all review fixes + test
 
 ---
 
-### 4.2 — Inventory view (web)
+### 4.2 — Inventory view (web) ✅ DONE
 
 ```
 Using /coder, build the inventory page in apps/web. Reference the Stitch design. Features: tabs for fridge/freezer/pantry, color-coded expiration badges (green >3 days, yellow 1-3 days, red expired), "added X days ago" counter on every item, FEFO sorting (closest to expiry first), long-press/click opens item detail sheet. Use shared utils from packages/shared for expiration calculations. Requirements: toast error handling on all mutations, maxLength on text inputs, aria-labels on interactive elements.
