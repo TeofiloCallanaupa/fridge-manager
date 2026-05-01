@@ -36,7 +36,8 @@ export function RecentlyRemoved({ items }: RecentlyRemovedProps) {
         {items.map((item) => {
           const emoji = item.categories?.emoji ?? '📦'
           const removedBy = item.profiles?.display_name ?? 'Unknown'
-          const reasonIcon = item.discard_reason === 'consumed' ? '✅' : '🗑️'
+          const reasonIcon = item.discard_reason === 'consumed' ? '✅'
+            : item.discard_reason === 'expired' ? '⏰' : '🗑️'
           const removedAt = item.discarded_at
             ? formatRelativeTime(new Date(item.discarded_at))
             : ''
@@ -59,7 +60,11 @@ export function RecentlyRemoved({ items }: RecentlyRemovedProps) {
                 <span>{removedAt}</span>
                 <span
                   className="text-base"
-                  aria-label={item.discard_reason === 'consumed' ? 'Used' : 'Tossed'}
+                  aria-label={
+                    item.discard_reason === 'consumed' ? 'Used'
+                    : item.discard_reason === 'expired' ? 'Expired'
+                    : 'Tossed'
+                  }
                 >
                   {reasonIcon}
                 </span>

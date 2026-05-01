@@ -19,12 +19,6 @@ export type InventoryItemWithDetails = InventoryItem & {
   } | null
 }
 
-export type RecentlyRemovedItem = InventoryItemWithDetails & {
-  discard_profiles: {
-    display_name: string | null
-  } | null
-}
-
 // ---------------------------------------------------------------------------
 // Queries
 // ---------------------------------------------------------------------------

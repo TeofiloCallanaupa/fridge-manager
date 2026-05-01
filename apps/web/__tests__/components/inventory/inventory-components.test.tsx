@@ -259,6 +259,12 @@ describe('RecentlyRemoved', () => {
     expect(screen.getByText('🗑️')).toBeDefined()
   })
 
+  it('shows expired icon for expired items', () => {
+    const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'expired' })]
+    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    expect(screen.getByText('⏰')).toBeDefined()
+  })
+
   it('shows "View History" link', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'consumed' })]
     render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
