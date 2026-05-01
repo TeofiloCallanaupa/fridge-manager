@@ -7,7 +7,7 @@ export const metadata = {
 }
 
 export default async function LoginPage(props: {
-  searchParams: Promise<{ error?: string; message?: string }>
+  searchParams: Promise<{ error?: string; message?: string; next?: string }>
 }) {
   const params = await props.searchParams
 
@@ -47,6 +47,7 @@ export default async function LoginPage(props: {
         )}
 
         <form className="flex flex-col gap-6">
+          {params.next && <input type="hidden" name="next" value={params.next} />}
           <div className="group">
             <label htmlFor="email" className="block text-[var(--color-on-secondary-container)] text-[13px] font-semibold mb-2 ml-1">Email Address</label>
             <div className="bg-[var(--color-surface-container-highest)] rounded-[1.5rem] px-6 py-4 transition-all duration-300 focus-within:bg-[var(--color-surface-container)] focus-within:ring-2 focus-within:ring-[var(--color-outline-variant)]">
@@ -101,6 +102,7 @@ export default async function LoginPage(props: {
         </div>
 
         <form className="flex flex-col gap-4">
+          {params.next && <input type="hidden" name="next" value={params.next} />}
           <div className="group">
             <div className="bg-[var(--color-surface-container-highest)] rounded-[1.5rem] px-6 py-4 transition-all duration-300 focus-within:bg-[var(--color-surface-container)] focus-within:ring-2 focus-within:ring-[var(--color-outline-variant)]">
               <input

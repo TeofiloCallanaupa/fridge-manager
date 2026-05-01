@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
   const isPublicRoute =
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/signup') ||
-    request.nextUrl.pathname.startsWith('/auth')
+    request.nextUrl.pathname.startsWith('/auth') ||
+    request.nextUrl.pathname.startsWith('/invite')
 
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
@@ -55,7 +56,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Enforce onboarding flow for authenticated users
-  if (user && !request.nextUrl.pathname.startsWith('/auth/signout')) {
+  if (user && !request.nextUrl.pathname.startsWith('/auth/signout') && !request.nextUrl.pathname.startsWith('/invite')) {
     const [
       { data: profile },
       { data: households }

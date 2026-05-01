@@ -3,9 +3,22 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 // Setup clients with service role to clean up if needed, but we'll try to stick to anon key + auth
+import { execSync } from 'child_process';
+
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+let SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+if (!SUPABASE_SERVICE_ROLE_KEY) {
+  try {
+    const statusJson = execSync('npx supabase status -o json', { encoding: 'utf-8' });
+    const status = JSON.parse(statusJson);
+    SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY;
+  } catch (e) {
+    console.warn('Could not fetch Supabase status. Make sure Supabase is running locally.');
+  }
+}
+
 
 test.describe('Row Level Security (Integration)', () => {
   // Only run API tests once (not per browser)

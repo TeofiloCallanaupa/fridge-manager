@@ -50,5 +50,5 @@ export async function createHousehold(formData: FormData) {
   }
 
   // Fully onboarded! Redirect to home page.
-  redirect('/')
+  redirect('/dashboard')
 }

@@ -13,12 +13,18 @@ export async function signup(formData: FormData) {
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const next = formData.get('next') as string
 
-  const { error } = await supabase.auth.signUp({
+  let emailRedirectTo = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`
+  if (next) {
+    emailRedirectTo += `?next=${encodeURIComponent(next)}`
+  }
+
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+      emailRedirectTo,
     },
   })
 
@@ -27,5 +33,11 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/signup?message=Check your email to confirm your account')
+  
+  if (data?.session) {
+    // If auto-confirm is on, we're already logged in
+    redirect(next || '/dashboard')
+  } else {
+    redirect('/signup?message=Check your email to confirm your account')
+  }
 }

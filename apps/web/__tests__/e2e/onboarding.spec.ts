@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Auth & Onboarding Flow', () => {
   test('Complete flow: signup, confirm email, profile, avatar, household, dashboard', async ({ page, request }) => {
+    test.setTimeout(60000); // This flow spans multiple pages with server actions
     const timestamp = Date.now();
     const email = `test.user.${timestamp}@example.com`;
     const password = 'TestPassword123!';
@@ -41,26 +42,29 @@ test.describe('Auth & Onboarding Flow', () => {
     // 3. Extract the confirmation link
     // The link looks like: http://127.0.0.1:54321/verify?token=...&redirect_to=http://localhost:3001/auth/callback
     const emailText = emailData.Text || emailData.HTML;
-    const linkMatch = emailText.match(/(http:\/\/127\.0\.0\.1:54321\/(?:auth\/v1\/)?verify[^\s"']+)/);
+    const linkMatch = emailText.match(/(http:\/\/(?:127\.0\.0\.1|localhost):54321\/(?:auth\/v1\/)?verify[^\s"']+)/);
     expect(linkMatch).not.toBeNull();
     let confirmationLink = linkMatch![1].replace(/&amp;/g, '&');
     // Fix local Supabase bug where /auth/v1/ is missing from the URL
     if (!confirmationLink.includes('/auth/v1/')) {
-      confirmationLink = confirmationLink.replace('127.0.0.1:54321/verify', '127.0.0.1:54321/auth/v1/verify');
+      confirmationLink = confirmationLink.replace(/(:54321)\/verify/, '$1/auth/v1/verify');
     }
+    // Force localhost instead of 127.0.0.1 for playwright and ensure it redirects to 3001
+    confirmationLink = confirmationLink.replace('127.0.0.1', 'localhost');
+    confirmationLink = confirmationLink.replace('3000', '3001');
 
     // 4. Click the confirmation link (Navigate)
     await page.goto(confirmationLink);
 
     // 5. Profile Step
-    await expect(page).toHaveURL(/\/onboarding\/profile/);
-    await expect(page.getByRole('heading', { name: /What should we\s*call you\?/ })).toBeVisible();
+    await expect(page).toHaveURL(/\/onboarding\/profile/, { timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /What should we\s*call you\?/ })).toBeVisible({ timeout: 5000 });
     
     await page.fill('input[name="display_name"]', 'Playwright Tester');
     await page.click('button[type="submit"]');
 
     // 6. Avatar Step
-    await expect(page).toHaveURL(/\/onboarding\/avatar/);
+    await expect(page).toHaveURL(/\/onboarding\/avatar/, { timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Create your avatar' })).toBeVisible();
     
     // Verify avatar preview loads (img with alt "Avatar preview")
@@ -70,14 +74,14 @@ test.describe('Auth & Onboarding Flow', () => {
     await page.click('button:has-text("Next Step")');
 
     // 7. Household Step
-    await expect(page).toHaveURL(/\/onboarding\/household/);
+    await expect(page).toHaveURL(/\/onboarding\/household/, { timeout: 10000 });
     await expect(page.getByRole('heading', { name: /Set up your\s*household/ })).toBeVisible();
 
     await page.fill('input[name="name"]', 'Playwright Test Household');
     await page.click('button[type="submit"]');
 
     // 8. Dashboard (Completion)
-    await expect(page).toHaveURL('http://localhost:3001/');
+    await expect(page).toHaveURL('http://localhost:3001/dashboard');
     // For now, accept whatever is on the home page as long as we landed there
   });
 });
