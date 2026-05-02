@@ -9,9 +9,10 @@ import { calculateExpiration, getDaysSince, getExpirationColor } from '../expira
 describe('calculateExpiration', () => {
   const addedAt = new Date('2026-05-01');
 
-  it('returns correct date for produce in fridge (5 day default)', () => {
+  it('returns FoodKeeper date for produce in fridge when matched', () => {
+    // "strawberries" matches FoodKeeper (min=3 days), which takes priority over default (5 days)
     const result = calculateExpiration('strawberries', true, 'fridge', addedAt, 5);
-    expect(result).toEqual(new Date('2026-05-06'));
+    expect(result).toEqual(new Date('2026-05-04')); // 3 days from FoodKeeper, not 5
   });
 
   it('returns null for household items (has_expiration = false)', () => {
@@ -80,5 +81,30 @@ describe('getExpirationColor', () => {
 
   it('returns null for items without expiration date', () => {
     expect(getExpirationColor(null)).toBeNull();
+  });
+});
+
+describe('calculateExpiration with FoodKeeper integration', () => {
+  const addedAt = new Date('2026-05-01');
+
+  it('uses FoodKeeper data when item name matches (Tier 1 priority)', () => {
+    // "chicken breast" has FoodKeeper data: fridge min=1 day
+    // Even though defaultShelfDays=3 (meat default), FoodKeeper should win
+    const result = calculateExpiration('chicken breast', true, 'fridge', addedAt, 3);
+    // FoodKeeper says 1 day for chicken breast in fridge
+    expect(result).toEqual(new Date('2026-05-02'));
+  });
+
+  it('falls back to defaultShelfDays when no FoodKeeper match (Tier 2)', () => {
+    // "mystery casserole" won't match any FoodKeeper entry
+    const result = calculateExpiration('mystery casserole', true, 'fridge', addedAt, 4);
+    // Should use the defaultShelfDays (4 days)
+    expect(result).toEqual(new Date('2026-05-05'));
+  });
+
+  it('still returns null for non-expiring categories regardless of FoodKeeper', () => {
+    // Even if "paper towels" somehow matched FoodKeeper, has_expiration=false wins
+    const result = calculateExpiration('paper towels', false, 'pantry', addedAt, null);
+    expect(result).toBeNull();
   });
 });

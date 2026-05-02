@@ -15,7 +15,7 @@ import type { Tables } from './database.js';
 export type StorageLocation = 'fridge' | 'freezer' | 'pantry';
 export type DiscardReason = 'consumed' | 'expired' | 'wasted';
 export type InventorySource = 'manual' | 'grocery_checkout';
-export type ExpirationSource = 'user' | 'default';
+export type ExpirationSource = 'user' | 'default' | 'foodkeeper';
 export type ExpirationColor = 'green' | 'yellow' | 'red';
 
 // ---------------------------------------------------------------------------

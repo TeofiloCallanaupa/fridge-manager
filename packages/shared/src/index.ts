@@ -52,6 +52,7 @@ export { formatRelativeTime, formatQuantity, formatPurchaseHistory } from './uti
 export { buildAvatarUrl, DEFAULT_AVATAR_CONFIG } from './utils/avatar.js';
 export { getOppositeReason, getDiscardReasonLabel } from './utils/discard.js';
 export type { OppositeReason } from './utils/discard.js';
+export { fuzzyMatchFoodKeeper } from './utils/foodkeeper.js';
 
 // Constants
 export {

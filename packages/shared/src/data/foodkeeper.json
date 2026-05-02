@@ -1,0 +1,688 @@
+[
+  {
+    "name": "chicken breast",
+    "keywords": ["chicken", "poultry", "chicken breast", "chicken thigh", "chicken thighs", "chicken leg", "chicken wings"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 2 },
+      "freezer": { "min": 270, "max": 365 }
+    }
+  },
+  {
+    "name": "ground beef",
+    "keywords": ["ground beef", "hamburger", "ground meat", "ground turkey", "ground pork", "ground chicken"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 2 },
+      "freezer": { "min": 90, "max": 120 }
+    }
+  },
+  {
+    "name": "steak",
+    "keywords": ["steak", "beef steak", "sirloin", "ribeye", "t-bone", "filet", "flank steak", "strip steak", "beef roast"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 120, "max": 365 }
+    }
+  },
+  {
+    "name": "pork chops",
+    "keywords": ["pork", "pork chops", "pork loin", "pork tenderloin", "pork roast"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 120, "max": 180 }
+    }
+  },
+  {
+    "name": "bacon",
+    "keywords": ["bacon"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 7 },
+      "freezer": { "min": 30, "max": 30 }
+    }
+  },
+  {
+    "name": "deli meat",
+    "keywords": ["deli meat", "lunch meat", "cold cuts", "ham", "turkey slices", "salami", "bologna"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "sausage",
+    "keywords": ["sausage", "bratwurst", "italian sausage", "hot dogs", "hot dog", "frankfurter"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 2 },
+      "freezer": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "fish fillet",
+    "keywords": ["fish", "salmon", "tilapia", "cod", "trout", "tuna steak", "halibut", "bass", "catfish", "mahi mahi", "swordfish"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 2 },
+      "freezer": { "min": 90, "max": 180 }
+    }
+  },
+  {
+    "name": "shrimp",
+    "keywords": ["shrimp", "prawns", "scallops", "crab", "lobster", "shellfish", "clams", "mussels"],
+    "category": "meat",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 2 },
+      "freezer": { "min": 90, "max": 180 }
+    }
+  },
+  {
+    "name": "milk",
+    "keywords": ["milk", "whole milk", "skim milk", "2% milk", "1% milk"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 5, "max": 7 },
+      "freezer": { "min": 90, "max": 90 }
+    }
+  },
+  {
+    "name": "yogurt",
+    "keywords": ["yogurt", "greek yogurt", "yoghurt"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 },
+      "freezer": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "butter",
+    "keywords": ["butter", "margarine"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 30, "max": 90 },
+      "freezer": { "min": 180, "max": 270 }
+    }
+  },
+  {
+    "name": "cheese (hard)",
+    "keywords": ["cheddar", "parmesan", "swiss", "gouda", "gruyere", "provolone", "colby", "monterey jack"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 21, "max": 42 },
+      "freezer": { "min": 180, "max": 180 }
+    }
+  },
+  {
+    "name": "cheese (soft)",
+    "keywords": ["mozzarella", "brie", "cream cheese", "ricotta", "cottage cheese", "feta", "goat cheese"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 },
+      "freezer": { "min": 180, "max": 180 }
+    }
+  },
+  {
+    "name": "eggs",
+    "keywords": ["eggs", "egg", "dozen eggs"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 21, "max": 35 }
+    }
+  },
+  {
+    "name": "sour cream",
+    "keywords": ["sour cream"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 14, "max": 21 }
+    }
+  },
+  {
+    "name": "heavy cream",
+    "keywords": ["heavy cream", "whipping cream", "half and half", "creamer"],
+    "category": "dairy",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 }
+    }
+  },
+  {
+    "name": "strawberries",
+    "keywords": ["strawberry", "strawberries"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 7 },
+      "freezer": { "min": 180, "max": 365 }
+    }
+  },
+  {
+    "name": "blueberries",
+    "keywords": ["blueberry", "blueberries", "raspberries", "raspberry", "blackberries", "blackberry", "berries"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 7 },
+      "freezer": { "min": 180, "max": 365 }
+    }
+  },
+  {
+    "name": "apples",
+    "keywords": ["apple", "apples"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 21, "max": 28 },
+      "pantry": { "min": 5, "max": 7 }
+    }
+  },
+  {
+    "name": "bananas",
+    "keywords": ["banana", "bananas"],
+    "category": "produce",
+    "shelfLife": {
+      "pantry": { "min": 2, "max": 5 },
+      "fridge": { "min": 5, "max": 7 },
+      "freezer": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "grapes",
+    "keywords": ["grapes", "grape"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 },
+      "freezer": { "min": 90, "max": 365 }
+    }
+  },
+  {
+    "name": "oranges",
+    "keywords": ["orange", "oranges", "tangerine", "clementine", "mandarin"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 14, "max": 21 },
+      "pantry": { "min": 7, "max": 10 }
+    }
+  },
+  {
+    "name": "lemons",
+    "keywords": ["lemon", "lemons", "lime", "limes"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 21, "max": 28 },
+      "pantry": { "min": 7, "max": 7 }
+    }
+  },
+  {
+    "name": "avocado",
+    "keywords": ["avocado", "avocados"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "pantry": { "min": 3, "max": 5 }
+    }
+  },
+  {
+    "name": "tomatoes",
+    "keywords": ["tomato", "tomatoes", "cherry tomatoes", "grape tomatoes"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 },
+      "pantry": { "min": 3, "max": 5 }
+    }
+  },
+  {
+    "name": "lettuce",
+    "keywords": ["lettuce", "romaine", "iceberg", "mixed greens", "salad greens", "arugula"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 7 }
+    }
+  },
+  {
+    "name": "spinach",
+    "keywords": ["spinach", "baby spinach", "kale"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 300, "max": 365 }
+    }
+  },
+  {
+    "name": "broccoli",
+    "keywords": ["broccoli", "cauliflower"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 300, "max": 365 }
+    }
+  },
+  {
+    "name": "carrots",
+    "keywords": ["carrot", "carrots", "baby carrots"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 14, "max": 21 },
+      "freezer": { "min": 300, "max": 365 }
+    }
+  },
+  {
+    "name": "bell peppers",
+    "keywords": ["bell pepper", "bell peppers", "peppers", "green pepper", "red pepper"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 },
+      "freezer": { "min": 180, "max": 365 }
+    }
+  },
+  {
+    "name": "onions",
+    "keywords": ["onion", "onions", "red onion", "yellow onion", "white onion"],
+    "category": "produce",
+    "shelfLife": {
+      "pantry": { "min": 30, "max": 60 },
+      "fridge": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "potatoes",
+    "keywords": ["potato", "potatoes", "russet", "yukon gold", "red potatoes", "sweet potato", "sweet potatoes"],
+    "category": "produce",
+    "shelfLife": {
+      "pantry": { "min": 14, "max": 30 },
+      "fridge": { "min": 21, "max": 60 }
+    }
+  },
+  {
+    "name": "garlic",
+    "keywords": ["garlic"],
+    "category": "produce",
+    "shelfLife": {
+      "pantry": { "min": 90, "max": 150 }
+    }
+  },
+  {
+    "name": "mushrooms",
+    "keywords": ["mushroom", "mushrooms", "portobello", "shiitake", "cremini"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 4, "max": 7 }
+    }
+  },
+  {
+    "name": "celery",
+    "keywords": ["celery"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 }
+    }
+  },
+  {
+    "name": "cucumber",
+    "keywords": ["cucumber", "cucumbers"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 5, "max": 7 }
+    }
+  },
+  {
+    "name": "corn",
+    "keywords": ["corn", "corn on the cob", "sweet corn"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 1, "max": 3 },
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "zucchini",
+    "keywords": ["zucchini", "squash", "summer squash", "yellow squash"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 4, "max": 5 }
+    }
+  },
+  {
+    "name": "green beans",
+    "keywords": ["green beans", "string beans", "snap peas"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "bread",
+    "keywords": ["bread", "white bread", "wheat bread", "sourdough", "loaf"],
+    "category": "bakery",
+    "shelfLife": {
+      "pantry": { "min": 5, "max": 7 },
+      "fridge": { "min": 7, "max": 14 },
+      "freezer": { "min": 90, "max": 180 }
+    }
+  },
+  {
+    "name": "tortillas",
+    "keywords": ["tortilla", "tortillas", "flour tortilla", "corn tortilla", "wraps"],
+    "category": "bakery",
+    "shelfLife": {
+      "pantry": { "min": 7, "max": 7 },
+      "fridge": { "min": 21, "max": 30 },
+      "freezer": { "min": 180, "max": 240 }
+    }
+  },
+  {
+    "name": "bagels",
+    "keywords": ["bagel", "bagels", "english muffin", "english muffins"],
+    "category": "bakery",
+    "shelfLife": {
+      "pantry": { "min": 3, "max": 5 },
+      "freezer": { "min": 90, "max": 120 }
+    }
+  },
+  {
+    "name": "muffins",
+    "keywords": ["muffin", "muffins", "croissant", "croissants", "pastry", "pastries", "danish"],
+    "category": "bakery",
+    "shelfLife": {
+      "pantry": { "min": 2, "max": 4 },
+      "freezer": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "pizza dough",
+    "keywords": ["pizza dough", "pie crust"],
+    "category": "bakery",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 90, "max": 90 }
+    }
+  },
+  {
+    "name": "frozen pizza",
+    "keywords": ["frozen pizza"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "frozen vegetables",
+    "keywords": ["frozen vegetables", "frozen peas", "frozen corn", "frozen broccoli", "frozen spinach", "frozen mixed vegetables"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "frozen fruit",
+    "keywords": ["frozen fruit", "frozen berries", "frozen strawberries", "frozen mango", "frozen blueberries"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "ice cream",
+    "keywords": ["ice cream", "gelato", "sorbet", "frozen yogurt"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 30, "max": 60 }
+    }
+  },
+  {
+    "name": "frozen dinner",
+    "keywords": ["frozen dinner", "frozen meal", "tv dinner", "frozen entree"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 90, "max": 120 }
+    }
+  },
+  {
+    "name": "frozen fries",
+    "keywords": ["frozen fries", "french fries", "tater tots", "frozen potatoes", "hash browns"],
+    "category": "frozen",
+    "shelfLife": {
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "juice",
+    "keywords": ["juice", "orange juice", "apple juice", "cranberry juice"],
+    "category": "beverages",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 10 }
+    }
+  },
+  {
+    "name": "almond milk",
+    "keywords": ["almond milk", "oat milk", "soy milk", "plant milk", "coconut milk"],
+    "category": "beverages",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 10 }
+    }
+  },
+  {
+    "name": "ketchup",
+    "keywords": ["ketchup", "catsup"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 180, "max": 180 },
+      "pantry": { "min": 365, "max": 365 }
+    }
+  },
+  {
+    "name": "mustard",
+    "keywords": ["mustard", "dijon", "yellow mustard"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 365, "max": 365 },
+      "pantry": { "min": 365, "max": 730 }
+    }
+  },
+  {
+    "name": "mayonnaise",
+    "keywords": ["mayonnaise", "mayo"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "salad dressing",
+    "keywords": ["salad dressing", "ranch", "vinaigrette", "italian dressing", "caesar dressing"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 30, "max": 90 }
+    }
+  },
+  {
+    "name": "salsa",
+    "keywords": ["salsa", "pico de gallo"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 14, "max": 30 }
+    }
+  },
+  {
+    "name": "soy sauce",
+    "keywords": ["soy sauce", "tamari", "teriyaki"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 365, "max": 730 },
+      "pantry": { "min": 365, "max": 1095 }
+    }
+  },
+  {
+    "name": "hot sauce",
+    "keywords": ["hot sauce", "sriracha", "tabasco", "chili sauce"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 365, "max": 730 },
+      "pantry": { "min": 180, "max": 365 }
+    }
+  },
+  {
+    "name": "jam",
+    "keywords": ["jam", "jelly", "preserves", "marmalade"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 90, "max": 180 },
+      "pantry": { "min": 365, "max": 365 }
+    }
+  },
+  {
+    "name": "peanut butter",
+    "keywords": ["peanut butter", "almond butter", "nut butter"],
+    "category": "condiments",
+    "shelfLife": {
+      "pantry": { "min": 60, "max": 90 },
+      "fridge": { "min": 90, "max": 180 }
+    }
+  },
+  {
+    "name": "hummus",
+    "keywords": ["hummus"],
+    "category": "condiments",
+    "shelfLife": {
+      "fridge": { "min": 4, "max": 7 }
+    }
+  },
+  {
+    "name": "chips",
+    "keywords": ["chips", "potato chips", "tortilla chips", "corn chips", "pretzels"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 14, "max": 30 }
+    }
+  },
+  {
+    "name": "crackers",
+    "keywords": ["crackers", "graham crackers", "saltines"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "cereal",
+    "keywords": ["cereal", "granola", "oatmeal"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 180, "max": 240 }
+    }
+  },
+  {
+    "name": "nuts",
+    "keywords": ["nuts", "almonds", "walnuts", "cashews", "peanuts", "pecans", "pistachios", "mixed nuts"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 30, "max": 90 },
+      "fridge": { "min": 120, "max": 180 },
+      "freezer": { "min": 365, "max": 730 }
+    }
+  },
+  {
+    "name": "pasta",
+    "keywords": ["pasta", "spaghetti", "penne", "macaroni", "linguine", "fettuccine", "noodles", "ramen"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 365, "max": 730 }
+    }
+  },
+  {
+    "name": "rice",
+    "keywords": ["rice", "white rice", "brown rice", "jasmine rice", "basmati"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 365, "max": 730 }
+    }
+  },
+  {
+    "name": "canned goods",
+    "keywords": ["canned", "canned beans", "canned tomatoes", "canned soup", "canned tuna", "canned corn", "canned vegetables"],
+    "category": "snacks",
+    "shelfLife": {
+      "pantry": { "min": 365, "max": 1825 }
+    }
+  },
+  {
+    "name": "leftovers (cooked)",
+    "keywords": ["leftovers", "leftover", "cooked"],
+    "category": "leftovers",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 4 },
+      "freezer": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "cooked rice",
+    "keywords": ["cooked rice", "fried rice"],
+    "category": "leftovers",
+    "shelfLife": {
+      "fridge": { "min": 4, "max": 6 },
+      "freezer": { "min": 180, "max": 180 }
+    }
+  },
+  {
+    "name": "soup (homemade)",
+    "keywords": ["homemade soup", "soup", "stew", "chili"],
+    "category": "leftovers",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 4 },
+      "freezer": { "min": 60, "max": 90 }
+    }
+  },
+  {
+    "name": "tofu",
+    "keywords": ["tofu"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 150, "max": 180 }
+    }
+  },
+  {
+    "name": "herbs (fresh)",
+    "keywords": ["basil", "cilantro", "parsley", "mint", "dill", "rosemary", "thyme", "fresh herbs"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 5, "max": 10 }
+    }
+  },
+  {
+    "name": "watermelon",
+    "keywords": ["watermelon", "cantaloupe", "honeydew", "melon"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "pantry": { "min": 7, "max": 10 }
+    }
+  },
+  {
+    "name": "peaches",
+    "keywords": ["peach", "peaches", "nectarine", "nectarines", "plum", "plums"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "pantry": { "min": 1, "max": 3 }
+    }
+  },
+  {
+    "name": "asparagus",
+    "keywords": ["asparagus"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 3, "max": 5 },
+      "freezer": { "min": 240, "max": 365 }
+    }
+  },
+  {
+    "name": "cabbage",
+    "keywords": ["cabbage", "coleslaw"],
+    "category": "produce",
+    "shelfLife": {
+      "fridge": { "min": 7, "max": 14 }
+    }
+  }
+]

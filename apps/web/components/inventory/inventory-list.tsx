@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Button } from '@/components/ui/button'
 import {
   useInventoryItems,
   useInventoryCounts,
@@ -12,6 +13,8 @@ import { useRealtimeInventory } from '@/hooks/use-realtime-inventory'
 import { InventoryItemCard } from './inventory-item-card'
 import { RecentlyRemoved } from './recently-removed'
 import { ItemDetailSheet } from './item-detail-sheet'
+import { QuickAddSheet } from './quick-add-sheet'
+import { Plus } from 'lucide-react'
 import type { StorageLocation } from '@fridge-manager/shared'
 
 type InventoryListProps = {
@@ -32,6 +35,7 @@ const TABS: { value: StorageLocation; label: string; emoji: string }[] = [
 export function InventoryList({ householdId, userId }: InventoryListProps) {
   const [activeTab, setActiveTab] = useState<StorageLocation>('fridge')
   const [selectedItem, setSelectedItem] = useState<import('@/hooks/use-inventory-items').InventoryItemWithDetails | null>(null)
+  const [showQuickAdd, setShowQuickAdd] = useState(false)
 
   // Subscribe to realtime changes
   useRealtimeInventory(householdId)
@@ -155,6 +159,24 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
         userId={userId}
         householdId={householdId}
       />
+
+      {/* Quick Add Sheet */}
+      <QuickAddSheet
+        open={showQuickAdd}
+        onOpenChange={setShowQuickAdd}
+        householdId={householdId}
+        userId={userId}
+        activeLocation={activeTab}
+      />
+
+      {/* Floating Action Button */}
+      <Button
+        onClick={() => setShowQuickAdd(true)}
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full forest-gradient shadow-lg hover:shadow-xl hover:opacity-90 transition-all z-50"
+        aria-label="Quick add item"
+      >
+        <Plus className="w-6 h-6 text-white" />
+      </Button>
     </div>
   )
 }

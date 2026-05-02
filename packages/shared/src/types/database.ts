@@ -328,7 +328,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_households: { Args: never; Returns: string[] }
+      get_user_owned_households: { Args: never; Returns: string[] }
     }
     Enums: {
       [_ in never]: never
@@ -461,3 +462,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

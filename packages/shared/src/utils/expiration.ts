@@ -9,6 +9,7 @@
  */
 
 import type { ExpirationColor, StorageLocation } from '../types/grocery.js';
+import { fuzzyMatchFoodKeeper } from './foodkeeper.js';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -21,13 +22,23 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
  * 3. null (if category.has_expiration = false)
  */
 export function calculateExpiration(
-  _itemName: string,
+  itemName: string,
   categoryHasExpiration: boolean,
-  _location: StorageLocation,
+  location: StorageLocation,
   addedAt: Date,
   defaultShelfDays: number | null,
 ): Date | null {
   if (!categoryHasExpiration) return null;
+
+  // Tier 1: FoodKeeper fuzzy match
+  const foodKeeperDays = fuzzyMatchFoodKeeper(itemName, location);
+  if (foodKeeperDays !== null) {
+    const expiration = new Date(addedAt);
+    expiration.setDate(expiration.getDate() + foodKeeperDays);
+    return expiration;
+  }
+
+  // Tier 2: Category default shelf days
   if (defaultShelfDays === null) return null;
 
   const expiration = new Date(addedAt);

@@ -180,7 +180,7 @@ inventory_items (
   category_id uuid FK → categories,
   location text not null,         -- 'fridge' | 'freezer' | 'pantry'
   expiration_date date,           -- null when category.has_expiration = false
-  expiration_source text,         -- 'user' | 'default' | null (how the expiration was set)
+  expiration_source text,         -- 'user' | 'default' | 'foodkeeper' | null (how the expiration was set)
   added_by uuid FK → auth.users,
   added_at timestamptz default now(),
   updated_at timestamptz default now(),  -- auto-updated via trigger (required for WatermelonDB sync)
@@ -190,7 +190,7 @@ inventory_items (
   CHECK (location IN ('fridge', 'freezer', 'pantry')),
   CHECK (discard_reason IN ('consumed', 'expired', 'wasted')),
   CHECK (source IN ('manual', 'grocery_checkout')),
-  CHECK (expiration_source IN ('user', 'default'))
+  CHECK (expiration_source IN ('user', 'default', 'foodkeeper'))
 )
 
 -- Default shelf life by food category (used for auto-estimating expiration dates)
@@ -288,7 +288,7 @@ system_logs (
 - **`household_members` is many-to-many from day one.** Schema supports multiple households per user without migration.
 - **`quiet_hours`** on notification preferences so alerts don't wake you up at night.
 - **`default_shelf_days` table** provides smart defaults for expiration dates by category and storage location. When an item is auto-added to inventory via checkout, the expiration date is calculated from `added_at + shelf_days`. Users can override any default.
-- **`expiration_source`** tracks whether the expiration date was set by the user or auto-calculated from defaults. Useful for improving defaults over time.
+- **`expiration_source`** tracks how the expiration date was set: `'user'` (manually entered), `'foodkeeper'` (auto-calculated from USDA FoodKeeper data), or `'default'` (category-level default). Useful for improving defaults over time.
 - **"Days since added" counter** displayed on every inventory item regardless of expiration date. Even if an item has no expiration (like a condiment), seeing "added 45 days ago" creates passive awareness.
 - **`updated_at` on all synced tables** (`grocery_items`, `inventory_items`, `households`, `household_members`) with an auto-update Postgres trigger. Required for WatermelonDB incremental sync ("give me everything changed since timestamp X").
 - **`completed_at` on `grocery_items`** provides soft-delete behavior. When an item is checked off and auto-moved to inventory, `completed_at` is set instead of deleting the row. This preserves purchase history for analytics ("bought 6 times in 3 months"). The grocery list view filters `WHERE completed_at IS NULL`.

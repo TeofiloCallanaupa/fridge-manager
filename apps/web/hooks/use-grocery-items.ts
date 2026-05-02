@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import { calculateExpiration } from '@fridge-manager/shared'
+import { calculateExpiration, fuzzyMatchFoodKeeper } from '@fridge-manager/shared'
 import { toast } from 'sonner'
 import type { GroceryItem, Category } from '@fridge-manager/shared'
 
@@ -176,14 +176,23 @@ export function useCheckOffGroceryItem() {
             defaultShelfDays = shelfData?.shelf_days ?? null
           }
 
-          // Use shared utility for expiration calculation
+          const loc = item.destination as 'fridge' | 'freezer' | 'pantry'
+
+          // Use shared utility for expiration calculation (FoodKeeper → default)
           const expirationDate = calculateExpiration(
             item.name,
             item.categories.has_expiration,
-            item.destination as 'fridge' | 'freezer' | 'pantry',
+            loc,
             new Date(),
             defaultShelfDays,
           )
+
+          // Detect which tier provided the expiration
+          let expirationSource: string | null = null
+          if (expirationDate) {
+            const foodKeeperMatch = fuzzyMatchFoodKeeper(item.name, loc)
+            expirationSource = foodKeeperMatch !== null ? 'foodkeeper' : 'default'
+          }
 
           const { error: insertError } = await supabase
             .from('inventory_items')
@@ -191,13 +200,13 @@ export function useCheckOffGroceryItem() {
               name: item.name,
               quantity: item.quantity,
               category_id: item.category_id,
-              location: item.destination as 'fridge' | 'freezer' | 'pantry',
+              location: loc,
               household_id: item.household_id,
               added_by: userId,
               expiration_date: expirationDate
                 ? expirationDate.toISOString().split('T')[0]
                 : null,
-              expiration_source: expirationDate ? 'default' : null,
+              expiration_source: expirationSource,
               source: 'grocery_checkout',
             })
 

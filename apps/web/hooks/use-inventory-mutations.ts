@@ -75,6 +75,75 @@ export function usePurchaseHistoryCount(
 }
 
 // ---------------------------------------------------------------------------
+// Add inventory item (Quick Add)
+// ---------------------------------------------------------------------------
+
+type AddInventoryInput = {
+  name: string
+  quantity: string | null
+  categoryId: string
+  location: StorageLocation
+  householdId: string
+  userId: string
+  expirationDate: string | null
+}
+
+/**
+ * Inserts a new inventory item directly (without going through grocery list).
+ * Used by the Quick Add sheet.
+ */
+export function useAddInventoryItem() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (input: AddInventoryInput) => {
+      const trimmedName = input.name.trim()
+      if (!trimmedName) throw new Error('Item name cannot be empty')
+      if (trimmedName.length > MAX_NAME_LENGTH) {
+        throw new Error(`Item name must be under ${MAX_NAME_LENGTH} characters`)
+      }
+      if (input.quantity && input.quantity.length > MAX_QUANTITY_LENGTH) {
+        throw new Error(`Quantity must be under ${MAX_QUANTITY_LENGTH} characters`)
+      }
+
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .insert({
+          name: trimmedName,
+          quantity: input.quantity || null,
+          category_id: input.categoryId,
+          location: input.location,
+          household_id: input.householdId,
+          added_by: input.userId,
+          source: 'manual',
+          expiration_date: input.expirationDate || null,
+          expiration_source: input.expirationDate ? 'user' : null,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+
+    onSuccess: (_data, variables) => {
+      toast.success('Item added to inventory')
+      queryClient.invalidateQueries({
+        queryKey: ['inventory-items', variables.householdId],
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['inventory-counts', variables.householdId],
+      })
+    },
+
+    onError: (error) => {
+      toast.error(error.message || 'Failed to add item')
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
 // Edit mutation
 // ---------------------------------------------------------------------------
 

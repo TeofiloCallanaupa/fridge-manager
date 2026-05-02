@@ -349,3 +349,154 @@ describe('useDeleteGroceryItem', () => {
     expect(mockToast.success).toHaveBeenCalledWith('Item removed')
   })
 })
+
+// ---------------------------------------------------------------------------
+// Tests: expiration_source in checkout flow (regression for Phase 4.8 bug)
+//
+// Before migration 009, the CHECK constraint only allowed 'user' | 'default'.
+// Writing 'foodkeeper' would cause a Postgres constraint violation at runtime.
+// These tests verify the correct source is written for different items.
+// ---------------------------------------------------------------------------
+
+describe('useCheckOffGroceryItem expiration_source', () => {
+  let inventoryInsert: ReturnType<typeof vi.fn>
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+
+    inventoryInsert = vi.fn().mockResolvedValue({ error: null })
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'grocery_items') {
+        return {
+          update: mockUpdate,
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              is: vi.fn().mockReturnValue({
+                order: vi.fn().mockResolvedValue({ data: [], error: null }),
+              }),
+            }),
+          }),
+        }
+      }
+      if (table === 'default_shelf_days') {
+        return { select: mockShelfSelect }
+      }
+      if (table === 'inventory_items') {
+        return { insert: inventoryInsert }
+      }
+      return { select: vi.fn() }
+    })
+  })
+
+  it('sets expiration_source to "foodkeeper" for FoodKeeper-matched items', async () => {
+    // "Chicken Breast" matches FoodKeeper data → should get 'foodkeeper' source
+    const { result } = renderHook(() => useCheckOffGroceryItem(), { wrapper: createWrapper() })
+    const item = makeItem({
+      name: 'Chicken Breast',
+      destination: 'fridge',
+      categories: {
+        name: 'Meat',
+        emoji: '🥩',
+        display_order: 3,
+        default_destination: 'fridge',
+        has_expiration: true,
+      },
+    })
+
+    result.current.mutate({ item, userId: 'user-1' })
+
+    await waitFor(() => {
+      expect(result.current.isSuccess || result.current.isError).toBe(true)
+    })
+
+    expect(inventoryInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expiration_source: 'foodkeeper',
+        source: 'grocery_checkout',
+      })
+    )
+  })
+
+  it('sets expiration_source to "default" when no FoodKeeper match', async () => {
+    // "Artisanal Acai Spread" has no FoodKeeper match → falls back to category default
+    const { result } = renderHook(() => useCheckOffGroceryItem(), { wrapper: createWrapper() })
+    const item = makeItem({
+      name: 'Artisanal Acai Spread',
+      destination: 'fridge',
+      categories: {
+        name: 'Condiments',
+        emoji: '🧂',
+        display_order: 8,
+        default_destination: 'pantry',
+        has_expiration: true,
+      },
+    })
+
+    result.current.mutate({ item, userId: 'user-1' })
+
+    await waitFor(() => {
+      expect(result.current.isSuccess || result.current.isError).toBe(true)
+    })
+
+    expect(inventoryInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expiration_source: 'default',
+        source: 'grocery_checkout',
+      })
+    )
+  })
+
+  it('sets expiration_source to null for non-expiring categories', async () => {
+    // Household items: has_expiration = false → null expiration
+    const { result } = renderHook(() => useCheckOffGroceryItem(), { wrapper: createWrapper() })
+    const item = makeItem({
+      name: 'Paper Towels',
+      destination: 'pantry',
+      categories: {
+        name: 'Household',
+        emoji: '🧹',
+        display_order: 10,
+        default_destination: 'none',
+        has_expiration: false,
+      },
+    })
+
+    result.current.mutate({ item, userId: 'user-1' })
+
+    await waitFor(() => {
+      expect(inventoryInsert).toHaveBeenCalled()
+    })
+
+    expect(inventoryInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expiration_date: null,
+        expiration_source: null,
+        source: 'grocery_checkout',
+      })
+    )
+  })
+
+  it('sets expiration_source to "foodkeeper" for common produce items', async () => {
+    // "Strawberries" is in FoodKeeper — regression test for the original Phase 4.8 bug
+    const { result } = renderHook(() => useCheckOffGroceryItem(), { wrapper: createWrapper() })
+    const item = makeItem({
+      name: 'Strawberries',
+      destination: 'fridge',
+    })
+
+    result.current.mutate({ item, userId: 'user-1' })
+
+    await waitFor(() => {
+      expect(inventoryInsert).toHaveBeenCalled()
+    })
+
+    expect(inventoryInsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expiration_source: 'foodkeeper',
+      })
+    )
+  })
+})
+
+
