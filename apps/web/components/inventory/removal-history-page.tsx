@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { formatRelativeTime } from '@fridge-manager/shared'
+import { formatRelativeTime, getOppositeReason } from '@fridge-manager/shared'
 import { useRestoreItem, useChangeDiscardReason } from '@/hooks/use-inventory-mutations'
 import { useRemovalHistory } from '@/hooks/use-inventory-items'
 import type { InventoryItemWithDetails } from '@/hooks/use-inventory-items'
@@ -12,19 +12,7 @@ import type { DiscardReason } from '@fridge-manager/shared'
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Returns the opposite discard reason for the toggle button.
- * consumed ↔ wasted (we don't toggle to 'expired' since that's auto-detected)
- */
-function getOppositeReason(reason: DiscardReason | null): {
-  label: string
-  newReason: DiscardReason
-} {
-  if (reason === 'consumed') {
-    return { label: 'Change to Tossed', newReason: 'wasted' }
-  }
-  return { label: 'Change to Used', newReason: 'consumed' }
-}
+
 
 /** Format a date as a readable day header: "Wednesday, April 16" */
 function formatDayHeader(date: Date): string {

@@ -72,6 +72,10 @@ vi.mock('@fridge-manager/shared', () => ({
     return `Bought ${count} times before`
   }),
   formatRelativeTime: vi.fn(() => '2 hours ago'),
+  getOppositeReason: (reason: string | null) => {
+    if (reason === 'consumed') return { label: 'Change to Tossed', newReason: 'wasted' }
+    return { label: 'Change to Used', newReason: 'consumed' }
+  },
 }))
 
 // Mock sonner toast

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { formatRelativeTime } from '@fridge-manager/shared'
+import { formatRelativeTime, getOppositeReason } from '@fridge-manager/shared'
 import { useRestoreItem, useChangeDiscardReason } from '@/hooks/use-inventory-mutations'
 import type { InventoryItemWithDetails } from '@/hooks/use-inventory-items'
 import type { DiscardReason } from '@fridge-manager/shared'
@@ -22,20 +22,7 @@ function isWithinUndoWindow(discardedAt: string | null): boolean {
   return Date.now() - new Date(discardedAt).getTime() < UNDO_WINDOW_MS
 }
 
-/**
- * Returns the opposite discard reason for the toggle button.
- * consumed ↔ wasted (we don't toggle to 'expired' since that's auto-detected)
- */
-function getOppositeReason(reason: DiscardReason | null): {
-  label: string
-  newReason: DiscardReason
-} {
-  if (reason === 'consumed') {
-    return { label: 'Change to Tossed', newReason: 'wasted' }
-  }
-  // wasted or expired → switch to consumed
-  return { label: 'Change to Used', newReason: 'consumed' }
-}
+
 
 /**
  * Recently Removed section showing the last 20 discarded items.

@@ -154,6 +154,7 @@ export function useRemovalHistory(
         .gte('discarded_at', startDate.toISOString())
         .lt('discarded_at', endDate.toISOString())
         .order('discarded_at', { ascending: false })
+        .limit(200)
 
       if (error) throw error
       return (data ?? []) as unknown as InventoryItemWithDetails[]

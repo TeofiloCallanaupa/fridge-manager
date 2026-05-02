@@ -58,6 +58,10 @@ vi.mock('@fridge-manager/shared', () => ({
   getExpirationColor: vi.fn(() => null),
   getDaysSince: vi.fn(() => 0),
   formatPurchaseHistory: vi.fn(() => 'No purchase history'),
+  getOppositeReason: (reason: string | null) => {
+    if (reason === 'consumed') return { label: 'Change to Tossed', newReason: 'wasted' }
+    return { label: 'Change to Used', newReason: 'consumed' }
+  },
 }))
 
 vi.mock('sonner', () => ({

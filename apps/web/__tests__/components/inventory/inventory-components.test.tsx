@@ -51,6 +51,10 @@ vi.mock('@fridge-manager/shared', () => ({
   }),
   formatRelativeTime: vi.fn(() => '2 hours ago'),
   formatPurchaseHistory: vi.fn(() => 'No purchase history'),
+  getOppositeReason: (reason: string | null) => {
+    if (reason === 'consumed') return { label: 'Change to Tossed', newReason: 'wasted' }
+    return { label: 'Change to Used', newReason: 'consumed' }
+  },
 }))
 
 // Mock inventory mutations (used by enhanced RecentlyRemoved)

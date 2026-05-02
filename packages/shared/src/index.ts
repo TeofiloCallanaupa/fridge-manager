@@ -50,6 +50,8 @@ export { calculateExpiration, getDaysSince, getExpirationColor } from './utils/e
 export { getCategoryEmoji, getDefaultShelfDays } from './utils/categories.js';
 export { formatRelativeTime, formatQuantity, formatPurchaseHistory } from './utils/formatting.js';
 export { buildAvatarUrl, DEFAULT_AVATAR_CONFIG } from './utils/avatar.js';
+export { getOppositeReason, getDiscardReasonLabel } from './utils/discard.js';
+export type { OppositeReason } from './utils/discard.js';
 
 // Constants
 export {
