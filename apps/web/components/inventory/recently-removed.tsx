@@ -76,13 +76,22 @@ export function RecentlyRemoved({ items, householdId }: RecentlyRemovedProps) {
   return (
     <section className="mt-8" aria-labelledby="recently-removed-heading">
       <div className="flex items-center justify-between mb-3">
-        <h2
-          id="recently-removed-heading"
-          className="text-sm font-semibold text-foreground"
+        <div>
+          <h2
+            id="recently-removed-heading"
+            className="text-sm font-semibold text-foreground"
+          >
+            Recently Removed
+          </h2>
+          <span className="text-xs text-muted-foreground">Last 7 days</span>
+        </div>
+        <a
+          href="/inventory/history"
+          className="text-xs text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          aria-label="View full removal history"
         >
-          Recently Removed
-        </h2>
-        <span className="text-xs text-muted-foreground">Last 7 days</span>
+          View all
+        </a>
       </div>
 
       <div className="space-y-1">

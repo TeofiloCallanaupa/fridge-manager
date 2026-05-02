@@ -88,6 +88,7 @@ export function useInventoryCounts(householdId: string) {
 
 /**
  * Fetches the 20 most recently removed (discarded) items for a household.
+ * Scoped to the last 7 days per architecture spec.
  */
 export function useRecentlyRemoved(householdId: string) {
   const supabase = createClient()
@@ -95,6 +96,8 @@ export function useRecentlyRemoved(householdId: string) {
   return useQuery({
     queryKey: ['recently-removed', householdId],
     queryFn: async () => {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+
       const { data, error } = await supabase
         .from('inventory_items')
         .select(`
@@ -104,6 +107,7 @@ export function useRecentlyRemoved(householdId: string) {
         `)
         .eq('household_id', householdId)
         .not('discarded_at', 'is', null)
+        .gte('discarded_at', sevenDaysAgo)
         .order('discarded_at', { ascending: false })
         .limit(20)
 
@@ -111,5 +115,49 @@ export function useRecentlyRemoved(householdId: string) {
       return (data ?? []) as unknown as InventoryItemWithDetails[]
     },
     staleTime: 30_000,
+  })
+}
+
+/**
+ * Fetches full removal history for a household, optionally filtered by
+ * year/month. Used on the dedicated "Removal History" page.
+ *
+ * @param year  - 4-digit year (e.g. 2026)
+ * @param month - 1-indexed month (1-12), or undefined for full year
+ */
+export function useRemovalHistory(
+  householdId: string,
+  year: number,
+  month?: number,
+) {
+  const supabase = createClient()
+
+  return useQuery({
+    queryKey: ['removal-history', householdId, year, month],
+    queryFn: async () => {
+      const startDate = month
+        ? new Date(year, month - 1, 1)
+        : new Date(year, 0, 1)
+      const endDate = month
+        ? new Date(year, month, 1)
+        : new Date(year + 1, 0, 1)
+
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .select(`
+          *,
+          categories (name, emoji, has_expiration),
+          profiles:added_by (display_name)
+        `)
+        .eq('household_id', householdId)
+        .not('discarded_at', 'is', null)
+        .gte('discarded_at', startDate.toISOString())
+        .lt('discarded_at', endDate.toISOString())
+        .order('discarded_at', { ascending: false })
+
+      if (error) throw error
+      return (data ?? []) as unknown as InventoryItemWithDetails[]
+    },
+    staleTime: 60_000,
   })
 }
