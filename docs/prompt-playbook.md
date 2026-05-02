@@ -225,7 +225,28 @@ git add -A && git commit -m "feat: discard flow with undo, change reason, and re
 
 ---
 
-### 4.6 — Quick Add to Inventory
+### 4.6 — Removal History page
+
+```
+Using /designer, design the Removal History page for the web app. This is a full-page view at /inventory/history showing all discarded items grouped by month. Include: month selector (backward navigation), summary stats per month (items consumed vs wasted vs expired), each item showing name, emoji, who discarded, when, and reason icon. Use the Heirloom Pantry design system. Reference the "View all" link from the Recently Removed section.
+```
+
+```
+Using /coder, build the Removal History page at apps/web/app/inventory/history/page.tsx. Use the existing useRemovalHistory(householdId, year, month?) hook from use-inventory-items.ts. Include: month/year picker navigation, items grouped by day within the month, summary counts (consumed/wasted/expired) at the top, same correction menu as RecentlyRemoved (change reason + restore). Requirements: responsive layout, loading states, empty month placeholder, back link to inventory.
+```
+
+```
+Using /tester, write component tests for the Removal History page: month navigation changes query params, items render grouped by day, summary counts are correct, correction actions (change reason, restore) work, empty state shows placeholder. Run tests.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: removal history page with monthly grouping" && git push
+```
+
+---
+
+### 4.7 — Quick Add to Inventory
 
 ```
 Using /coder, build the "Quick Add" feature in apps/web. Add a floating "+" FAB or "Add Item" button to the inventory view that opens a form for direct inventory item creation without going through the grocery list. Include category picker, location selector, and expiration fields. Reference the Stitch design. Use TanStack Query for data fetching and shadcn/ui components.
@@ -242,7 +263,7 @@ git add -A && git commit -m "feat: quick add to inventory" && git push
 
 ---
 
-### 4.7 — FoodKeeper Data & Fuzzy Match
+### 4.8 — FoodKeeper Data & Fuzzy Match
 
 ```
 Using /coder, fetch the USDA FoodKeeper dataset and format it into a lightweight JSON file saved to packages/shared/data/foodkeeper.json. Build a fuzzy matching utility function fuzzyMatchFoodKeeper(itemName) in packages/shared/src/utils/ to look up shelf life ranges based on item names.
@@ -263,10 +284,10 @@ git add -A && git commit -m "feat: foodkeeper fuzzy match data and checkout inte
 
 ---
 
-### 4.8 — Phase 4 E2E integration test
+### 4.9 — Phase 4 E2E integration test
 
 ```
-Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → quick add item → open detail sheet → discard → verify in recently removed → change discard reason → undo → verify restored. Ensure that expiration date assignment from FoodKeeper fuzzy match is verified. Run pnpm --filter web test:e2e.
+Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → quick add item → open detail sheet → discard → verify in recently removed → change discard reason → undo → verify restored → navigate to removal history → verify monthly grouping. Ensure that expiration date assignment from FoodKeeper fuzzy match is verified. Run pnpm --filter web test:e2e.
 ```
 
 > Commit:
