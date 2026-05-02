@@ -287,6 +287,7 @@ export function useRestoreItem() {
       queryClient.invalidateQueries({ queryKey: ['inventory-items', householdId] })
       queryClient.invalidateQueries({ queryKey: ['inventory-counts', householdId] })
       queryClient.invalidateQueries({ queryKey: ['recently-removed', householdId] })
+      queryClient.invalidateQueries({ queryKey: ['removal-history', householdId] })
       toast.success('Item restored to inventory')
     },
 
@@ -329,6 +330,7 @@ export function useChangeDiscardReason() {
 
     onSuccess: (_data, { householdId }) => {
       queryClient.invalidateQueries({ queryKey: ['recently-removed', householdId] })
+      queryClient.invalidateQueries({ queryKey: ['removal-history', householdId] })
       toast.success('Reason updated')
     },
 
