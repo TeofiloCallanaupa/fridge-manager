@@ -56,8 +56,11 @@ vi.mock('@/hooks/use-inventory-items', () => ({
   useRemovalHistory: mockUseRemovalHistory,
 }))
 
-vi.mock('@/hooks/use-household', () => ({
-  useHousehold: () => ({ id: 'hh-1', name: 'Test House' }),
+// next/link: render as a plain <a> for testing
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode; [key: string]: unknown }) => (
+    <a href={href} {...rest}>{children}</a>
+  ),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -183,7 +186,7 @@ describe('RemovalHistoryPage', () => {
         error: null,
       })
 
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       expect(screen.getByTestId('history-loading')).toBeDefined()
     })
 
@@ -194,7 +197,7 @@ describe('RemovalHistoryPage', () => {
         error: null,
       })
 
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       expect(screen.getByText(/Nothing removed this month/)).toBeDefined()
     })
   })
@@ -209,27 +212,28 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('renders page title "Removal History"', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       expect(screen.getByText('Removal History')).toBeDefined()
     })
 
     it('renders back link to inventory', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       const backLink = screen.getByLabelText(/back to inventory/i)
       expect(backLink).toBeDefined()
     })
 
     it('shows current month and year', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
-      // Default should show current month/year
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
+      // Month name appears in header ("May 2026"), month chip ("May"), and summary footer
       const now = new Date()
       const monthName = now.toLocaleString('default', { month: 'long' })
-      expect(screen.getByText(new RegExp(monthName))).toBeDefined()
+      const yearStr = now.getFullYear().toString()
+      expect(screen.getAllByText(new RegExp(`${monthName}.*${yearStr}`)).length).toBeGreaterThanOrEqual(1)
     })
 
     it('navigates to previous month when clicking back arrow', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const prevButton = screen.getByLabelText(/previous month/i)
       await user.click(prevButton)
@@ -241,7 +245,7 @@ describe('RemovalHistoryPage', () => {
 
     it('navigates to next month when clicking forward arrow', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const nextButton = screen.getByLabelText(/next month/i)
       await user.click(nextButton)
@@ -260,7 +264,7 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('displays correct consumed count', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       // 3 consumed items in sample data
       const summary = screen.getByTestId('summary-card')
       expect(within(summary).getByText('3')).toBeDefined()
@@ -268,21 +272,21 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('displays correct wasted count', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       const summary = screen.getByTestId('summary-card')
       // 1 wasted item — check the label exists, count is verified via total
       expect(within(summary).getByText(/Wasted/i)).toBeDefined()
     })
 
     it('displays correct expired count', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       const summary = screen.getByTestId('summary-card')
       // 1 expired item
       expect(within(summary).getByText(/Expired/i)).toBeDefined()
     })
 
     it('displays total items removed', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       const summary = screen.getByTestId('summary-card')
       expect(within(summary).getByText(/5 items removed/i)).toBeDefined()
     })
@@ -298,14 +302,14 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('renders day headers for each unique day', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       // 3 different days: April 16, 15, 14
       const dayHeaders = screen.getAllByTestId('day-header')
       expect(dayHeaders.length).toBe(3)
     })
 
     it('groups items under the correct day header', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       // April 16 should have Sourdough loaf and Chicken breast
       expect(screen.getByText('Sourdough loaf')).toBeDefined()
       expect(screen.getByText('Chicken breast')).toBeDefined()
@@ -317,7 +321,7 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('shows reason chips with semantic colors', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       // Should have reason labels
       expect(screen.getAllByText(/Used/i).length).toBeGreaterThanOrEqual(1)
       expect(screen.getAllByText(/Wasted/i).length).toBeGreaterThanOrEqual(1)
@@ -325,7 +329,7 @@ describe('RemovalHistoryPage', () => {
     })
 
     it('shows who discarded each item', () => {
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
       expect(screen.getAllByText(/Teo/).length).toBeGreaterThanOrEqual(1)
       expect(screen.getAllByText(/Emilia/).length).toBeGreaterThanOrEqual(1)
     })
@@ -342,7 +346,7 @@ describe('RemovalHistoryPage', () => {
 
     it('tapping a card expands correction menu', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const card = screen.getByText('Sourdough loaf').closest('[data-testid="history-item-card"]')!
       await user.click(card)
@@ -353,7 +357,7 @@ describe('RemovalHistoryPage', () => {
 
     it('change reason calls mutation with correct payload', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const card = screen.getByText('Sourdough loaf').closest('[data-testid="history-item-card"]')!
       await user.click(card)
@@ -371,7 +375,7 @@ describe('RemovalHistoryPage', () => {
 
     it('restore calls mutation with correct payload', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const card = screen.getByText('Chicken breast').closest('[data-testid="history-item-card"]')!
       await user.click(card)
@@ -388,7 +392,7 @@ describe('RemovalHistoryPage', () => {
 
     it('tapping expanded card collapses the menu', async () => {
       const user = userEvent.setup()
-      render(<RemovalHistoryPage />, { wrapper: createWrapper() })
+      render(<RemovalHistoryPage householdId="hh-1" />, { wrapper: createWrapper() })
 
       const card = screen.getByText('Sourdough loaf').closest('[data-testid="history-item-card"]')!
       await user.click(card)
