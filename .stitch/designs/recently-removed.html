@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#f9f9f7",
+                    "on-secondary-container": "#5e6572",
+                    "on-primary-container": "#c5ffd8",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e2e3e1",
+                    "surface-bright": "#f9f9f7",
+                    "on-background": "#1a1c1b",
+                    "on-primary-fixed": "#002111",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#596da1",
+                    "surface-dim": "#dadad8",
+                    "secondary": "#585f6c",
+                    "surface-container-high": "#e8e8e6",
+                    "surface-container": "#eeeeec",
+                    "tertiary-fixed-dim": "#b1c5ff",
+                    "surface-container-highest": "#e2e3e1",
+                    "on-secondary-fixed": "#151c27",
+                    "inverse-primary": "#93d5ac",
+                    "primary-fixed-dim": "#93d5ac",
+                    "primary-container": "#3b7a57",
+                    "outline": "#707972",
+                    "primary": "#206140",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed": "#001947",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#dce2f3",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#bfc9c0",
+                    "secondary-fixed": "#dce2f3",
+                    "primary-fixed": "#aff1c6",
+                    "on-tertiary-fixed-variant": "#314576",
+                    "on-secondary-fixed-variant": "#404754",
+                    "surface-tint": "#2a6a48",
+                    "inverse-surface": "#2f3130",
+                    "on-surface-variant": "#404942",
+                    "inverse-on-surface": "#f1f1ef",
+                    "secondary-fixed-dim": "#c0c7d6",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f4f4f2",
+                    "on-surface": "#1a1c1b",
+                    "tertiary": "#405587",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#f0f1ff",
+                    "on-primary-fixed-variant": "#0a5132",
+                    "tertiary-fixed": "#dae2ff",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f9f9f7"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Plus Jakarta Sans"],
+                    "display": ["Plus Jakarta Sans"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"],
+                    "mono": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#F9F9F7]/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 h-16 w-full max-w-4xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 active:scale-95 duration-200 text-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-xl font-bold text-on-background tracking-tight">Kitchen Larder</h1>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional high-resolution avatar of a friendly individual in a modern minimalist style. The illustration uses clean lines and a soft color palette of greens and neutrals, fitting the kitchen larder app aesthetic. The character has a gentle expression and is set against a solid, soft off-white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANhXUN30qmwokmwW2UzdCaE6sfiTrovAp27dLwmmGqvmyg-3xfULKQKRY829ebcqvKGcEyYiyeAOI6Qj02YQH-_dEGfo7CO7Ez8aDs9IMBNH0v_RoeWmF52As5Eye3YqGzi0wnXaniJbLo_pPWM3KPL7jRVOVNNdBRG34jJ1FfVtGgcw97G8Qf8E57K5Ya_ga9Fegfl8Vq3f6Gv3aFD9zVCrMYjZLYy39haxoz2PuJx_iHIfk-phQjNxsb1IfMuqPymX4mHvuM2vZf"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-8 max-w-4xl mx-auto min-h-screen bg-surface">
+<!-- Section Header -->
+<div class="mt-8 mb-6">
+<h2 class="text-2xl font-semibold text-on-background headline-md">Recently Removed</h2>
+<p class="text-on-secondary-container text-xs font-medium tracking-wide mt-1 uppercase">Last 7 days</p>
+</div>
+<!-- Activity Feed Area -->
+<div class="bg-surface-container-low rounded-2xl p-4 space-y-3">
+<!-- Item 1: Chicken Breast (With Correction Menu) -->
+<div class="relative group">
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center justify-between shadow-[0_4px_20px_rgba(26,28,27,0.02)]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed/30 text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold text-on-background leading-tight">Chicken breast</span>
+<div class="flex items-center gap-2 mt-1">
+<img alt="Teo" class="w-6 h-6 rounded-full" data-alt="A small circular avatar portrait of a person named Teo, designed in a clean vector style. The avatar features friendly features, short hair, and uses a natural color scheme with subtle earthy tones to match the organic kitchen environment. The lighting is flat and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeeFpVDzK02iI92t31De6tzbqtSm5jzt9Ut8jxQhJ7SkOnjpE-35Fa7W2NCkClxCq-QDDuWXmzm2x8bpuwua0K1YPEmLDD1JMVim9pU4gn3a_LC9HJUmpUkaF5in4uchzxtken2MGK6mT6UooL5TTJZ-t0vue9brBvNFeyMNM_CuPT2DZtS09gSXRq5hq-mch_y2Dx6cv-d9gKXc_kVU33gqzQlE8dQmEX-GjQovyx0nHm95xg8BePhtlLgeIJhd1gSXddl4QLxqN2"/>
+<span class="text-sm text-on-secondary-container">Removed by Teo • <span class="font-mono text-xs opacity-75">2 hours ago</span></span>
+</div>
+</div>
+</div>
+<button class="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md shadow-primary/20 active:scale-95 duration-200">
+                        Undo
+                    </button>
+</div>
+<!-- Inline Correction Menu -->
+<div class="mt-3 bg-white/60 backdrop-blur-sm border-l-4 border-primary rounded-xl p-5 ml-6">
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium text-on-surface-variant">Update removal reason:</span>
+<div class="flex bg-surface-container p-1 rounded-full">
+<button class="px-4 py-1.5 rounded-full text-xs font-bold bg-primary text-white shadow-sm">Used it</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-bold text-on-surface-variant hover:bg-surface-variant transition-colors">Tossed it</button>
+</div>
+</div>
+<div class="flex items-center justify-end">
+<a class="text-primary text-sm font-semibold flex items-center gap-1 hover:underline" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="settings_backup_restore">settings_backup_restore</span>
+                                Restore to inventory
+                            </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2: Greek Yogurt -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center justify-between shadow-[0_4px_20px_rgba(26,28,27,0.02)]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed/30 text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold text-on-background leading-tight">Greek yogurt</span>
+<div class="flex items-center gap-2 mt-1">
+<img alt="Emilia" class="w-6 h-6 rounded-full" data-alt="A minimalist vector avatar of a person named Emilia with long hair and a soft smile. The design uses warm, organic colors and is set against a circular backdrop. The style is sophisticated and clean, designed to feel premium and friendly within a high-end application interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANwmxjo7jIeC7MWTi4KILl6rmPJ6dtNO2CRcqSY6GzlJHgI7vIYrysePGIsKEk-KH9rtnobLG-6u3IIobeNguMT6YSJ9MFkhHPFlo_2q5636bCOOQ_y-nOYue3NPqYzCyNi39iZxBcavW8dEO_ptX0hLwdtZXQ_s0ix0Hqgnwd9vyFs9njQGzg9d6nNZxVHOHLOHM5EvPd7cgfAo77Q7gzCHLNbPMTuVy3B-ZHX4vnKzK288JdvU4khmfRYqtRawQlXQ0_lRXkV0KR"/>
+<span class="text-sm text-on-secondary-container">Removed by Emilia • <span class="font-mono text-xs opacity-75">5 hours ago</span></span>
+</div>
+</div>
+</div>
+<button class="bg-primary text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md shadow-primary/20 active:scale-95 duration-200">
+                    Undo
+                </button>
+</div>
+<!-- Item 3: Leftover pasta -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center justify-between opacity-80">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-error-container text-error">
+<span class="material-symbols-outlined" data-icon="delete_outline">delete_outline</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold text-on-background leading-tight">Leftover pasta</span>
+<div class="flex items-center gap-2 mt-1">
+<img alt="Teo" class="w-6 h-6 rounded-full" data-alt="A friendly, modern vector illustration of a young man with short hair, presented as a circular profile avatar. The color palette is composed of natural greens and warm neutral tones, reflecting the healthy living and organic food theme of the kitchen larder application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxSVAR5C0u5-3RerUy_PwqzdVX_ILWRekgDT60P9oIvx5kJGf0cl-ajMSNFEnJJ09WuL9x0cZidGq8_WL6lKtswJbaH5rgKVxTkhuEaEnw-AI0_MBgiUSEeXjxFjgbkEMT8J93k1-tkGUvpW0XIUc0lx-evPYAOeJoih_mEXR6DoMrmbhJBsgbjAydlFDcfBPmQ5gRHsnzz-f7sABNjlnM4E2AvEzqYcjh6DVEO6z6uFngnOHz5fzxUHLPnCASyKf3XsajQ6UlANVa"/>
+<span class="text-sm text-on-secondary-container">Wasted by Teo • <span class="font-mono text-xs opacity-75">yesterday</span></span>
+</div>
+</div>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-widest px-4">FINALIZED</span>
+</div>
+<!-- Item 4: Baby spinach -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center justify-between opacity-80">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-variant text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="event_busy">event_busy</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold text-on-background leading-tight">Baby spinach</span>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px]" data-icon="memory">memory</span>
+</div>
+<span class="text-sm text-on-secondary-container">Expired by System • <span class="font-mono text-xs opacity-75">2 days ago</span></span>
+</div>
+</div>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-widest px-4">FINALIZED</span>
+</div>
+<!-- Item 5: Cheddar cheese -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center justify-between opacity-80">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-fixed/30 text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-semibold text-on-background leading-tight">Cheddar cheese</span>
+<div class="flex items-center gap-2 mt-1">
+<img alt="Emilia" class="w-6 h-6 rounded-full" data-alt="A clean, minimalist vector avatar portrait of a person named Emilia. The design is elegant, featuring modern soft colors and clear outlines, set within a circle. The lighting is gentle and even, emphasizing a sophisticated yet accessible digital pantry application interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwSSiGILTVMJovn7FL7E8B2_ncGgUHjlOB4kWhjKcCb4eWTyRdo52CdH4anaTUsJ8gjKl7je_CHrd6y_iUjIYZMRj4P3MBG2YD3bjJaDGfJivyAszk48IHmNCQOfz-IlrMGreZcWRA9gAULQBONJ98UtoGwFiDdKRxNWVvBjn7f4qxKlMZcV1TKvSds402_FlvlBYugiqAlAppBOyA5usyd9kGkXpxPwFWfWrxQmX6eqS-_vvKqPbg3FW6P7ar_VwXgZHM_mL780pk"/>
+<span class="text-sm text-on-secondary-container">Consumed by Emilia • <span class="font-mono text-xs opacity-75">3 days ago</span></span>
+</div>
+</div>
+</div>
+<span class="text-xs font-bold text-outline uppercase tracking-widest px-4">FINALIZED</span>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-end px-6 pb-6 pt-2 bg-[#F9F9F7]/80 backdrop-blur-xl rounded-t-[2rem] shadow-[0_-12px_32px_rgba(26,28,27,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#5E6572] p-2 hover:text-[#3B7A57] transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Pantry</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E6572] p-2 hover:text-[#3B7A57] transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Shopping</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#206140] to-[#3B7A57] text-white rounded-full w-12 h-12 mb-1 shadow-lg shadow-[#3B7A57]/20 active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium hidden">Activity</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5E6572] p-2 hover:text-[#3B7A57] transition-all active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-medium mt-1">Settings</span>
+</a>
+</nav>
+</body></html>

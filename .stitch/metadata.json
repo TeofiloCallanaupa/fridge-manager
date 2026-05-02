@@ -93,6 +93,26 @@
         "screenshot": ".stitch/designs/onboarding-avatar-v2-screenshot.png",
         "html": ".stitch/designs/onboarding-avatar-v2.html"
       }
+    },
+    "discard-flow": {
+      "screenId": "9b25c28579d1463aa2a18b13e62d2bbd",
+      "title": "Discard Confirmation",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/discard-flow-screenshot.png",
+        "html": ".stitch/designs/discard-flow.html"
+      }
+    },
+    "recently-removed": {
+      "screenId": "22ea4c3b954c4e15a966f04bb2835247",
+      "title": "Recently Removed Activity Feed",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/recently-removed-screenshot.png",
+        "html": ".stitch/designs/recently-removed.html"
+      }
     }
   },
   "createdAt": "2026-04-27T11:23:00-04:00"

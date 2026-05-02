@@ -144,7 +144,7 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
 
       {/* Recently Removed section */}
       {recentlyRemoved && recentlyRemoved.length > 0 && (
-        <RecentlyRemoved items={recentlyRemoved} />
+        <RecentlyRemoved items={recentlyRemoved} householdId={householdId} />
       )}
 
       {/* Item Detail Sheet */}

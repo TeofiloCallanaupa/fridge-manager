@@ -50,6 +50,17 @@ vi.mock('@fridge-manager/shared', () => ({
     return Math.floor((Date.now() - date.getTime()) / 86400000)
   }),
   formatRelativeTime: vi.fn(() => '2 hours ago'),
+  formatPurchaseHistory: vi.fn(() => 'No purchase history'),
+}))
+
+// Mock inventory mutations (used by enhanced RecentlyRemoved)
+vi.mock('@/hooks/use-inventory-mutations', () => ({
+  useEditInventoryItem: () => ({ mutate: vi.fn(), isPending: false }),
+  useDiscardItem: () => ({ mutate: vi.fn(), isPending: false }),
+  useReAddToGroceryList: () => ({ mutate: vi.fn(), isPending: false }),
+  usePurchaseHistoryCount: () => ({ data: 0 }),
+  useRestoreItem: () => ({ mutate: vi.fn(), isPending: false }),
+  useChangeDiscardReason: () => ({ mutate: vi.fn(), isPending: false }),
 }))
 
 // ---------------------------------------------------------------------------
@@ -237,43 +248,43 @@ describe('InventoryItemCard', () => {
 
 describe('RecentlyRemoved', () => {
   it('renders nothing when list is empty', () => {
-    const { container } = render(<RecentlyRemoved items={[]} />, { wrapper: createWrapper() })
+    const { container } = render(<RecentlyRemoved items={[]} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(container.innerHTML).toBe('')
   })
 
   it('renders section heading', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'consumed' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('Recently Removed')).toBeDefined()
   })
 
   it('shows consumed icon for consumed items', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'consumed' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('✅')).toBeDefined()
   })
 
   it('shows tossed icon for wasted items', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'wasted' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('🗑️')).toBeDefined()
   })
 
   it('shows expired icon for expired items', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'expired' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('⏰')).toBeDefined()
   })
 
-  it('shows "View History" link', () => {
+  it('shows "Last 7 days" subtitle', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'consumed' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
-    expect(screen.getByText('View History')).toBeDefined()
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
+    expect(screen.getByText('Last 7 days')).toBeDefined()
   })
 
   it('shows relative time for removal', () => {
     const items = [makeItem({ discarded_at: now.toISOString(), discard_reason: 'consumed' })]
-    render(<RecentlyRemoved items={items} />, { wrapper: createWrapper() })
+    render(<RecentlyRemoved items={items} householdId="hh-1" />, { wrapper: createWrapper() })
     expect(screen.getByText('2 hours ago')).toBeDefined()
   })
 })

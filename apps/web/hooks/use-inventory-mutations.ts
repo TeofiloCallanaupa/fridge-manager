@@ -249,3 +249,92 @@ export function useReAddToGroceryList() {
     },
   })
 }
+
+// ---------------------------------------------------------------------------
+// Restore item mutation
+// ---------------------------------------------------------------------------
+
+type RestoreInput = {
+  itemId: string
+  householdId: string
+}
+
+/**
+ * Restores a discarded item back to active inventory.
+ * Clears discarded_at and discard_reason.
+ */
+export function useRestoreItem() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ itemId }: RestoreInput) => {
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .update({
+          discarded_at: null,
+          discard_reason: null,
+        })
+        .eq('id', itemId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+
+    onSuccess: (_data, { householdId }) => {
+      queryClient.invalidateQueries({ queryKey: ['inventory-items', householdId] })
+      queryClient.invalidateQueries({ queryKey: ['inventory-counts', householdId] })
+      queryClient.invalidateQueries({ queryKey: ['recently-removed', householdId] })
+      toast.success('Item restored to inventory')
+    },
+
+    onError: () => {
+      toast.error('Failed to restore item')
+    },
+  })
+}
+
+// ---------------------------------------------------------------------------
+// Change discard reason mutation
+// ---------------------------------------------------------------------------
+
+type ChangeReasonInput = {
+  itemId: string
+  householdId: string
+  newReason: DiscardReason
+}
+
+/**
+ * Changes the discard reason on an already-discarded item.
+ * Used for corrections: "I meant to mark it as used, not tossed."
+ */
+export function useChangeDiscardReason() {
+  const supabase = createClient()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ itemId, newReason }: ChangeReasonInput) => {
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .update({ discard_reason: newReason })
+        .eq('id', itemId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    },
+
+    onSuccess: (_data, { householdId }) => {
+      queryClient.invalidateQueries({ queryKey: ['recently-removed', householdId] })
+      toast.success('Reason updated')
+    },
+
+    onError: () => {
+      toast.error('Failed to update reason')
+    },
+  })
+}
+

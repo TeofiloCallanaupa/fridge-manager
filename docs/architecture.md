@@ -508,11 +508,31 @@ A "Recently Removed" section visible to all household members. Shows the last ~2
 
 ### Undo & Correction Actions
 
-From the Recently Removed list, a user can:
-- **Change reason:** Tap to switch between "Used it" ↔ "Tossed it" (fixes the salmon mistake)
-- **Restore to inventory:** Put the item back in active inventory (sets `discarded_at = null`, `discard_reason = null`). For when someone accidentally discards an item that's still in the fridge.
+Corrections are **always available** — there is no time limit. If someone marks chicken as "tossed" but meant "used," they can fix it 3 hours later. Getting the reason right matters for analytics accuracy, and there's no security reason to time-lock changes in a household app.
 
-No new tables needed — this is just a filtered view of `inventory_items WHERE discarded_at IS NOT NULL` ordered by `discarded_at DESC`.
+**Visual tiering:**
+
+| Recency | UX Treatment |
+|---|---|
+| **< 1 hour** | Prominent "Undo" pill button visible on the card |
+| **1 hour – 7 days** | No visible undo button — tap the card to see correction options |
+| **> 7 days** | Item falls off the "Recently Removed" feed entirely |
+
+**Two distinct interaction paths:**
+
+1. **Quick Undo** (tap the "Undo" pill button on the card):
+   - Immediately restores the item to active inventory (`discarded_at = null`, `discard_reason = null`)
+   - One-tap fast path for "oops, wrong button" situations
+   - Only visible on items discarded < 1 hour ago
+
+2. **Correction Menu** (tap the card body):
+   - Expands an inline panel below the card with spring animation
+   - **Change reason:** Toggle between "Used it" ↔ "Tossed it" (fixes the salmon mistake)
+   - **Restore to inventory:** Put the item back in active inventory
+   - Available on all items regardless of age (within the 7-day feed window)
+
+No new tables needed — this is just a filtered view of `inventory_items WHERE discarded_at IS NOT NULL` ordered by `discarded_at DESC LIMIT 20`.
+
 
 ---
 
