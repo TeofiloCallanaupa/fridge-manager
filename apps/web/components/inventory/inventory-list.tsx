@@ -11,6 +11,7 @@ import {
 import { useRealtimeInventory } from '@/hooks/use-realtime-inventory'
 import { InventoryItemCard } from './inventory-item-card'
 import { RecentlyRemoved } from './recently-removed'
+import { ItemDetailSheet } from './item-detail-sheet'
 import type { StorageLocation } from '@fridge-manager/shared'
 
 type InventoryListProps = {
@@ -30,6 +31,7 @@ const TABS: { value: StorageLocation; label: string; emoji: string }[] = [
  */
 export function InventoryList({ householdId, userId }: InventoryListProps) {
   const [activeTab, setActiveTab] = useState<StorageLocation>('fridge')
+  const [selectedItem, setSelectedItem] = useState<import('@/hooks/use-inventory-items').InventoryItemWithDetails | null>(null)
 
   // Subscribe to realtime changes
   useRealtimeInventory(householdId)
@@ -131,9 +133,7 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
                   <InventoryItemCard
                     key={item.id}
                     item={item}
-                    onClick={() => {
-                      // TODO: Phase 4.3 — open item detail sheet
-                    }}
+                    onClick={() => setSelectedItem(item)}
                   />
                 ))}
               </div>
@@ -146,6 +146,15 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
       {recentlyRemoved && recentlyRemoved.length > 0 && (
         <RecentlyRemoved items={recentlyRemoved} />
       )}
+
+      {/* Item Detail Sheet */}
+      <ItemDetailSheet
+        item={selectedItem}
+        open={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+        userId={userId}
+        householdId={householdId}
+      />
     </div>
   )
 }

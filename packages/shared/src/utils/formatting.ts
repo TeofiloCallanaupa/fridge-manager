@@ -35,3 +35,17 @@ export function formatRelativeTime(timestamp: Date): string {
 export function formatQuantity(quantity: string | null): string {
   return quantity ?? '';
 }
+
+/**
+ * Formats a purchase history count as a human-readable string.
+ *
+ * Examples:
+ *   "No purchase history"       (count = 0)
+ *   "Bought once before"        (count = 1)
+ *   "Bought 6 times before"     (count > 1)
+ */
+export function formatPurchaseHistory(count: number): string {
+  if (count <= 0) return 'No purchase history';
+  if (count === 1) return 'Bought once before';
+  return `Bought ${count} times before`;
+}

@@ -866,46 +866,4 @@ Each user creates a customizable sprite avatar during onboarding. Makes the app 
 
 ## Next Steps (Phased)
 
-### Phase 0: UI Design
-- [x] Create Stitch project with design system (colors, fonts, shapes)
-- [ ] Generate screen mockups for all core views (grocery list, inventory, detail sheet, discard, settings) — **3/8 done** (grocery list, inventory, item detail sheet)
-- [x] Iterate on designs based on competitive analysis patterns
-- [x] Finalize designs as reference for implementation
-
-### Phase 1: Scaffold & Schema
-- [x] Set up monorepo structure with pnpm workspaces (apps/mobile, apps/web, packages/shared)
-- [x] Scaffold Expo project (apps/mobile) with TypeScript
-- [x] Scaffold Next.js project (apps/web) with App Router + TypeScript
-- [x] Set up `packages/shared` with types, utils, constants
-- [x] Write unit tests for shared utils (TDD) — **28/28 passing**
-- [x] Create `supabase/migrations/` with full schema + seed data
-- [ ] Write README with setup instructions
-
-### Phase 2: Auth & Households
-- [ ] Set up Supabase project (auth + database + RLS policies)
-- [ ] Build auth flow on both platforms (signup, login, display name)
-- [ ] Build household creation + invite flow (with timezone selection)
-- [ ] Test RLS policies (users can only access their household)
-
-### Phase 3: Core Features
-- [ ] Build grocery list with real-time sync + category grouping
-- [ ] Build inventory view with color-coded expiration + "days since added"
-- [ ] Implement auto-move checkout flow
-- [ ] Build discard flow (used it / tossed it + auto-restock prompt)
-- [ ] Build Recently Removed activity feed with undo
-- [ ] Seed USDA FoodKeeper data (packages/shared/data/foodkeeper.json)
-- [ ] Write Playwright E2E tests for critical web flows
-
-### Phase 4: Offline & Notifications
-- [ ] Set up WatermelonDB for offline support (mobile)
-- [ ] Set up FCM + push notification Edge Function
-- [ ] Set up pg_cron for daily expiration check
-- [ ] Build notification preferences UI
-
-### Phase 5: Polish & Ship
-- [ ] Build avatar creator (DiceBear Avataaars)
-- [ ] Build item detail sheet (long-press)
-- [ ] Build analytics dashboard (At a Glance + Charts tabs)
-- [ ] Set up Sentry for error tracking
-- [ ] Build health/admin page on web
-- [ ] Publish to Play Store or sideload APK
+> See `docs/prompt-playbook.md` for current progress and the authoritative source of implementation steps. The Playbook contains the latest status and specific prompts for each phase of development.

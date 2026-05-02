@@ -4,7 +4,7 @@
  * All should FAIL initially (red phase).
  */
 import { describe, it, expect } from 'vitest';
-import { formatRelativeTime, formatQuantity } from '../formatting.js';
+import { formatRelativeTime, formatQuantity, formatPurchaseHistory } from '../formatting.js';
 
 describe('formatRelativeTime', () => {
   function minutesAgo(minutes: number): Date {
@@ -51,5 +51,27 @@ describe('formatQuantity', () => {
 
   it('returns empty string for null', () => {
     expect(formatQuantity(null)).toBe('');
+  });
+});
+
+describe('formatPurchaseHistory', () => {
+  it('returns "No purchase history" for 0', () => {
+    expect(formatPurchaseHistory(0)).toBe('No purchase history');
+  });
+
+  it('returns "No purchase history" for negative', () => {
+    expect(formatPurchaseHistory(-1)).toBe('No purchase history');
+  });
+
+  it('returns "Bought once before" for 1', () => {
+    expect(formatPurchaseHistory(1)).toBe('Bought once before');
+  });
+
+  it('returns "Bought N times before" for N > 1', () => {
+    expect(formatPurchaseHistory(6)).toBe('Bought 6 times before');
+  });
+
+  it('handles large counts', () => {
+    expect(formatPurchaseHistory(100)).toBe('Bought 100 times before');
   });
 });

@@ -1,22 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
-import { execSync } from 'child_process';
 
 // ---------------------------------------------------------------------------
 // Setup: Admin client + test user creation
 // ---------------------------------------------------------------------------
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
-let supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 if (!supabaseKey) {
-  try {
-    const statusJson = execSync('npx supabase status -o json', { encoding: 'utf-8' });
-    const status = JSON.parse(statusJson);
-    supabaseKey = status.SERVICE_ROLE_KEY;
-  } catch (e) {
-    console.warn('Could not fetch Supabase status. Make sure Supabase is running locally.');
-  }
+  throw new Error(
+    'SUPABASE_SERVICE_ROLE_KEY is not set. Add it to .env.test.'
+  );
 }
 
 const adminClient = createClient(supabaseUrl, supabaseKey);
@@ -116,7 +111,8 @@ test.describe('Grocery List Flows', () => {
     // Sheet should appear
     await expect(page.getByText('Add Item')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Item name')).toBeVisible();
-    await expect(page.getByText('Category')).toBeVisible();
+    // Use exact: true to avoid matching the placeholder text that also contains "category"
+    await expect(page.getByText('Category', { exact: true })).toBeVisible();
     await expect(page.getByText('Goes to')).toBeVisible();
   });
 
@@ -155,11 +151,11 @@ test.describe('Grocery List Flows', () => {
     await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('(2 lbs)')).toBeVisible();
 
-    // Verify it's under the Produce category header
-    await expect(page.getByText('Produce')).toBeVisible();
+    // Verify it's under the Produce category header (h2 inside a section button)
+    await expect(page.locator('section h2:has-text("produce")')).toBeVisible();
   });
 
-  test('check-off marks item as checked with visual feedback', async ({ page }) => {
+  test('check-off removes item from active list', async ({ page }) => {
     await loginAndNavigate(page);
 
     // The item from the previous test should exist
@@ -169,12 +165,15 @@ test.describe('Grocery List Flows', () => {
     // Click the check circle
     await page.click('[aria-label="Check off Organic Strawberries"]');
 
-    // The item should show as checked (line-through styling)
-    // Wait for the animation and mutation to complete
-    await expect(page.locator('.line-through:has-text("Organic Strawberries")')).toBeVisible({ timeout: 10000 });
+    // After check-off, the item gets completed_at set and is filtered out of the query.
+    // So the item should disappear from the list after the mutation + refetch.
+    await expect(page.getByText('Organic Strawberries')).not.toBeVisible({ timeout: 15000 });
   });
 
   test('check-off creates inventory_item with correct data', async ({ page }) => {
+    // Give the async mutation a moment to settle
+    await page.waitForTimeout(2000);
+
     // Verify the inventory item was created in the database
     const { data: inventoryItems } = await adminClient
       .from('inventory_items')
@@ -220,8 +219,11 @@ test.describe('Grocery List Flows', () => {
     // Check it off
     await page.click('[aria-label="Check off Paper Towels"]');
 
-    // Wait for completion
-    await expect(page.locator('.line-through:has-text("Paper Towels")')).toBeVisible({ timeout: 10000 });
+    // After check-off, the item should disappear from the active list
+    await expect(page.getByText('Paper Towels')).not.toBeVisible({ timeout: 15000 });
+
+    // Give the mutation a moment to settle
+    await page.waitForTimeout(1000);
 
     // Verify NO inventory item was created for household items
     const { data: inventoryItems } = await adminClient
@@ -248,12 +250,21 @@ test.describe('Grocery List Flows', () => {
 
     await expect(page.getByText('Item To Delete')).toBeVisible({ timeout: 10000 });
 
-    // Long-press or hover to reveal delete (use hover for desktop)
-    const itemCard = page.locator(':has-text("Item To Delete")').first();
-    await itemCard.hover();
+    // Click the menu icon to reveal delete action — use the more-options button
+    const moreButton = page.locator('[aria-label="More options for Item To Delete"]');
+    // On desktop, the delete button appears on hover. Let's use the MoreVertical icon (visible on mobile)
+    // or force the hover state.
+    const itemRow = page.locator('div:has(> div > div > span:text("Item To Delete"))').first();
+    await itemRow.hover();
 
-    // Click delete
-    await page.click('[aria-label="Delete Item To Delete"]');
+    // Wait for the delete button to become visible
+    const deleteButton = page.locator('[aria-label="Delete Item To Delete"]');
+    // If the delete button isn't visible after hover, try clicking the more-options button
+    if (await moreButton.isVisible()) {
+      await moreButton.click();
+    }
+    await expect(deleteButton).toBeVisible({ timeout: 5000 });
+    await deleteButton.click();
 
     // Verify item is gone
     await expect(page.getByText('Item To Delete')).not.toBeVisible({ timeout: 10000 });

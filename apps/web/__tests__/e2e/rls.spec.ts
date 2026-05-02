@@ -2,21 +2,12 @@ import { test, expect } from '@playwright/test';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-// Setup clients with service role to clean up if needed, but we'll try to stick to anon key + auth
-import { execSync } from 'child_process';
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-let SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 if (!SUPABASE_SERVICE_ROLE_KEY) {
-  try {
-    const statusJson = execSync('npx supabase status -o json', { encoding: 'utf-8' });
-    const status = JSON.parse(statusJson);
-    SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY;
-  } catch (e) {
-    console.warn('Could not fetch Supabase status. Make sure Supabase is running locally.');
-  }
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set. Add it to .env.test.');
 }
 
 
@@ -234,5 +225,83 @@ test.describe('Row Level Security (Integration)', () => {
     // User B cannot see Household A's invites
     const { data: invitesB } = await clientB.from('household_invites').select('*').eq('household_id', householdA.id);
     expect(invitesB).toHaveLength(0);
+  });
+
+  test('Inventory Items: UPDATE WITH CHECK prevents household_id reassignment', async () => {
+    // Ensure an item exists in Household A
+    await clientA.from('inventory_items').insert({
+      household_id: householdA.id,
+      name: 'WITH-CHECK-inv-test',
+      category_id: categoryId,
+      location: 'fridge',
+      added_by: userA.id,
+    });
+
+    const { data: items } = await clientA.from('inventory_items')
+      .select('id')
+      .eq('household_id', householdA.id)
+      .eq('name', 'WITH-CHECK-inv-test')
+      .limit(1);
+    expect(items?.length).toBeGreaterThan(0);
+    const itemId = items![0].id;
+
+    // Try to move the item to Household B by updating household_id
+    const { data: updated, error } = await clientA.from('inventory_items')
+      .update({ household_id: householdB.id })
+      .eq('id', itemId)
+      .select();
+
+    // WITH CHECK rejects: either error, null data, or 0 rows
+    if (error) {
+      // PostgREST may return an error for WITH CHECK violation
+      expect(error).toBeTruthy();
+    } else {
+      // Or it silently returns 0 rows
+      expect(updated?.length ?? 0).toBe(0);
+    }
+
+    // Verify item is still in Household A (unchanged)
+    const { data: check } = await clientA.from('inventory_items')
+      .select('household_id')
+      .eq('id', itemId)
+      .single();
+    expect(check?.household_id).toBe(householdA.id);
+  });
+
+  test('Grocery Items: UPDATE WITH CHECK prevents household_id reassignment', async () => {
+    // Ensure an item exists in Household A
+    await clientA.from('grocery_items').insert({
+      household_id: householdA.id,
+      name: 'WITH-CHECK-groc-test',
+      category_id: categoryId,
+      added_by: userA.id,
+    });
+
+    const { data: items } = await clientA.from('grocery_items')
+      .select('id')
+      .eq('household_id', householdA.id)
+      .eq('name', 'WITH-CHECK-groc-test')
+      .limit(1);
+    expect(items?.length).toBeGreaterThan(0);
+    const itemId = items![0].id;
+
+    // Try to move to Household B
+    const { data: updated, error } = await clientA.from('grocery_items')
+      .update({ household_id: householdB.id })
+      .eq('id', itemId)
+      .select();
+
+    if (error) {
+      expect(error).toBeTruthy();
+    } else {
+      expect(updated?.length ?? 0).toBe(0);
+    }
+
+    // Verify item is still in Household A
+    const { data: check } = await clientA.from('grocery_items')
+      .select('household_id')
+      .eq('id', itemId)
+      .single();
+    expect(check?.household_id).toBe(householdA.id);
   });
 });

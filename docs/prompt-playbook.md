@@ -207,11 +207,11 @@ Using /designer, design the Discard Flow modals/prompts and the "Recently Remove
 ### 4.5 — Discard flow + recently removed (web)
 
 ```
-Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired — auto-detect based on expiration_date). Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. Add undo/restore functionality. Requirements: toast error handling, optimistic updates with rollback, accessible modal controls.
+Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired). If user taps 'Tossed it' and `now() > expiration_date`, set `discard_reason = 'expired'`. Otherwise set `discard_reason = 'wasted'`. Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. From Recently Removed, allow 'change reason' (tap to toggle consumed ↔ wasted/expired) and 'restore to inventory' as separate actions. Requirements: toast error handling, optimistic updates with rollback, accessible modal controls.
 ```
 
 ```
-Using /tester, write tests for the discard flow: "Used" vs "Tossed" sets correct reason, auto-detect logic matches expiration_date, undo restores item, re-add creates grocery_item. Run tests.
+Using /tester, write tests for the discard flow: "Used" vs "Tossed" sets correct reason, auto-detect logic matches expiration_date, change reason updates correctly, undo restores item, re-add creates grocery_item. Run tests.
 ```
 
 ```
@@ -220,15 +220,53 @@ Using /security-architect, review the discard flow. Check: RLS enforces househol
 
 > Commit:
 ```bash
-git add -A && git commit -m "feat: discard flow with undo and recently removed" && git push
+git add -A && git commit -m "feat: discard flow with undo, change reason, and recently removed" && git push
 ```
 
 ---
 
-### 4.6 — Phase 4 E2E integration test
+### 4.6 — Quick Add to Inventory
 
 ```
-Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → open detail sheet → discard → verify in recently removed → undo → verify restored. Run pnpm --filter web test:e2e.
+Using /coder, build the "Quick Add" feature in apps/web. Add a floating "+" FAB or "Add Item" button to the inventory view that opens a form for direct inventory item creation without going through the grocery list. Include category picker, location selector, and expiration fields. Reference the Stitch design. Use TanStack Query for data fetching and shadcn/ui components.
+```
+
+```
+Using /tester, write component tests for the Quick Add to Inventory feature: ensures form validation, creation mutation calls supabase with correct payload, and optimistic updates reflect the new item in the inventory list. Run tests.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: quick add to inventory" && git push
+```
+
+---
+
+### 4.7 — FoodKeeper Data & Fuzzy Match
+
+```
+Using /coder, fetch the USDA FoodKeeper dataset and format it into a lightweight JSON file saved to packages/shared/data/foodkeeper.json. Build a fuzzy matching utility function fuzzyMatchFoodKeeper(itemName) in packages/shared/src/utils/ to look up shelf life ranges based on item names.
+```
+
+```
+Using /coder, integrate fuzzyMatchFoodKeeper into the checkout flow (both grocery list check-off and Quick Add to Inventory). Use the FoodKeeper data as the secondary fallback (Tier 2) before falling back to default_shelf_days.
+```
+
+```
+Using /tester, write unit tests for the fuzzy matching logic to ensure accuracy and performance. Write tests verifying that checkout flow correctly assigns shelf life based on FoodKeeper data. Run tests.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: foodkeeper fuzzy match data and checkout integration" && git push
+```
+
+---
+
+### 4.8 — Phase 4 E2E integration test
+
+```
+Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → quick add item → open detail sheet → discard → verify in recently removed → change discard reason → undo → verify restored. Ensure that expiration date assignment from FoodKeeper fuzzy match is verified. Run pnpm --filter web test:e2e.
 ```
 
 > Commit:

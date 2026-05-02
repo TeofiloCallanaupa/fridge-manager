@@ -1,20 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { execSync } from 'child_process';
 import crypto from 'crypto';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-let SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 if (!SUPABASE_SERVICE_ROLE_KEY) {
-  try {
-    const statusJson = execSync('npx supabase status -o json', { encoding: 'utf-8' });
-    const status = JSON.parse(statusJson);
-    SUPABASE_SERVICE_ROLE_KEY = status.SERVICE_ROLE_KEY;
-  } catch (e) {
-    console.warn('Could not fetch Supabase status.');
-  }
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set. Add it to .env.test.');
 }
 
 test.describe('Security Regression Tests', () => {

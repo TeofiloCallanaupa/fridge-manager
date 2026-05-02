@@ -48,7 +48,7 @@ export type {
 // Utils
 export { calculateExpiration, getDaysSince, getExpirationColor } from './utils/expiration.js';
 export { getCategoryEmoji, getDefaultShelfDays } from './utils/categories.js';
-export { formatRelativeTime, formatQuantity } from './utils/formatting.js';
+export { formatRelativeTime, formatQuantity, formatPurchaseHistory } from './utils/formatting.js';
 export { buildAvatarUrl, DEFAULT_AVATAR_CONFIG } from './utils/avatar.js';
 
 // Constants
