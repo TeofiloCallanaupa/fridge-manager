@@ -113,6 +113,16 @@
         "screenshot": ".stitch/designs/recently-removed-screenshot.png",
         "html": ".stitch/designs/recently-removed.html"
       }
+    },
+    "removal-history": {
+      "screenId": "592f61a76e8e4af5b0d810df4f4c81ca",
+      "title": "Removal History",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/removal-history-screenshot.png",
+        "html": ".stitch/designs/removal-history.html"
+      }
     }
   },
   "createdAt": "2026-04-27T11:23:00-04:00"
