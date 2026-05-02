@@ -69,10 +69,21 @@ test.describe('Removal History Page', () => {
     categoryId = cats!.id;
 
     // Insert discarded items across multiple days in the current month
+    // Use dates relative to today but CLAMPED to current month to avoid
+    // cross-month boundary issues (e.g. May 2 → 2 days ago = April 30)
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today.getTime() - 86400000);
-    const twoDaysAgo = new Date(today.getTime() - 2 * 86400000);
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    const currentDay = now.getDate();
+
+    // All items must be in the current month
+    const todayDate = new Date(currentYear, currentMonth, currentDay, 12, 0, 0);
+    const dayBefore = currentDay >= 2
+      ? new Date(currentYear, currentMonth, currentDay - 1, 12, 0, 0)
+      : todayDate; // fallback to today if 1st of month
+    const twoBefore = currentDay >= 3
+      ? new Date(currentYear, currentMonth, currentDay - 2, 12, 0, 0)
+      : todayDate; // fallback to today if 1st or 2nd
 
     // Consumed item (today)
     const { data: consumed } = await adminClient
@@ -85,7 +96,7 @@ test.describe('Removal History Page', () => {
         household_id: testHouseholdId,
         added_by: testUserId,
         source: 'manual',
-        discarded_at: today.toISOString(),
+        discarded_at: todayDate.toISOString(),
         discard_reason: 'consumed',
       })
       .select('id')
@@ -103,7 +114,7 @@ test.describe('Removal History Page', () => {
         household_id: testHouseholdId,
         added_by: testUserId,
         source: 'manual',
-        discarded_at: yesterday.toISOString(),
+        discarded_at: dayBefore.toISOString(),
         discard_reason: 'wasted',
       })
       .select('id')
@@ -121,7 +132,7 @@ test.describe('Removal History Page', () => {
         household_id: testHouseholdId,
         added_by: testUserId,
         source: 'manual',
-        discarded_at: twoDaysAgo.toISOString(),
+        discarded_at: twoBefore.toISOString(),
         discard_reason: 'expired',
       })
       .select('id')
@@ -233,7 +244,8 @@ test.describe('Removal History Page', () => {
     await expect(summary).toBeVisible({ timeout: 10000 });
 
     // 1 consumed, 1 wasted, 1 expired = 3 total
-    await expect(summary.getByText('3 items removed')).toBeVisible();
+    // Text format is "{N} items removed · {Month} {Year}"
+    await expect(summary.getByText(/3 items removed/)).toBeVisible();
     await expect(summary.getByText('Used')).toBeVisible();
     await expect(summary.getByText('Wasted')).toBeVisible();
     await expect(summary.getByText('Expired')).toBeVisible();
