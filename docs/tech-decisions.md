@@ -279,6 +279,62 @@ Supabase Studio. It's impossible to bypass because it's enforced at the
 database level. If someone discovers a new endpoint or finds a way to
 call the API differently, RLS still blocks unauthorized access.
 
+## 7. Offline Strategy: TanStack Query + AsyncStorage vs. WatermelonDB
+
+### Original plan
+
+The architecture doc specifies **WatermelonDB** for offline-first mobile data:
+local SQLite storage on-device, background sync to Supabase.
+
+### Why we dropped it
+
+WatermelonDB would have required **maintaining two database schemas in parallel**:
+
+| Concern | Supabase (Postgres) | WatermelonDB (SQLite) |
+|---------|--------------------|-----------------------|
+| Schema definition | SQL migrations | WatermelonDB model classes |
+| Types | `supabase gen types` | Manual TypeScript types |
+| RLS / auth | Postgres policies | N/A (local only) |
+| Sync logic | — | Custom pull/push adapter |
+| Conflict resolution | — | Custom merge functions |
+
+For a **2-person household app**, this is a disproportionate amount of complexity:
+1. Every schema change requires updating two places
+2. The sync adapter between WatermelonDB ↔ Supabase is custom code with subtle bugs
+3. Conflict resolution (last-write-wins) needs careful handling of `updated_at` timestamps
+4. Testing doubles — need to test both local and remote data flows
+
+### What we use instead
+
+```
+TanStack Query (cache layer)
+  └── Supabase SDK (network)
+  └── AsyncStorage mutation queue (offline writes)
+  └── AsyncStorage auth cache (offline startup)
+```
+
+- **Reads**: TanStack Query caches responses in memory. The app shows cached data
+  instantly and refetches in the background when online.
+- **Writes**: When offline, mutations are queued in AsyncStorage via `mutation-queue.ts`.
+  When connectivity returns, the queue drains automatically.
+- **Auth**: Profile + household data cached in AsyncStorage so the app renders
+  immediately without waiting for the network (see 5.1 — Offline Auth Resilience).
+
+### Trade-offs accepted
+
+| WatermelonDB advantage we lose | Acceptable because |
+|-------------------------------|-------------------|
+| True offline-first local DB | TQ cache + mutation queue covers 95% of offline use (checking items at the store) |
+| Survives app kill while offline | Mutation queue persists to AsyncStorage — survives app restart |
+| Large dataset performance | We have ~50-200 items per household, not thousands |
+
+### When we'd reconsider
+
+If Fridge Manager grows to support hundreds of households or needs complex offline
+queries (filtering, sorting, joins while fully offline), we'd evaluate
+**PowerSync** or **ElectricSQL** — both provide Postgres-native sync without
+requiring a separate schema definition.
+
 ---
 
 ## Summary: When Would We Change?

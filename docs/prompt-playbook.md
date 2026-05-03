@@ -333,10 +333,12 @@ git add -A && git commit -m "feat: offline-resilient auth — cached profile hyd
 
 ---
 
-### 5.2 — Grocery list (mobile) 🟡 PARTIAL
+### 5.2 — Grocery list (mobile) ✅ DONE
+
+> **Note:** WatermelonDB was dropped in favor of TanStack Query + an AsyncStorage-based mutation queue. Maintaining two databases (WatermelonDB's local SQLite + Supabase Postgres) would have doubled the schema surface and sync complexity for a 2-person household app. See `docs/tech-decisions.md` §7 for the full rationale.
 
 ```
-Using /coder, build the grocery list screen in apps/mobile. Same features as web (category-grouped, check-off, real-time sync) but using React Native Paper components (List.Section, Checkbox, FAB for add). Implement WatermelonDB local storage for offline support. Sync with Supabase when online.
+Using /coder, build the grocery list screen in apps/mobile. Same features as web (category-grouped, check-off, real-time sync) but using React Native Paper components (List.Section, Checkbox, FAB for add). Offline support via TanStack Query cache + AsyncStorage mutation queue.
 ```
 
 ### 5.3 — Inventory view (mobile)
