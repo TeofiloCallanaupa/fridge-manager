@@ -316,7 +316,7 @@ git add -A && git commit -m "feat: mobile auth and onboarding" && git push
 
 ---
 
-### 5.1 — Offline auth resilience
+### 5.1 — Offline auth resilience ✅ DONE
 
 ```
 Using /coder, make the mobile AuthContext resilient to offline/unreachable backend. Currently, fetchProfileAndHousehold() makes network calls that block rendering — if offline, the app shows an infinite spinner and the user can never reach their cached grocery list. Fix by: (1) persisting profile + hasHousehold + householdId to AsyncStorage alongside the auth session, (2) on startup, hydrate auth state from cache immediately so the app renders without waiting for the network, (3) refresh profile/household from the network in the background when connected, (4) add a timeout (e.g. 5s) on the network calls so they fail fast instead of hanging. Ensure the protected route logic works with cached data so users can access the grocery list and inventory offline.

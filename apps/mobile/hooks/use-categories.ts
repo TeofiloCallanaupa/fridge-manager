@@ -1,14 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import type { Category } from '@fridge-manager/shared'
 
-export type CategoryData = {
-  id: string
-  name: string
-  emoji: string
-  display_order: number
-  default_destination: 'fridge' | 'freezer' | 'pantry' | 'none'
-  has_expiration: boolean
-}
+/** Re-export Category as CategoryData for backward compatibility */
+export type CategoryData = Category
 
 /**
  * Fetches all categories for the add-item picker.
