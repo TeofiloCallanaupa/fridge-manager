@@ -43,5 +43,20 @@ export type InventoryItem = Omit<
   expiration_source: ExpirationSource | null;
 };
 
+/**
+ * An inventory item joined with its category and adder profile.
+ * Used by both web and mobile inventory UIs.
+ */
+export type InventoryItemWithDetails = InventoryItem & {
+  categories: {
+    name: string;
+    emoji: string | null;
+    has_expiration: boolean;
+  } | null;
+  profiles: {
+    display_name: string | null;
+  } | null;
+};
+
 /** Default shelf life by category + storage location (global reference data). */
 export type DefaultShelfDays = Tables<'default_shelf_days'>;

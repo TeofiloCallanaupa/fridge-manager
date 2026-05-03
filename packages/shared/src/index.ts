@@ -13,6 +13,7 @@ export type {
   Category,
   GroceryItem,
   InventoryItem,
+  InventoryItemWithDetails,
   DefaultShelfDays,
   StorageLocation,
   DiscardReason,

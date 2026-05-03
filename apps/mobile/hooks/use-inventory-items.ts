@@ -1,21 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import type { InventoryItem, StorageLocation } from '@fridge-manager/shared'
+import type { StorageLocation } from '@fridge-manager/shared'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export type InventoryItemWithDetails = InventoryItem & {
-  categories: {
-    name: string
-    emoji: string | null
-    has_expiration: boolean
-  } | null
-  profiles: {
-    display_name: string | null
-  } | null
-}
+// Re-export from shared — single source of truth
+export type { InventoryItemWithDetails } from '@fridge-manager/shared'
+import type { InventoryItemWithDetails } from '@fridge-manager/shared'
 
 // ---------------------------------------------------------------------------
 // Queries

@@ -32,6 +32,11 @@ type ChangeReasonInput = {
   newReason: DiscardReason
 }
 
+/** Max length for item name */
+const MAX_NAME_LENGTH = 200
+/** Max length for quantity */
+const MAX_QUANTITY_LENGTH = 50
+
 // ---------------------------------------------------------------------------
 // Discard mutation
 // ---------------------------------------------------------------------------
@@ -122,10 +127,19 @@ export function useReAddToGroceryList() {
       householdId,
       addedBy,
     }: ReAddToGroceryInput) => {
+      const trimmedName = name.trim()
+      if (!trimmedName) throw new Error('Item name cannot be empty')
+      if (trimmedName.length > MAX_NAME_LENGTH) {
+        throw new Error(`Item name must be under ${MAX_NAME_LENGTH} characters`)
+      }
+      if (quantity && quantity.length > MAX_QUANTITY_LENGTH) {
+        throw new Error(`Quantity must be under ${MAX_QUANTITY_LENGTH} characters`)
+      }
+
       const { data, error } = await supabase
         .from('grocery_items')
         .insert({
-          name: name.trim(),
+          name: trimmedName,
           quantity,
           category_id: categoryId,
           destination,
