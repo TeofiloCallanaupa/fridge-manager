@@ -155,22 +155,52 @@ test.describe('Grocery List Flows', () => {
     await expect(page.locator('section h2:has-text("produce")')).toBeVisible();
   });
 
-  test('check-off removes item from active list', async ({ page }) => {
+  test('check-off toggles item strikethrough — item stays in list', async ({ page }) => {
     await loginAndNavigate(page);
 
     // The item from the previous test should exist
-    // Wait for it to appear
     await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 10000 });
 
     // Click the check circle
     await page.click('[aria-label="Check off Organic Strawberries"]');
 
-    // After check-off, the item gets completed_at set and is filtered out of the query.
-    // So the item should disappear from the list after the mutation + refetch.
-    await expect(page.getByText('Organic Strawberries')).not.toBeVisible({ timeout: 15000 });
+    // After check-off, the item should STILL be visible (just with strikethrough)
+    // It should NOT disappear — that only happens with "Finish Shopping"
+    await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 5000 });
   });
 
-  test('check-off creates inventory_item with correct data', async ({ page }) => {
+  test('uncheck removes strikethrough — item stays in list', async ({ page }) => {
+    await loginAndNavigate(page);
+
+    // Item should be visible and checked from previous test
+    await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 10000 });
+
+    // Click again to uncheck
+    await page.click('[aria-label="Check off Organic Strawberries"]');
+
+    // Item should still be visible
+    await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 5000 });
+  });
+
+  test('finish shopping completes checked items and creates inventory', async ({ page }) => {
+    await loginAndNavigate(page);
+
+    // Ensure item exists
+    await expect(page.getByText('Organic Strawberries')).toBeVisible({ timeout: 10000 });
+
+    // Check the item
+    await page.click('[aria-label="Check off Organic Strawberries"]');
+
+    // "Finish Shopping" button should appear
+    const finishButton = page.getByRole('button', { name: /finish shopping/i });
+    await expect(finishButton).toBeVisible({ timeout: 5000 });
+
+    // Click Finish Shopping
+    await finishButton.click();
+
+    // Item should disappear from the list
+    await expect(page.getByText('Organic Strawberries')).not.toBeVisible({ timeout: 15000 });
+
     // Give the async mutation a moment to settle
     await page.waitForTimeout(2000);
 
@@ -219,7 +249,12 @@ test.describe('Grocery List Flows', () => {
     // Check it off
     await page.click('[aria-label="Check off Paper Towels"]');
 
-    // After check-off, the item should disappear from the active list
+    // Click Finish Shopping
+    const finishButton = page.getByRole('button', { name: /finish shopping/i });
+    await expect(finishButton).toBeVisible({ timeout: 5000 });
+    await finishButton.click();
+
+    // After finish shopping, the item should disappear from the active list
     await expect(page.getByText('Paper Towels')).not.toBeVisible({ timeout: 15000 });
 
     // Give the mutation a moment to settle

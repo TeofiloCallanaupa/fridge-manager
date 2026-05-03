@@ -1,9 +1,6 @@
-'use client'
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '../lib/supabase'
 import { calculateExpiration, fuzzyMatchFoodKeeper } from '@fridge-manager/shared'
-import { toast } from 'sonner'
 import type { GroceryItem, Category } from '@fridge-manager/shared'
 
 // ---------------------------------------------------------------------------
@@ -39,8 +36,6 @@ const VALID_DESTINATIONS = new Set(['fridge', 'freezer', 'pantry', 'none'])
  * joined with categories for grouping and sorting.
  */
 export function useGroceryItems(householdId: string | undefined) {
-  const supabase = createClient()
-
   return useQuery({
     queryKey: ['grocery-items', householdId],
     queryFn: async () => {
@@ -82,7 +77,6 @@ function validateAddInput(input: AddGroceryItemInput): string | null {
 // ---------------------------------------------------------------------------
 
 export function useAddGroceryItem() {
-  const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -111,11 +105,6 @@ export function useAddGroceryItem() {
         queryKey: ['grocery-items', variables.household_id],
       })
     },
-    onError: (error) => {
-      toast.error('Failed to add item', {
-        description: error instanceof Error ? error.message : 'Please try again',
-      })
-    },
   })
 }
 
@@ -131,8 +120,7 @@ export function useAddGroceryItem() {
  * This does NOT set completed_at or create inventory items.
  * Use `useFinishShopping` for the batch-complete + inventory flow.
  */
-export function useCheckOffGroceryItem() {
-  const supabase = createClient()
+export function useToggleGroceryItem() {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -167,10 +155,12 @@ export function useCheckOffGroceryItem() {
       return { itemId: item.id, checked: nowChecked }
     },
     onMutate: async (variables) => {
+      // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: ['grocery-items', variables.item.household_id],
       })
 
+      // Snapshot for rollback
       const previousItems = queryClient.getQueryData<GroceryItemWithCategory[]>(
         ['grocery-items', variables.item.household_id]
       )
@@ -195,55 +185,10 @@ export function useCheckOffGroceryItem() {
           context.previousItems
         )
       }
-      toast.error('Failed to toggle item', {
-        description: 'Please try again',
-      })
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['grocery-items', variables.item.household_id],
-      })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Uncheck mutation (legacy compat — still used by web card component)
-// ---------------------------------------------------------------------------
-
-export function useUncheckGroceryItem() {
-  const supabase = createClient()
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({
-      itemId,
-      householdId,
-    }: {
-      itemId: string
-      householdId: string
-    }) => {
-      const { error } = await supabase
-        .from('grocery_items')
-        .update({
-          checked: false,
-          checked_by: null,
-          checked_at: null,
-          completed_at: null,
-        })
-        .eq('id', itemId)
-
-      if (error) throw error
-      return { itemId }
-    },
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['grocery-items', variables.householdId],
-      })
-    },
-    onError: (error) => {
-      toast.error('Failed to uncheck item', {
-        description: error instanceof Error ? error.message : 'Please try again',
       })
     },
   })
@@ -262,7 +207,6 @@ export function useUncheckGroceryItem() {
  * Uses `calculateExpiration()` from packages/shared for date calculation.
  */
 export function useFinishShopping() {
-  const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -302,7 +246,6 @@ export function useFinishShopping() {
       if (updateError) throw updateError
 
       // 3. Create inventory items for non-'none' destinations
-      let inventoryCreated = 0
       for (const item of checkedItems as GroceryItemWithCategory[]) {
         if (!item.destination || item.destination === 'none') continue
 
@@ -354,29 +297,17 @@ export function useFinishShopping() {
 
           if (insertError) {
             console.error(`[FinishShopping] Failed to create inventory for "${item.name}":`, insertError)
-          } else {
-            inventoryCreated++
           }
         } catch (err) {
           console.error(`[FinishShopping] Error processing "${item.name}":`, err)
         }
       }
 
-      return { completedCount: checkedItems.length, inventoryCreated }
+      return { completedCount: checkedItems.length }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['grocery-items', variables.householdId],
-      })
-      if (data.completedCount > 0) {
-        toast.success(`Shopping done!`, {
-          description: `${data.completedCount} item${data.completedCount !== 1 ? 's' : ''} completed${data.inventoryCreated ? `, ${data.inventoryCreated} added to inventory` : ''}`,
-        })
-      }
-    },
-    onError: (error) => {
-      toast.error('Failed to finish shopping', {
-        description: error instanceof Error ? error.message : 'Please try again',
       })
     },
   })
@@ -387,7 +318,6 @@ export function useFinishShopping() {
 // ---------------------------------------------------------------------------
 
 export function useDeleteGroceryItem() {
-  const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -410,12 +340,9 @@ export function useDeleteGroceryItem() {
       queryClient.invalidateQueries({
         queryKey: ['grocery-items', variables.householdId],
       })
-      toast.success('Item removed')
-    },
-    onError: (error) => {
-      toast.error('Failed to delete item', {
-        description: error instanceof Error ? error.message : 'Please try again',
-      })
     },
   })
 }
+
+// Keep backward-compatible export for any existing references
+export const useCheckOffGroceryItem = useToggleGroceryItem

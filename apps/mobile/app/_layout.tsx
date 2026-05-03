@@ -2,7 +2,60 @@ import React, { useEffect } from 'react'
 import { Slot, useRouter, useSegments } from 'expo-router'
 import { PaperProvider, MD3LightTheme } from 'react-native-paper'
 import { AuthProvider, useAuth } from '../contexts/AuthContext'
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, AppState, Platform } from 'react-native'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import NetInfo from '@react-native-community/netinfo'
+import { onlineManager, focusManager } from '@tanstack/react-query'
+import { queryClient } from '../lib/query-client'
+
+// ---------------------------------------------------------------------------
+// Offline detection — TanStack Query auto-pauses mutations when offline
+// ---------------------------------------------------------------------------
+
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!state.isConnected)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// App focus detection — refetch on app foreground
+// ---------------------------------------------------------------------------
+
+function onAppStateChange(status: string) {
+  if (Platform.OS !== 'web') {
+    focusManager.setFocused(status === 'active')
+  }
+}
+
+// ---------------------------------------------------------------------------
+// AsyncStorage persister for query cache
+// ---------------------------------------------------------------------------
+
+const CACHE_KEY = '@fridge-manager/query-cache'
+const CACHE_URL_KEY = '@fridge-manager/cache-supabase-url'
+
+const asyncStoragePersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  key: CACHE_KEY,
+})
+
+// Clear stale cache if the Supabase URL has changed (e.g. switching local ↔ remote)
+const currentUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? ''
+AsyncStorage.getItem(CACHE_URL_KEY).then((cachedUrl) => {
+  if (cachedUrl && cachedUrl !== currentUrl) {
+    console.log('[Cache] Supabase URL changed, clearing stale query cache')
+    AsyncStorage.removeItem(CACHE_KEY)
+    queryClient.clear()
+  }
+  AsyncStorage.setItem(CACHE_URL_KEY, currentUrl)
+})
+
+// ---------------------------------------------------------------------------
+// Theme
+// ---------------------------------------------------------------------------
 
 const theme = {
   ...MD3LightTheme,
@@ -14,9 +67,13 @@ const theme = {
   },
 }
 
+// ---------------------------------------------------------------------------
+// Protected route logic
+// ---------------------------------------------------------------------------
+
 function useProtectedRoute() {
   const { user, profile, hasHousehold, isLoading } = useAuth()
-  const segments = useSegments()
+  const segments = useSegments() as string[]
   const router = useRouter()
 
   useEffect(() => {
@@ -24,9 +81,6 @@ function useProtectedRoute() {
 
     const inAuthGroup = segments[0] === '(auth)'
     const inOnboardingGroup = segments[0] === 'onboarding'
-    
-    // To prevent infinite loops during rendering, we check if we're already on the correct path
-    // For expo-router, segments is an array like ['onboarding', 'profile']
     
     if (!user) {
       if (!inAuthGroup) {
@@ -50,10 +104,8 @@ function useProtectedRoute() {
         }
       } else if (hasDisplayName && hasAvatar && hasHousehold) {
         if (inAuthGroup || inOnboardingGroup || segments.length === 0) {
-          // Empty segments array sometimes means we're at the root, which in our case is /(app)
-          // But actually we want to explicitly route to the app group
           if (segments[0] !== '(app)') {
-            router.replace('/(app)')
+            router.replace('/(app)/grocery')
           }
         }
       }
@@ -61,9 +113,19 @@ function useProtectedRoute() {
   }, [user, profile, hasHousehold, isLoading, segments])
 }
 
+// ---------------------------------------------------------------------------
+// Root layout
+// ---------------------------------------------------------------------------
+
 function RootLayoutNav() {
   const { isLoading } = useAuth()
   useProtectedRoute()
+
+  // Subscribe to app state for focus management
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', onAppStateChange)
+    return () => subscription.remove()
+  }, [])
 
   if (isLoading) {
     return (
@@ -78,10 +140,18 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <PaperProvider theme={theme}>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
-    </PaperProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{
+        persister: asyncStoragePersister,
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days — grocery list stays cached
+      }}
+    >
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <RootLayoutNav />
+        </AuthProvider>
+      </PaperProvider>
+    </PersistQueryClientProvider>
   )
 }

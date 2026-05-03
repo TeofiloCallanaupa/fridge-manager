@@ -1,11 +1,12 @@
-import { Stack } from 'expo-router'
+import { Tabs } from 'expo-router'
 import { useTheme } from 'react-native-paper'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 export default function AppLayout() {
   const theme = useTheme()
 
   return (
-    <Stack
+    <Tabs
       screenOptions={{
         headerStyle: {
           backgroundColor: theme.colors.surface,
@@ -15,12 +16,57 @@ export default function AppLayout() {
           fontWeight: 'bold',
         },
         headerShadowVisible: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          lineHeight: 18,
+          includeFontPadding: false,
+        },
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outlineVariant,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 4,
+        },
       }}
     >
-      <Stack.Screen 
-        name="index" 
-        options={{ title: 'Fridge Manager' }} 
+      <Tabs.Screen
+        name="grocery"
+        options={{
+          title: 'Grocery',
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="cart-outline" color={color} size={size} />
+          ),
+        }}
       />
-    </Stack>
+      <Tabs.Screen
+        name="inventory"
+        options={{
+          title: 'Inventory',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="fridge-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      {/* Hide the old index route from tabs */}
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
+    </Tabs>
   )
 }

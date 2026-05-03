@@ -1,13 +1,13 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useGroceryItems } from '@/hooks/use-grocery-items'
+import { useGroceryItems, useFinishShopping } from '@/hooks/use-grocery-items'
 import { useCategories } from '@/hooks/use-categories'
 import { useRealtimeGrocery } from '@/hooks/use-realtime-grocery'
 import { CategorySection } from './category-section'
 import { GroceryFab } from './grocery-fab'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ShoppingBasket } from 'lucide-react'
+import { ShoppingBasket, ShoppingCart } from 'lucide-react'
 import type { GroceryItemWithCategory } from '@/hooks/use-grocery-items'
 import type { Category } from '@fridge-manager/shared'
 
@@ -29,8 +29,10 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
   const { data: items, isLoading: itemsLoading } = useGroceryItems(householdId)
   const { data: categories, isLoading: categoriesLoading } = useCategories()
   const { syncStatus } = useRealtimeGrocery(householdId)
+  const finishShopping = useFinishShopping()
 
   // Group items by category, sorted by display_order
+  // Within each group, sort unchecked first, checked last
   const groups = useMemo<CategoryGroup[]>(() => {
     if (!items || !categories) return []
 
@@ -42,7 +44,7 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
       groupMap.set(item.category_id, existing)
     }
 
-    // Build groups in category display_order
+    // Build groups in category display_order, sort checked to bottom
     return categories
       .filter((cat) => groupMap.has(cat.id))
       .map((cat) => ({
@@ -52,12 +54,16 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
           emoji: cat.emoji,
           display_order: cat.display_order,
         },
-        items: groupMap.get(cat.id)!,
+        items: groupMap.get(cat.id)!.sort((a, b) => {
+          if (a.checked === b.checked) return 0
+          return a.checked ? 1 : -1
+        }),
       }))
   }, [items, categories])
 
   const isLoading = itemsLoading || categoriesLoading
   const totalItems = items?.length ?? 0
+  const checkedCount = items?.filter((i) => i.checked).length ?? 0
   const totalCategories = groups.length
 
   return (
@@ -72,7 +78,7 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
             <p className="text-on-secondary-container text-sm font-medium">
               {isLoading
                 ? 'Loading...'
-                : `${totalItems} item${totalItems !== 1 ? 's' : ''} · ${totalCategories} categor${totalCategories !== 1 ? 'ies' : 'y'}`}
+                : `${totalItems} item${totalItems !== 1 ? 's' : ''}${checkedCount > 0 ? ` · ${checkedCount} checked` : ''} · ${totalCategories} categor${totalCategories !== 1 ? 'ies' : 'y'}`}
             </p>
           </div>
           <SyncBadge status={syncStatus} />
@@ -97,6 +103,23 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
           ))
         )}
       </main>
+
+      {/* Finish Shopping bar — only visible when items are checked */}
+      {checkedCount > 0 && (
+        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
+          <button
+            onClick={() => finishShopping.mutate({ householdId, userId })}
+            disabled={finishShopping.isPending}
+            className="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-60"
+            aria-label="Finish shopping"
+          >
+            <ShoppingCart className="w-5 h-5" />
+            <span className="font-semibold text-sm">
+              {finishShopping.isPending ? 'Completing...' : `Finish Shopping (${checkedCount})`}
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* Floating Action Button */}
       <GroceryFab householdId={householdId} userId={userId} />

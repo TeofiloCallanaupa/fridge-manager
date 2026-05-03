@@ -181,7 +181,7 @@ git add -A && git commit -m "feat: inventory view with expiration badges and FEF
 
 ---
 
-### 4.3 — Item detail sheet (web)
+### 4.3 — Item detail sheet (web) ✅ DONE
 
 ```
 Using /coder, build the item detail bottom sheet in apps/web. Reference the Stitch design. Shows: item name, category emoji, location, expiration with color + days remaining, "added X days ago", added by (display name + avatar), purchase history count. Actions: edit, mark as used, mark as tossed (triggers discard flow), add to grocery list. Requirements: toast on mutation errors, loading states for async actions, accessible close button.
@@ -198,13 +198,13 @@ git add -A && git commit -m "feat: item detail sheet with edit, discard, and re-
 
 ---
 
-### 4.4 — Design discard flow
+### 4.4 — Design discard flow ✅ DONE
 
 ```
 Using /designer, design the Discard Flow modals/prompts and the "Recently Removed" page for the web app.
 ```
 
-### 4.5 — Discard flow + recently removed (web)
+### 4.5 — Discard flow + recently removed (web) ✅ DONE
 
 ```
 Using /coder, build the discard flow in apps/web. When user marks an item: prompt "Used it" (consumed) or "Tossed it" (wasted/expired). If user taps 'Tossed it' and `now() > expiration_date`, set `discard_reason = 'expired'`. Otherwise set `discard_reason = 'wasted'`. Set discarded_at to now(). Show "Add to grocery list?" prompt. Build the Recently Removed section showing last 20 discarded items with who removed it, when, and reason. From Recently Removed, allow 'change reason' (tap to toggle consumed ↔ wasted/expired) and 'restore to inventory' as separate actions. Requirements: toast error handling, optimistic updates with rollback, accessible modal controls.
@@ -225,7 +225,7 @@ git add -A && git commit -m "feat: discard flow with undo, change reason, and re
 
 ---
 
-### 4.6 — Removal History page
+### 4.6 — Removal History page ✅ DONE
 
 ```
 Using /designer, design the Removal History page for the web app. This is a full-page view at /inventory/history showing all discarded items grouped by month. Include: month selector (backward navigation), summary stats per month (items consumed vs wasted vs expired), each item showing name, emoji, who discarded, when, and reason icon. Use the Heirloom Pantry design system. Reference the "View all" link from the Recently Removed section.
@@ -246,7 +246,7 @@ git add -A && git commit -m "feat: removal history page with monthly grouping" &
 
 ---
 
-### 4.7 — Quick Add to Inventory
+### 4.7 — Quick Add to Inventory ✅ DONE
 
 ```
 Using /coder, build the "Quick Add" feature in apps/web. Add a floating "+" FAB or "Add Item" button to the inventory view that opens a form for direct inventory item creation without going through the grocery list. Include category picker, location selector, and expiration fields. Reference the Stitch design. Use TanStack Query for data fetching and shadcn/ui components.
@@ -263,7 +263,7 @@ git add -A && git commit -m "feat: quick add to inventory" && git push
 
 ---
 
-### 4.8 — FoodKeeper Data & Fuzzy Match
+### 4.8 — FoodKeeper Data & Fuzzy Match ✅ DONE
 
 ```
 Using /coder, fetch the USDA FoodKeeper dataset and format it into a lightweight JSON file saved to packages/shared/data/foodkeeper.json. Build a fuzzy matching utility function fuzzyMatchFoodKeeper(itemName) in packages/shared/src/utils/ to look up shelf life ranges based on item names.
@@ -284,7 +284,7 @@ git add -A && git commit -m "feat: foodkeeper fuzzy match data and checkout inte
 
 ---
 
-### 4.9 — Phase 4 E2E integration test
+### 4.9 — Phase 4 E2E integration test ✅ DONE
 
 ```
 Using /e2e, write Playwright tests covering the full web workflow: add grocery item → check off → verify in inventory → quick add item → open detail sheet → discard → verify in recently removed → change discard reason → undo → verify restored → navigate to removal history → verify monthly grouping. Ensure that expiration date assignment from FoodKeeper fuzzy match is verified. Run pnpm --filter web test:e2e.
@@ -297,9 +297,9 @@ git add -A && git commit -m "test: phase 4 E2E integration tests" && git push
 
 ---
 
-## Phase 5: Core Features (Mobile)
+## Phase 5: Core Features (Mobile) ← YOU ARE HERE
 
-### 5.0 — Mobile auth setup (moved from Phase 3)
+### 5.0 — Mobile auth setup (moved from Phase 3) ✅ DONE
 
 ```
 Using /coder, set up Supabase Auth in apps/mobile (Expo). Install @supabase/supabase-js, create the Supabase client with AsyncStorage for token persistence, and create the auth screens: Login, Signup, and the same onboarding flow (profile → avatar → household). Use React Native Paper components.
@@ -316,31 +316,48 @@ git add -A && git commit -m "feat: mobile auth and onboarding" && git push
 
 ---
 
-### 5.1 — Grocery list (mobile)
+### 5.1 — Offline auth resilience
+
+```
+Using /coder, make the mobile AuthContext resilient to offline/unreachable backend. Currently, fetchProfileAndHousehold() makes network calls that block rendering — if offline, the app shows an infinite spinner and the user can never reach their cached grocery list. Fix by: (1) persisting profile + hasHousehold + householdId to AsyncStorage alongside the auth session, (2) on startup, hydrate auth state from cache immediately so the app renders without waiting for the network, (3) refresh profile/household from the network in the background when connected, (4) add a timeout (e.g. 5s) on the network calls so they fail fast instead of hanging. Ensure the protected route logic works with cached data so users can access the grocery list and inventory offline.
+```
+
+```
+Using /tester, write unit tests for offline auth resilience: app renders grocery list when offline with cached session + profile, app updates profile from network when reconnected, stale cache is cleared when Supabase URL changes, timeout fires if network calls hang.
+```
+
+> Commit:
+```bash
+git add -A && git commit -m "feat: offline-resilient auth — cached profile hydration" && git push
+```
+
+---
+
+### 5.2 — Grocery list (mobile) 🟡 PARTIAL
 
 ```
 Using /coder, build the grocery list screen in apps/mobile. Same features as web (category-grouped, check-off, real-time sync) but using React Native Paper components (List.Section, Checkbox, FAB for add). Implement WatermelonDB local storage for offline support. Sync with Supabase when online.
 ```
 
-### 5.2 — Inventory view (mobile)
+### 5.3 — Inventory view (mobile)
 
 ```
 Using /coder, build the inventory screen in apps/mobile. Tabs for fridge/freezer/pantry using React Native Paper SegmentedButtons. Color-coded expiration badges, "added X days ago" counter, FEFO sorting. Long-press opens item detail bottom sheet (React Native Paper BottomSheet).
 ```
 
-### 5.3 — Discard flow + recently removed (mobile)
+### 5.4 — Discard flow + recently removed (mobile)
 
 ```
 Using /coder, build the discard flow and Recently Removed screen in apps/mobile. Same logic as web but using React Native Paper components. Swipe-to-discard gesture on inventory items. Undo via Snackbar.
 ```
 
-### 5.4 — Write component tests (mobile)
+### 5.5 — Write component tests (mobile)
 
 ```
 Using /tester, write component tests for the mobile grocery list, inventory view, and discard flow in apps/mobile/__tests__/components/ using React Native Testing Library.
 ```
 
-### 5.5 — Manual E2E test & Commit Mobile Features
+### 5.6 — Manual E2E test & Commit Mobile Features
 
 > Run this as a git command.
 

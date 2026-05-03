@@ -12,6 +12,7 @@ type AuthContextType = {
   user: User | null
   profile: Profile | null
   hasHousehold: boolean
+  householdId: string | null
   isLoading: boolean
   refreshSession: () => Promise<void>
 }
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   profile: null,
   hasHousehold: false,
+  householdId: null,
   isLoading: true,
   refreshSession: async () => {},
 })
@@ -32,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [hasHousehold, setHasHousehold] = useState(false)
+  const [householdId, setHouseholdId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchProfileAndHousehold = async (userId: string) => {
@@ -45,7 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       ])
 
       setProfile(profileData)
-      setHasHousehold(householdData && householdData.length > 0)
+      setHasHousehold(!!(householdData && householdData.length > 0))
+      setHouseholdId(householdData && householdData.length > 0 ? householdData[0].household_id : null)
     } catch (e) {
       console.error('Error fetching user data:', e)
     }
@@ -62,6 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       setProfile(null)
       setHasHousehold(false)
+      setHouseholdId(null)
     }
     setIsLoading(false)
   }
@@ -79,6 +84,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setProfile(null)
           setHasHousehold(false)
+          setHouseholdId(null)
         }
         setIsLoading(false)
       }
@@ -90,7 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ session, user, profile, hasHousehold, isLoading, refreshSession }}>
+    <AuthContext.Provider value={{ session, user, profile, hasHousehold, householdId, isLoading, refreshSession }}>
       {children}
     </AuthContext.Provider>
   )
