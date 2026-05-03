@@ -63,7 +63,7 @@ const RECENT_ITEM: InventoryItemWithDetails = {
   source: 'grocery_checkout',
   discarded_at: new Date(NOW - 30 * 60 * 1000).toISOString(), // 30 min ago
   discard_reason: 'consumed',
-  grocery_item_id: null,
+  updated_at: new Date(NOW - 30 * 60 * 1000).toISOString(),
   categories: { name: 'Dairy', emoji: '🥛', has_expiration: true },
   profiles: { display_name: 'Emilia' },
 }
@@ -83,7 +83,7 @@ const OLD_ITEM: InventoryItemWithDetails = {
   source: 'manual',
   discarded_at: new Date(NOW - 3 * 60 * 60 * 1000).toISOString(), // 3 hours ago
   discard_reason: 'wasted',
-  grocery_item_id: null,
+  updated_at: new Date(NOW - 3 * 60 * 60 * 1000).toISOString(),
   categories: { name: 'Prepared', emoji: '🍝', has_expiration: true },
   profiles: { display_name: 'Teo' },
 }

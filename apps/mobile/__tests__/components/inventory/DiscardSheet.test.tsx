@@ -60,7 +60,7 @@ const MOCK_ITEM: InventoryItemWithDetails = {
   source: 'grocery_checkout',
   discarded_at: null,
   discard_reason: null,
-  grocery_item_id: null,
+  updated_at: new Date().toISOString(),
   categories: { name: 'Meat', emoji: '🍗', has_expiration: true },
   profiles: { display_name: 'Teo' },
 }
