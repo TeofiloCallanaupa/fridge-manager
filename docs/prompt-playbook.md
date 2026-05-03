@@ -359,10 +359,11 @@ Using /coder + /tester + /designer, built: DiscardSheet (2-step modal: "What hap
 Added 3 new test suites (27 tests) covering ExpirationBadge (null/green/yellow/red/label), InventoryItemCard (name/qty/emoji/metadata/press/longPress/a11y), and InventoryScreen (header/counts/tabs/empty/loading/error). Also fixed stale login test and web grocery-list type errors. Total: 11 suites, 81 tests passing.
 ```
 
-### 5.6 — Manual E2E test & Commit Mobile Features
+### 5.6 — Manual E2E test & Commit Mobile Features ✅ DONE
 
-> Run this as a git command.
+Pre-flight verified: 0 TS errors (mobile + web), 81 mobile tests passing, 63 shared tests passing. All work committed incrementally through 5.0–5.5.
 
+> Commit:
 ```bash
 git add -A && git commit -m "feat: complete core mobile features" && git push
 ```
