@@ -347,10 +347,10 @@ Using /coder, build the grocery list screen in apps/mobile. Same features as web
 Using /coder, build the inventory screen in apps/mobile. SegmentedButtons for fridge/freezer/pantry tabs with count badges. FEFO-sorted item cards with category emoji, expiration badges (color-coded per DESIGN.md), "added X days ago" metadata. Pull-to-refresh. Loading/error/empty states. Follows Stitch "Heirloom Pantry" design system.
 ```
 
-### 5.4 — Discard flow + recently removed (mobile)
+### 5.4 — Discard flow + recently removed (mobile) ✅ DONE
 
 ```
-Using /coder, build the discard flow and Recently Removed screen in apps/mobile. Same logic as web but using React Native Paper components. Swipe-to-discard gesture on inventory items. Undo via Snackbar.
+Using /coder + /tester + /designer, built: DiscardSheet (2-step modal: "What happened?" → "Add to grocery list?"), RecentlyRemoved (reason chips, 1-hour Undo window, expandable correction panel), inventory mutation hooks (discard/restore/re-add/change-reason). Long-press item triggers discard. 16 component tests passing.
 ```
 
 ### 5.5 — Write component tests (mobile)

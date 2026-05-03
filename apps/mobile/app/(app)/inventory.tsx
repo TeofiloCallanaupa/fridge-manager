@@ -9,13 +9,17 @@ import {
   Text,
   SegmentedButtons,
   ActivityIndicator,
+  Snackbar,
   useTheme,
 } from 'react-native-paper'
 import { OfflineBanner } from '../../components/OfflineBanner'
 import { InventoryItemCard } from '../../components/inventory/InventoryItemCard'
+import { DiscardSheet } from '../../components/inventory/DiscardSheet'
+import { RecentlyRemoved } from '../../components/inventory/RecentlyRemoved'
 import {
   useInventoryItems,
   useInventoryCounts,
+  useRecentlyRemoved,
 } from '../../hooks/use-inventory-items'
 import { useAuth } from '../../contexts/AuthContext'
 import type { StorageLocation } from '@fridge-manager/shared'
@@ -31,8 +35,11 @@ export default function InventoryScreen() {
   const theme = useTheme()
   const { user, householdId } = useAuth()
   const [activeTab, setActiveTab] = useState<StorageLocation>('fridge')
+  const [discardItem, setDiscardItem] = useState<InventoryItemWithDetails | null>(null)
+  const [snackMessage, setSnackMessage] = useState<string | null>(null)
 
   const { data: counts } = useInventoryCounts(householdId ?? undefined)
+  const { data: recentlyRemoved = [] } = useRecentlyRemoved(householdId ?? undefined)
 
   const {
     data: items = [],
@@ -50,16 +57,33 @@ export default function InventoryScreen() {
     ? counts.fridge + counts.freezer + counts.pantry
     : 0
 
+  const handleLongPress = useCallback(
+    (item: InventoryItemWithDetails) => {
+      setDiscardItem(item)
+    },
+    []
+  )
+
+  const handleDiscardComplete = useCallback(
+    (action: 'consumed' | 'tossed', reAdded: boolean) => {
+      const actionLabel = action === 'consumed' ? 'Marked as used' : 'Marked as tossed'
+      const restockLabel = reAdded ? ' · Added to grocery list' : ''
+      setSnackMessage(`${actionLabel}${restockLabel}`)
+    },
+    []
+  )
+
   const renderItem = useCallback(
     ({ item }: { item: InventoryItemWithDetails }) => (
       <InventoryItemCard
         item={item}
         onPress={() => {
-          // Item detail sheet — will be built in 5.4
+          // Item detail sheet — will be built later
         }}
+        onLongPress={() => handleLongPress(item)}
       />
     ),
-    []
+    [handleLongPress]
   )
 
   const renderEmpty = useCallback(() => {
@@ -86,6 +110,13 @@ export default function InventoryScreen() {
       </View>
     )
   }, [isLoading, activeTab, theme])
+
+  const renderFooter = useCallback(() => {
+    if (recentlyRemoved.length === 0 || !householdId) return null
+    return (
+      <RecentlyRemoved items={recentlyRemoved} householdId={householdId} />
+    )
+  }, [recentlyRemoved, householdId])
 
   // Build segmented button values with counts
   const segmentedButtons = TABS.map((tab) => ({
@@ -152,13 +183,14 @@ export default function InventoryScreen() {
         </View>
       )}
 
-      {/* Items list */}
+      {/* Items list + Recently Removed */}
       {!isLoading && !error && (
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           ListEmptyComponent={renderEmpty}
+          ListFooterComponent={renderFooter}
           contentContainerStyle={styles.listContent}
           refreshControl={
             <RefreshControl
@@ -170,6 +202,25 @@ export default function InventoryScreen() {
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      {/* Discard flow modal */}
+      <DiscardSheet
+        item={discardItem}
+        visible={!!discardItem}
+        onDismiss={() => setDiscardItem(null)}
+        userId={user?.id ?? ''}
+        householdId={householdId ?? ''}
+        onComplete={handleDiscardComplete}
+      />
+
+      {/* Feedback snackbar */}
+      <Snackbar
+        visible={!!snackMessage}
+        onDismiss={() => setSnackMessage(null)}
+        duration={3000}
+      >
+        {snackMessage ?? ''}
+      </Snackbar>
     </View>
   )
 }
