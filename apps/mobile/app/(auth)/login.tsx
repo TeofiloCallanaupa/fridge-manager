@@ -48,6 +48,7 @@ export default function LoginScreen() {
           <Text style={styles.label}>Email Address</Text>
           <View style={styles.inputContainer}>
             <TextInput
+              testID="login-email-input"
               onChangeText={setEmail}
               value={email}
               placeholder="hello@kitchen.com"
@@ -68,6 +69,7 @@ export default function LoginScreen() {
           </View>
           <View style={styles.inputContainer}>
             <TextInput
+              testID="login-password-input"
               onChangeText={setPassword}
               value={password}
               secureTextEntry
@@ -82,6 +84,7 @@ export default function LoginScreen() {
         </View>
 
         <TouchableOpacity 
+          testID="login-submit-button"
           style={styles.primaryButton} 
           onPress={signInWithEmail} 
           disabled={loading}

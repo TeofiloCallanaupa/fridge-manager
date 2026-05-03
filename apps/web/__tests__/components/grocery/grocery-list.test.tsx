@@ -59,7 +59,7 @@ const mockCategories: Category[] = [
     display_order: 1,
     default_destination: 'fridge',
     has_expiration: true,
-    created_at: '2024-01-01T00:00:00Z',
+
   },
   {
     id: 'cat-dairy',
@@ -68,7 +68,7 @@ const mockCategories: Category[] = [
     display_order: 2,
     default_destination: 'fridge',
     has_expiration: true,
-    created_at: '2024-01-01T00:00:00Z',
+
   },
   {
     id: 'cat-household',
@@ -77,7 +77,7 @@ const mockCategories: Category[] = [
     display_order: 10,
     default_destination: 'none',
     has_expiration: false,
-    created_at: '2024-01-01T00:00:00Z',
+
   },
 ]
 
