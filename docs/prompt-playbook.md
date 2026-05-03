@@ -341,10 +341,10 @@ git add -A && git commit -m "feat: offline-resilient auth — cached profile hyd
 Using /coder, build the grocery list screen in apps/mobile. Same features as web (category-grouped, check-off, real-time sync) but using React Native Paper components (List.Section, Checkbox, FAB for add). Offline support via TanStack Query cache + AsyncStorage mutation queue.
 ```
 
-### 5.3 — Inventory view (mobile)
+### 5.3 — Inventory view (mobile) ✅ DONE
 
 ```
-Using /coder, build the inventory screen in apps/mobile. Tabs for fridge/freezer/pantry using React Native Paper SegmentedButtons. Color-coded expiration badges, "added X days ago" counter, FEFO sorting. Long-press opens item detail bottom sheet (React Native Paper BottomSheet).
+Using /coder, build the inventory screen in apps/mobile. SegmentedButtons for fridge/freezer/pantry tabs with count badges. FEFO-sorted item cards with category emoji, expiration badges (color-coded per DESIGN.md), "added X days ago" metadata. Pull-to-refresh. Loading/error/empty states. Follows Stitch "Heirloom Pantry" design system.
 ```
 
 ### 5.4 — Discard flow + recently removed (mobile)

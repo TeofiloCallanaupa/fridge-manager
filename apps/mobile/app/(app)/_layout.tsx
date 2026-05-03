@@ -46,6 +46,7 @@ export default function AppLayout() {
         name="inventory"
         options={{
           title: 'Inventory',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="fridge-outline" color={color} size={size} />
           ),
