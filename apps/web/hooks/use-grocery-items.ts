@@ -208,7 +208,7 @@ export function useCheckOffGroceryItem() {
 }
 
 // ---------------------------------------------------------------------------
-// Uncheck mutation (legacy compat — still used by web card component)
+// Uncheck mutation — used by web card component for uncheck action
 // ---------------------------------------------------------------------------
 
 export function useUncheckGroceryItem() {

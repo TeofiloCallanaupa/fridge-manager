@@ -343,6 +343,3 @@ export function useDeleteGroceryItem() {
     },
   })
 }
-
-// Keep backward-compatible export for any existing references
-export const useCheckOffGroceryItem = useToggleGroceryItem
