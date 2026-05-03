@@ -17,7 +17,7 @@ import {
   IconButton,
   useTheme,
 } from 'react-native-paper'
-import type { CategoryData } from '../../hooks/use-categories'
+import type { Category } from '@fridge-manager/shared'
 
 type Props = {
   visible: boolean
@@ -28,7 +28,7 @@ type Props = {
     category_id: string
     destination: 'fridge' | 'freezer' | 'pantry' | 'none'
   }) => void
-  categories: CategoryData[]
+  categories: Category[]
   isLoading?: boolean
 }
 

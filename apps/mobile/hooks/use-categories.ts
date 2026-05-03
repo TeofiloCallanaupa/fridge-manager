@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { Category } from '@fridge-manager/shared'
 
-/** Re-export Category as CategoryData for backward compatibility */
-export type CategoryData = Category
+export type { Category }
 
 /**
  * Fetches all categories for the add-item picker.
@@ -19,7 +18,7 @@ export function useCategories() {
         .order('display_order', { ascending: true })
 
       if (error) throw error
-      return (data ?? []) as CategoryData[]
+      return (data ?? []) as Category[]
     },
     staleTime: 1000 * 60 * 60, // 1 hour — categories rarely change
   })
