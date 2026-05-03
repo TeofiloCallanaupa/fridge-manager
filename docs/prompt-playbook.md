@@ -353,10 +353,10 @@ Using /coder, build the inventory screen in apps/mobile. SegmentedButtons for fr
 Using /coder + /tester + /designer, built: DiscardSheet (2-step modal: "What happened?" → "Add to grocery list?"), RecentlyRemoved (reason chips, 1-hour Undo window, expandable correction panel), inventory mutation hooks (discard/restore/re-add/change-reason). Long-press item triggers discard. 16 component tests passing.
 ```
 
-### 5.5 — Write component tests (mobile)
+### 5.5 — Write component tests (mobile) ✅ DONE
 
 ```
-Using /tester, write component tests for the mobile grocery list, inventory view, and discard flow in apps/mobile/__tests__/components/ using React Native Testing Library.
+Added 3 new test suites (27 tests) covering ExpirationBadge (null/green/yellow/red/label), InventoryItemCard (name/qty/emoji/metadata/press/longPress/a11y), and InventoryScreen (header/counts/tabs/empty/loading/error). Also fixed stale login test and web grocery-list type errors. Total: 11 suites, 81 tests passing.
 ```
 
 ### 5.6 — Manual E2E test & Commit Mobile Features
