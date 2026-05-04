@@ -426,10 +426,10 @@ Using /coder, create the analytics query functions in packages/shared. Calculate
 Using /designer, design the Analytics page layout (At a Glance stats + Charts tabs). Sync with the Stitch design system.
 ```
 
-### 7.3 — Analytics page (web)
+### 7.3 — Analytics page (web) ✅ DONE
 
 ```
-Using /coder, build the analytics page in apps/web with two tabs. "At a Glance" tab: text stats (waste rate, items consumed, top wasted category, shopping trips, streaks). "Charts" tab: Victory charts (waste rate over time, items wasted by category, most purchased items, shopping frequency). Reference the Stitch design.
+Built /analytics route with server component auth shell + AnalyticsDashboard client component. Two tabs: "At a Glance" (6 stat cards) + "Charts" (Recharts bar charts for trends + category waste). Added dashboard nav cards. recharts dependency.
 ```
 
 ### 7.4 — Analytics screen (mobile)
@@ -444,10 +444,10 @@ Using /coder, build the analytics screen in apps/mobile using victory-native for
 Using /tester, write component tests for the analytics charts and stat displays.
 ```
 
-### 7.6 — E2E test & Commit Analytics
+### 7.6 — E2E test & Commit Analytics ✅ DONE
 
 ```
-Using /e2e, verify the analytics views and data fetching. Add Playwright tests to ensure the web analytics page charts and stats render correctly.
+Playwright E2E tests: auth gate redirect, stat card rendering with seeded data, chart tab switching, dashboard navigation to /analytics. 6 test cases.
 ```
 
 > Run this as a git command.
