@@ -42,6 +42,36 @@ export default async function DashboardPage() {
             Your dashboard is ready.
           </p>
         </div>
+
+        <nav className="grid grid-cols-1 sm:grid-cols-3 gap-4" data-testid="dashboard-nav">
+          <a
+            href="/grocery"
+            className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors group"
+            data-testid="nav-grocery"
+          >
+            <span className="text-2xl">🛒</span>
+            <h3 className="text-white font-medium mt-2">Grocery List</h3>
+            <p className="text-white/50 text-sm mt-1">Manage your shopping</p>
+          </a>
+          <a
+            href="/inventory"
+            className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors group"
+            data-testid="nav-inventory"
+          >
+            <span className="text-2xl">🧊</span>
+            <h3 className="text-white font-medium mt-2">Inventory</h3>
+            <p className="text-white/50 text-sm mt-1">Track your food</p>
+          </a>
+          <a
+            href="/analytics"
+            className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/10 transition-colors group"
+            data-testid="nav-analytics"
+          >
+            <span className="text-2xl">📊</span>
+            <h3 className="text-white font-medium mt-2">Analytics</h3>
+            <p className="text-white/50 text-sm mt-1">Food waste insights</p>
+          </a>
+        </nav>
       </main>
     </div>
   )
