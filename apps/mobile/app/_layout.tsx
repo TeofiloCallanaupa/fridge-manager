@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager, focusManager } from '@tanstack/react-query'
 import { queryClient } from '../lib/query-client'
+import { usePushNotifications } from '../hooks/use-push-notifications'
 
 // ---------------------------------------------------------------------------
 // Offline detection — TanStack Query auto-pauses mutations when offline
@@ -120,6 +121,7 @@ function useProtectedRoute() {
 function RootLayoutNav() {
   const { isLoading } = useAuth()
   useProtectedRoute()
+  usePushNotifications()
 
   // Subscribe to app state for focus management
   useEffect(() => {
