@@ -11,7 +11,7 @@ Supabase's default email templates use `{{ .ConfirmationURL }}` which redirects 
 ### Steps
 
 1. Go to the [Supabase Dashboard](https://supabase.com/dashboard)
-2. Open your project: **fridge-manager** (`vsjyngzffwdhqgjuoady`)
+2. Open your project: **fridge-manager**
 3. Navigate to **Authentication** → **Email Templates**
 
 ### Confirm Signup Template

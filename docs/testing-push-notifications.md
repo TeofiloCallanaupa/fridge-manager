@@ -2,6 +2,8 @@
 
 How to manually verify that push notifications work end-to-end.
 
+> **Setup:** Replace `$SUPABASE_URL` in the curl commands below with your project URL (found in your `.env` as `EXPO_PUBLIC_SUPABASE_URL` or in the Supabase Dashboard under Project Settings → API).
+
 ---
 
 ## Prerequisites
@@ -47,7 +49,7 @@ Log in and grab the token:
 
 ```bash
 # Log in to get an access token
-curl -X POST 'https://vsjyngzffwdhqgjuoady.supabase.co/auth/v1/token?grant_type=password' \
+curl -X POST '$SUPABASE_URL/auth/v1/token?grant_type=password' \
   -H 'apikey: YOUR_ANON_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -61,7 +63,7 @@ Copy the `access_token` from the response.
 #### Step 2: Send a test notification
 
 ```bash
-curl -X POST 'https://vsjyngzffwdhqgjuoady.supabase.co/functions/v1/send-test-notification' \
+curl -X POST '$SUPABASE_URL/functions/v1/send-test-notification' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -137,7 +139,7 @@ VALUES
 Invoke the cron Edge Function manually:
 
 ```bash
-curl -X POST 'https://vsjyngzffwdhqgjuoady.supabase.co/functions/v1/check-expiration-notifications' \
+curl -X POST '$SUPABASE_URL/functions/v1/check-expiration-notifications' \
   -H 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
   -H 'Content-Type: application/json' \
   -d '{}'
