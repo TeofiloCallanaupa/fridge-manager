@@ -125,20 +125,34 @@ test.describe('Phase 4 Integration — Full Workflow', () => {
     await expect(page.getByText('Chicken Breast')).toBeVisible({ timeout: 10000 });
   });
 
-  test('1b: check off "Chicken Breast" → disappears from grocery list', async () => {
+  test('1b: check off "Chicken Breast" and finish shopping → disappears from grocery list', async () => {
     // Item should be visible from previous test
     await expect(page.getByText('Chicken Breast')).toBeVisible({ timeout: 5000 });
 
-    // Click the check circle
+    // Click the check circle — item stays visible (strikethrough)
     await page.click('[aria-label="Check off Chicken Breast"]');
+    await expect(page.getByText('Chicken Breast')).toBeVisible({ timeout: 5000 });
 
-    // Item should disappear from grocery list
+    // Click "Finish Shopping" to batch-complete checked items
+    const finishButton = page.getByRole('button', { name: /finish shopping/i });
+    await expect(finishButton).toBeVisible({ timeout: 5000 });
+    await finishButton.click();
+
+    // Item should now disappear from grocery list
     await expect(page.getByText('Chicken Breast')).not.toBeVisible({ timeout: 15000 });
   });
 
   test('1c: verify checkout created inventory item with foodkeeper source', async () => {
-    // Wait for async mutation to settle
-    await page.waitForTimeout(2000);
+    // Poll DB until the async mutation has persisted
+    await expect.poll(async () => {
+      const { data } = await adminClient
+        .from('inventory_items')
+        .select('id')
+        .eq('household_id', testHouseholdId)
+        .eq('name', 'Chicken Breast')
+        .eq('source', 'grocery_checkout');
+      return data?.length ?? 0;
+    }, { timeout: 10000 }).toBeGreaterThanOrEqual(1);
 
     // Verify in DB: should have expiration_source = 'foodkeeper'
     const { data: items } = await adminClient
@@ -187,11 +201,17 @@ test.describe('Phase 4 Integration — Full Workflow', () => {
     await page.getByRole('button', { name: /add to list/i }).click();
     await expect(page.getByText('Artisanal Acai Spread')).toBeVisible({ timeout: 10000 });
 
-    // Check off
+    // Check off — item stays visible (strikethrough)
     await page.click('[aria-label="Check off Artisanal Acai Spread"]');
-    await expect(page.getByText('Artisanal Acai Spread')).not.toBeVisible({ timeout: 15000 });
+    await expect(page.getByText('Artisanal Acai Spread')).toBeVisible({ timeout: 5000 });
 
-    await page.waitForTimeout(2000);
+    // Click "Finish Shopping" to batch-complete
+    const finishButton = page.getByRole('button', { name: /finish shopping/i });
+    await expect(finishButton).toBeVisible({ timeout: 5000 });
+    await finishButton.click();
+
+    // Item should now disappear
+    await expect(page.getByText('Artisanal Acai Spread')).not.toBeVisible({ timeout: 15000 });
 
     // Verify in DB
     const { data: items } = await adminClient
@@ -298,7 +318,16 @@ test.describe('Phase 4 Integration — Full Workflow', () => {
   });
 
   test('5b: verify "Chicken Breast" discarded in DB with correct reason', async () => {
-    await page.waitForTimeout(1000);
+    // Poll DB until the discard mutation has persisted
+    await expect.poll(async () => {
+      const { data } = await adminClient
+        .from('inventory_items')
+        .select('id')
+        .eq('household_id', testHouseholdId)
+        .eq('name', 'Chicken Breast')
+        .not('discarded_at', 'is', null);
+      return data?.length ?? 0;
+    }, { timeout: 10000 }).toBeGreaterThanOrEqual(1);
 
     const { data: discarded } = await adminClient
       .from('inventory_items')
@@ -328,7 +357,6 @@ test.describe('Phase 4 Integration — Full Workflow', () => {
       await expect(sheet).toBeVisible({ timeout: 5000 });
       await sheet.getByLabel('Mark as used').click();
       await expect(sheet).not.toBeVisible({ timeout: 5000 });
-      await page.waitForTimeout(1000);
     }
 
     // Now find it in recently removed and restore
@@ -342,8 +370,6 @@ test.describe('Phase 4 Integration — Full Workflow', () => {
       await restoreBtn.click();
 
       await expect(page.getByText(/restored/i)).toBeVisible({ timeout: 5000 });
-
-      await page.waitForTimeout(1000);
     }
 
     // Verify in DB

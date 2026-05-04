@@ -154,7 +154,7 @@ test.describe('Analytics Dashboard Flows', () => {
     await expect(page).toHaveURL(/\/(dashboard|grocery)/, { timeout: 15000 });
 
     await page.goto('/analytics');
-    await page.waitForLoadState('networkidle');
+    await expect(page.getByTestId('tab-selector')).toBeVisible({ timeout: 15000 });
   }
 
   // -----------------------------------------------------------------------
@@ -182,11 +182,11 @@ test.describe('Analytics Dashboard Flows', () => {
     const statCards = page.getByTestId('stat-cards');
     await expect(statCards).toBeVisible({ timeout: 15000 });
 
-    // Should show consumed count (3)
-    await expect(page.getByText('3')).toBeVisible();
+    // Should show consumed count (3) — scoped to avoid strict mode violations
+    await expect(page.getByTestId('stat-consumed').getByText('3')).toBeVisible();
 
     // Should show wasted count (2)
-    await expect(page.getByText('2')).toBeVisible();
+    await expect(page.getByTestId('stat-wasted').getByText('2')).toBeVisible();
 
     // Waste rate should be 40% (2 / 5 = 40%)
     await expect(page.getByText('40%')).toBeVisible();

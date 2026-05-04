@@ -201,8 +201,16 @@ test.describe('Grocery List Flows', () => {
     // Item should disappear from the list
     await expect(page.getByText('Organic Strawberries')).not.toBeVisible({ timeout: 15000 });
 
-    // Give the async mutation a moment to settle
-    await page.waitForTimeout(2000);
+    // Poll DB until the async mutation has persisted
+    await expect.poll(async () => {
+      const { data } = await adminClient
+        .from('inventory_items')
+        .select('id')
+        .eq('household_id', testHouseholdId)
+        .eq('name', 'Organic Strawberries')
+        .eq('source', 'grocery_checkout');
+      return data?.length ?? 0;
+    }, { timeout: 10000 }).toBeGreaterThanOrEqual(1);
 
     // Verify the inventory item was created in the database
     const { data: inventoryItems } = await adminClient
@@ -257,8 +265,18 @@ test.describe('Grocery List Flows', () => {
     // After finish shopping, the item should disappear from the active list
     await expect(page.getByText('Paper Towels')).not.toBeVisible({ timeout: 15000 });
 
-    // Give the mutation a moment to settle
-    await page.waitForTimeout(1000);
+    // Poll to allow mutation to settle (expecting 0 items)
+    // Wait briefly, then verify no inventory item was created
+    await expect.poll(async () => {
+      // Check that the grocery item was completed
+      const { data } = await adminClient
+        .from('grocery_items')
+        .select('id')
+        .eq('household_id', testHouseholdId)
+        .eq('name', 'Paper Towels')
+        .not('completed_at', 'is', null);
+      return data?.length ?? 0;
+    }, { timeout: 10000 }).toBeGreaterThanOrEqual(1);
 
     // Verify NO inventory item was created for household items
     const { data: inventoryItems } = await adminClient

@@ -140,7 +140,7 @@ test.describe('Security Regression Tests', () => {
 
       // Make a request to the invite page as an unauthenticated user
       // (it will redirect to signup, but we can check the rendered HTML first)
-      const response = await fetch(`http://localhost:3001/invite/${invite!.id}`, {
+      const response = await fetch(`http://localhost:3000/invite/${invite!.id}`, {
         redirect: 'manual',
       });
 

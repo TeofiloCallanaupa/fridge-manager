@@ -51,7 +51,6 @@ test.describe('Auth & Onboarding Flow', () => {
     }
     // Force localhost instead of 127.0.0.1 for playwright and ensure it redirects to 3001
     confirmationLink = confirmationLink.replace('127.0.0.1', 'localhost');
-    confirmationLink = confirmationLink.replace('3000', '3001');
 
     // 4. Click the confirmation link (Navigate)
     await page.goto(confirmationLink);
@@ -81,7 +80,7 @@ test.describe('Auth & Onboarding Flow', () => {
     await page.click('button[type="submit"]');
 
     // 8. Dashboard (Completion)
-    await expect(page).toHaveURL('http://localhost:3001/dashboard');
+    await expect(page).toHaveURL('http://localhost:3000/dashboard');
     // For now, accept whatever is on the home page as long as we landed there
   });
 });
