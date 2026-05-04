@@ -36,7 +36,6 @@ export default async function AnalyticsPage() {
   return (
     <AnalyticsDashboard
       householdId={membership.household_id}
-      userId={user.id}
     />
   )
 }

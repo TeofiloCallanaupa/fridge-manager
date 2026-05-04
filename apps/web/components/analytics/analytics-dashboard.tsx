@@ -5,7 +5,7 @@
  *
  * Two tabs:
  * - "At a Glance" — stat cards with summary metrics
- * - "Charts" — Recharts bar/area charts
+ * - "Charts" — Victory bar charts (same API as victory-native on mobile)
  *
  * Matches the "Heirloom Pantry" design system.
  */
@@ -23,15 +23,26 @@ import {
   type CategoryWaste,
 } from '@fridge-manager/shared'
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts'
+  VictoryBar,
+  VictoryChart,
+  VictoryAxis,
+  VictoryTooltip,
+  VictoryLegend,
+  VictoryGroup,
+  VictoryTheme,
+} from 'victory'
+
+// ---------------------------------------------------------------------------
+// Chart colors (from Heirloom Pantry design tokens)
+// ---------------------------------------------------------------------------
+
+const CHART_COLORS = {
+  consumed: '#206140', // --color-primary
+  wasted: '#ba1a1a',   // --color-error
+  category: '#3b7a57', // --color-primary-container
+  axis: '#707972',     // --color-outline
+  grid: '#bfc9c0',     // --color-outline-variant
+}
 
 // ---------------------------------------------------------------------------
 // Stat card config
@@ -63,7 +74,7 @@ const STAT_CARDS: StatCardConfig[] = [
     label: 'Wasted',
     getValue: (s) => String(s.itemsWasted),
     getSubtitle: () => 'items wasted',
-    color: 'var(--color-error)',
+    color: CHART_COLORS.wasted,
   },
   {
     emoji: '🏆',
@@ -99,7 +110,6 @@ const STAT_CARDS: StatCardConfig[] = [
 
 interface Props {
   householdId: string
-  userId: string
 }
 
 export function AnalyticsDashboard({ householdId }: Props) {
@@ -257,14 +267,14 @@ function ChartsTab({
   const trendChartData = trends.map((t) => {
     const [, monthNum] = t.month.split('-')
     return {
-      name: MONTHS[parseInt(monthNum, 10) - 1] ?? t.month,
+      month: MONTHS[parseInt(monthNum, 10) - 1] ?? t.month,
       consumed: t.consumed,
       wasted: t.wasted,
     }
   })
 
   const categoryChartData = categoryWaste.slice(0, 6).map((c) => ({
-    name: `${c.emoji} ${c.category}`,
+    label: `${c.emoji} ${c.category}`,
     count: c.count,
   }))
 
@@ -276,25 +286,57 @@ function ChartsTab({
         {trends.length === 0 ? (
           <p className="text-on-surface-variant">Not enough data yet</p>
         ) : (
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trendChartData} barCategoryGap="20%">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" opacity={0.3} />
-                <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
-                <YAxis tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-surface-container)',
-                    border: '1px solid var(--color-outline-variant)',
-                    borderRadius: '12px',
-                    fontSize: '13px',
-                  }}
+          <div className="w-full" style={{ maxWidth: 600 }}>
+            <VictoryChart
+              theme={VictoryTheme.clean}
+              domainPadding={{ x: 30 }}
+              height={300}
+              padding={{ top: 40, bottom: 50, left: 50, right: 20 }}
+            >
+              <VictoryLegend
+                x={120}
+                y={0}
+                orientation="horizontal"
+                gutter={20}
+                data={[
+                  { name: 'Consumed', symbol: { fill: CHART_COLORS.consumed } },
+                  { name: 'Wasted', symbol: { fill: CHART_COLORS.wasted } },
+                ]}
+                style={{ labels: { fontSize: 11, fill: CHART_COLORS.axis } }}
+              />
+              <VictoryAxis
+                tickValues={trendChartData.map((d) => d.month)}
+                style={{
+                  tickLabels: { fontSize: 11, fill: CHART_COLORS.axis },
+                  grid: { stroke: CHART_COLORS.grid, strokeDasharray: '4,4', opacity: 0.4 },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                style={{
+                  tickLabels: { fontSize: 11, fill: CHART_COLORS.axis },
+                  grid: { stroke: CHART_COLORS.grid, strokeDasharray: '4,4', opacity: 0.4 },
+                }}
+              />
+              <VictoryGroup offset={14}>
+                <VictoryBar
+                  data={trendChartData}
+                  x="month"
+                  y="consumed"
+                  style={{ data: { fill: CHART_COLORS.consumed, width: 12 } }}
+                  cornerRadius={{ topLeft: 4, topRight: 4 }}
+                  labelComponent={<VictoryTooltip />}
                 />
-                <Legend />
-                <Bar dataKey="consumed" name="Consumed" fill="var(--color-primary)" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="wasted" name="Wasted" fill="var(--color-error)" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+                <VictoryBar
+                  data={trendChartData}
+                  x="month"
+                  y="wasted"
+                  style={{ data: { fill: CHART_COLORS.wasted, width: 12 } }}
+                  cornerRadius={{ topLeft: 4, topRight: 4 }}
+                  labelComponent={<VictoryTooltip />}
+                />
+              </VictoryGroup>
+            </VictoryChart>
           </div>
         )}
       </section>
@@ -305,28 +347,35 @@ function ChartsTab({
         {categoryWaste.length === 0 ? (
           <p className="text-on-surface-variant">No wasted items this month</p>
         ) : (
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={categoryChartData} layout="vertical" barCategoryGap="20%">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" opacity={0.3} />
-                <XAxis type="number" tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }} />
-                <YAxis
-                  dataKey="name"
-                  type="category"
-                  width={120}
-                  tick={{ fontSize: 12, fill: 'var(--color-on-surface-variant)' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-surface-container)',
-                    border: '1px solid var(--color-outline-variant)',
-                    borderRadius: '12px',
-                    fontSize: '13px',
-                  }}
-                />
-                <Bar dataKey="count" name="Items wasted" fill="var(--color-primary)" radius={[0, 6, 6, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="w-full" style={{ maxWidth: 600 }}>
+            <VictoryChart
+              theme={VictoryTheme.clean}
+              horizontal
+              domainPadding={{ x: 20 }}
+              height={Math.max(200, categoryChartData.length * 50 + 60)}
+              padding={{ top: 20, bottom: 40, left: 120, right: 30 }}
+            >
+              <VictoryAxis
+                style={{
+                  tickLabels: { fontSize: 11, fill: CHART_COLORS.axis },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                style={{
+                  tickLabels: { fontSize: 11, fill: CHART_COLORS.axis },
+                  grid: { stroke: CHART_COLORS.grid, strokeDasharray: '4,4', opacity: 0.4 },
+                }}
+              />
+              <VictoryBar
+                data={categoryChartData}
+                x="label"
+                y="count"
+                style={{ data: { fill: CHART_COLORS.category, width: 16 } }}
+                cornerRadius={{ topLeft: 4, topRight: 4 }}
+                labelComponent={<VictoryTooltip />}
+              />
+            </VictoryChart>
           </div>
         )}
       </section>

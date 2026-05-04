@@ -67,7 +67,6 @@ test.describe('Analytics Dashboard Flows', () => {
 
     // Seed inventory items with discard data for analytics
     const now = new Date();
-    const thisMonth = now.toISOString().substring(0, 7); // "2026-05"
 
     const seedItems = [
       // 3 consumed items
