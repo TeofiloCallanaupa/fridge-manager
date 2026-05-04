@@ -123,6 +123,15 @@
         "screenshot": ".stitch/designs/removal-history-screenshot.png",
         "html": ".stitch/designs/removal-history.html"
       }
+    },
+    "notification-preferences": {
+      "screenId": "5744e933d91a4545b33c512c475bb10c",
+      "title": "Notification Preferences",
+      "deviceType": "MOBILE",
+      "status": "COMPLETE",
+      "files": {
+        "screenshot": ".stitch/designs/notification-preferences-screenshot.png"
+      }
     }
   },
   "createdAt": "2026-04-27T11:23:00-04:00"
