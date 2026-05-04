@@ -36,6 +36,13 @@
         {
           "color": "#206140"
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "self-nyp",
+          "project": "fridge-manager-mobile"
+        }
       ]
     ]
   }

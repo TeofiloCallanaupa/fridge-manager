@@ -10,6 +10,18 @@ import NetInfo from '@react-native-community/netinfo'
 import { onlineManager, focusManager } from '@tanstack/react-query'
 import { queryClient } from '../lib/query-client'
 import { usePushNotifications } from '../hooks/use-push-notifications'
+import * as Sentry from '@sentry/react-native'
+
+// ---------------------------------------------------------------------------
+// Sentry — error tracking & performance monitoring
+// ---------------------------------------------------------------------------
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  environment: __DEV__ ? 'development' : 'production',
+  tracesSampleRate: __DEV__ ? 1.0 : 0.2,
+  enabled: !__DEV__,
+})
 
 // ---------------------------------------------------------------------------
 // Offline detection — TanStack Query auto-pauses mutations when offline
@@ -140,7 +152,7 @@ function RootLayoutNav() {
   return <Slot />
 }
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <PersistQueryClientProvider
       client={queryClient}
@@ -157,3 +169,5 @@ export default function RootLayout() {
     </PersistQueryClientProvider>
   )
 }
+
+export default Sentry.wrap(RootLayout)
