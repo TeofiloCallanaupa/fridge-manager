@@ -22,6 +22,7 @@ web-build/
 .env.local
 .env.test
 .env.*.local
+.env.sentry-build-plugin
 
 # Supabase
 supabase/.temp/
