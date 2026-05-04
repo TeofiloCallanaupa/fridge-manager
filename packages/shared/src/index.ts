@@ -89,3 +89,10 @@ export {
   NOTIFICATION_THRESHOLDS,
   QUIET_HOURS_DEFAULT,
 } from './constants/notifications.js';
+
+// Queries (platform-agnostic, accept any SupabaseClient)
+export {
+  fetchAnalyticsSummary,
+  fetchMonthlyTrends,
+  fetchCategoryWaste,
+} from './queries/analytics.js';
