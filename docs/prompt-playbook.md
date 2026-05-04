@@ -468,11 +468,13 @@ Using /e2e, do a final review of all Playwright E2E tests across the 5 critical 
 
 > **Result:** 73/73 E2E tests passing. Fixed 5 failures (Finish Shopping flow mismatch, ambiguous selectors, wrong ports). Eliminated 7/8 waitForTimeout calls. Only remaining timeout is Mailpit polling retry (acceptable).
 
-### 8.2 — Error tracking
+### 8.2 — Error tracking ✅
 
 ```
 Using /coder, set up Sentry in both apps/web and apps/mobile. Install @sentry/nextjs and @sentry/react-native. Configure error boundaries, performance monitoring, and source maps. Add Sentry DSN to environment variables.
 ```
+
+> **Result:** Sentry integrated in both platforms. Web: wizard-configured with tracing, session replay, and logs — test page verified errors appear in Sentry dashboard. Mobile: SDK initialized in root layout with Expo plugin, disabled in dev, 20% trace sampling. Sentry MCP server added to Antigravity config. No secrets in git.
 
 ### 8.3 — Security final review
 
