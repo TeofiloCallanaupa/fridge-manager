@@ -54,6 +54,16 @@ export { buildAvatarUrl, DEFAULT_AVATAR_CONFIG } from './utils/avatar.js';
 export { getOppositeReason, getDiscardReasonLabel } from './utils/discard.js';
 export type { OppositeReason } from './utils/discard.js';
 export { fuzzyMatchFoodKeeper } from './utils/foodkeeper.js';
+export {
+  getActiveThresholds,
+  isInQuietHours,
+  buildNotificationMessage,
+} from './utils/notifications.js';
+export type {
+  NotifiableItem,
+  QuietHoursPrefs,
+  NotificationMessage,
+} from './utils/notifications.js';
 
 // Constants
 export {

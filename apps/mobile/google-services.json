@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216492412027",
+    "project_id": "teo-fridge-manager",
+    "storage_bucket": "teo-fridge-manager.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216492412027:android:c762541e3ba73eb138e6de",
+        "android_client_info": {
+          "package_name": "com.teofilo.fridgemanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4LqXQBPPGrwEUpu5AK1be_Cd576XrPWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
