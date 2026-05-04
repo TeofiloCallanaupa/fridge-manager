@@ -299,6 +299,98 @@ export type Database = {
           },
         ]
       }
+      notification_log: {
+        Row: {
+          household_id: string
+          id: string
+          inventory_item_id: string
+          sent_at: string
+          type: string
+        }
+        Insert: {
+          household_id: string
+          id?: string
+          inventory_item_id: string
+          sent_at?: string
+          type: string
+        }
+        Update: {
+          household_id?: string
+          id?: string
+          inventory_item_id?: string
+          sent_at?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_log_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_log_inventory_item_id_fkey"
+            columns: ["inventory_item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string
+          day_of_enabled: boolean
+          halfway_enabled: boolean
+          household_id: string
+          id: string
+          one_day_enabled: boolean
+          post_expiration_enabled: boolean
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          two_day_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_enabled?: boolean
+          halfway_enabled?: boolean
+          household_id: string
+          id?: string
+          one_day_enabled?: boolean
+          post_expiration_enabled?: boolean
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          two_day_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          day_of_enabled?: boolean
+          halfway_enabled?: boolean
+          household_id?: string
+          id?: string
+          one_day_enabled?: boolean
+          post_expiration_enabled?: boolean
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          two_day_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_config: Json | null
@@ -320,6 +412,65 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          keys: Json | null
+          platform: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          keys?: Json | null
+          platform: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          keys?: Json | null
+          platform?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      system_logs: {
+        Row: {
+          created_at: string
+          details: Json | null
+          event: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          event: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          event?: string
+          id?: string
         }
         Relationships: []
       }
@@ -462,4 +613,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
