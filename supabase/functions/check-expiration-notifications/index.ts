@@ -401,7 +401,7 @@ Deno.serve(async (_req: Request) => {
   } catch (err) {
     console.error('Notification check failed:', err);
     return new Response(
-      JSON.stringify({ error: (err as Error).message }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

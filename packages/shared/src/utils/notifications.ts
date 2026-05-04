@@ -4,6 +4,11 @@
  * - getActiveThresholds() — determines which notification types should fire for an item today
  * - isInQuietHours() — checks if current time falls within a user's quiet hours
  * - buildNotificationMessage() — generates push notification title + body text
+ *
+ * IMPORTANT: These functions are duplicated in the Edge Function at
+ * supabase/functions/check-expiration-notifications/index.ts because Deno
+ * cannot import from the shared npm package. If you change logic here,
+ * update the Edge Function copy as well (and vice versa).
  */
 
 import type { NotificationType } from '../types/notifications.js';
