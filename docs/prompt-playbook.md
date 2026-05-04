@@ -460,11 +460,13 @@ git add -A && git commit -m "feat: complete analytics dashboards" && git push
 
 ## Phase 8: Polish & Deploy
 
-### 8.1 — Final E2E Polish
+### 8.1 — Final E2E Polish ✅
 
 ```
 Using /e2e, do a final review of all Playwright E2E tests across the 5 critical paths. Ensure all tests are resilient, fast, and pass reliably without flaky behavior. Run pnpm --filter web test:e2e.
 ```
+
+> **Result:** 73/73 E2E tests passing. Fixed 5 failures (Finish Shopping flow mismatch, ambiguous selectors, wrong ports). Eliminated 7/8 waitForTimeout calls. Only remaining timeout is Mailpit polling retry (acceptable).
 
 ### 8.2 — Error tracking
 
