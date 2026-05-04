@@ -59,6 +59,34 @@ export default function SettingsScreen() {
             color={theme.colors.onSurfaceVariant}
           />
         </Pressable>
+
+        <Pressable
+          testID="settings-analytics-row"
+          style={({ pressed }) => [
+            styles.menuRow,
+            {
+              backgroundColor: pressed
+                ? theme.colors.surfaceVariant
+                : 'transparent',
+            },
+          ]}
+          onPress={() => router.push('/(app)/analytics')}
+        >
+          <MaterialCommunityIcons
+            name="chart-line"
+            size={22}
+            color={theme.colors.onSurface}
+            style={styles.menuIcon}
+          />
+          <Text variant="bodyLarge" style={styles.menuLabel}>
+            Analytics
+          </Text>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={22}
+            color={theme.colors.onSurfaceVariant}
+          />
+        </Pressable>
       </View>
 
       <Button mode="outlined" onPress={signOut} style={styles.signOut}>

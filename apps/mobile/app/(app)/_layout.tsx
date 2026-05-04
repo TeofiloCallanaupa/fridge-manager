@@ -77,6 +77,15 @@ export default function AppLayout() {
           headerShown: false,
         }}
       />
+      {/* Analytics is accessed from Settings — hide from tab bar */}
+      <Tabs.Screen
+        name="analytics"
+        options={{
+          href: null,
+          title: 'Analytics',
+          headerShown: false,
+        }}
+      />
     </Tabs>
   )
 }

@@ -55,6 +55,7 @@ jest.mock('expo-router', () => ({
   router: { back: jest.fn() },
 }))
 
+// @ts-expect-error — Expo Router route group path; Jest resolves at runtime
 import NotificationsScreen from '../../app/(app)/notifications'
 import {
   useNotificationPreferences,

@@ -46,6 +46,12 @@ export type {
   SystemLog,
 } from './types/notifications.js';
 
+export type {
+  AnalyticsSummary,
+  MonthlyTrend,
+  CategoryWaste,
+} from './types/analytics.js';
+
 // Utils
 export { calculateExpiration, getDaysSince, getExpirationColor } from './utils/expiration.js';
 export { getCategoryEmoji, getDefaultShelfDays } from './utils/categories.js';
@@ -64,6 +70,13 @@ export type {
   QuietHoursPrefs,
   NotificationMessage,
 } from './utils/notifications.js';
+export {
+  calculateWasteRate,
+  calculateStreakWeeks,
+  formatWasteRate,
+  formatShelfLife,
+  formatStatNumber,
+} from './utils/analytics.js';
 
 // Constants
 export {
