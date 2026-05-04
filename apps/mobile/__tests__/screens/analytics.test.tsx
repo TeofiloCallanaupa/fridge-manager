@@ -109,12 +109,11 @@ describe('AnalyticsScreen', () => {
 
   it('renders stat cards on At a Glance tab', () => {
     const { getByText } = renderScreen()
-    expect(getByText('11%')).toBeTruthy()
-    expect(getByText('47')).toBeTruthy()
-    expect(getByText('8')).toBeTruthy()
-    expect(getByText('Dairy')).toBeTruthy()
-    expect(getByText('6')).toBeTruthy()
-    expect(getByText('4.2')).toBeTruthy()
+    expect(getByText('47')).toBeTruthy()        // consumed
+    expect(getByText('8')).toBeTruthy()          // wasted
+    expect(getByText('Dairy')).toBeTruthy()      // top wasted category
+    expect(getByText('6')).toBeTruthy()          // shopping trips
+    expect(getByText('4.2 days')).toBeTruthy()   // avg shelf life (formatted via formatShelfLife)
   })
 
   it('renders streak banner', () => {

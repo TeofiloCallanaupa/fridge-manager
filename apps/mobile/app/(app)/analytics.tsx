@@ -86,12 +86,9 @@ const STAT_CARDS: StatCard[] = [
     label: 'AVG LIFE',
     getValue: (s) => {
       if (s.avgShelfLifeDays === null) return '—'
-      return String(s.avgShelfLifeDays)
+      return formatShelfLife(s.avgShelfLifeDays)
     },
-    getSubtitle: (s) =>
-      s.avgShelfLifeDays !== null
-        ? `day${s.avgShelfLifeDays === 1 ? '' : 's'} avg shelf life`
-        : 'No data yet',
+    getSubtitle: () => 'avg shelf life',
   },
 ]
 
