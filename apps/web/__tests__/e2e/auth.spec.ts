@@ -59,10 +59,10 @@ test.describe('Authentication Flows', () => {
     await page.fill('input[name="password"]', testPassword);
     await page.click('#login-button');
 
-    // Should redirect to dashboard
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
-    await expect(page.getByText('Sign Out')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByText('Test Login User')).toBeVisible({ timeout: 5000 });
+    // Should redirect to grocery (main landing page)
+    await expect(page).toHaveURL(/\/grocery/, { timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Grocery List' })).toBeVisible({ timeout: 5000 });
+    await expect(page.getByTestId('header-settings')).toBeVisible({ timeout: 5000 });
   });
 
   test('Invalid login flow', async ({ page }) => {

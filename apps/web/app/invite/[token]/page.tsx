@@ -90,7 +90,7 @@ async function acceptInvite(formData: FormData) {
   
   const token = formData.get('token') as string;
   
-  if (!token) return redirect('/dashboard');
+  if (!token) return redirect('/grocery');
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -150,5 +150,5 @@ async function acceptInvite(formData: FormData) {
     .update({ status: 'accepted' })
     .eq('id', token);
 
-  redirect('/dashboard');
+  redirect('/grocery');
 }

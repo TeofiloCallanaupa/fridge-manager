@@ -79,8 +79,8 @@ test.describe('Auth & Onboarding Flow', () => {
     await page.fill('input[name="name"]', 'Playwright Test Household');
     await page.click('button[type="submit"]');
 
-    // 8. Dashboard (Completion)
-    await expect(page).toHaveURL('http://localhost:3000/dashboard');
+    // 8. Grocery list (Completion — main landing page)
+    await expect(page).toHaveURL(/\/grocery/, { timeout: 15000 });
     // For now, accept whatever is on the home page as long as we landed there
   });
 });

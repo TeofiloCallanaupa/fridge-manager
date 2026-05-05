@@ -69,7 +69,7 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
           </p>
         </div>
         <Link
-          href="/dashboard"
+          href="/settings"
           className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           aria-label="Settings"
           data-testid="header-settings"

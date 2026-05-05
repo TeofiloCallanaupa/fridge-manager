@@ -231,18 +231,13 @@ test.describe('Analytics Dashboard Flows', () => {
     await page.fill('input[name="password"]', testPassword);
     await page.click('#login-button');
 
-    await expect(page).toHaveURL(/\/(dashboard|grocery)/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/(grocery)/, { timeout: 15000 });
 
-    // Navigate to dashboard
-    await page.goto('/dashboard');
+    // Navigate to analytics via bottom nav
+    await page.goto('/analytics');
     await page.waitForLoadState('networkidle');
 
-    // Click the analytics nav card
-    const analyticsLink = page.getByTestId('nav-analytics');
-    await expect(analyticsLink).toBeVisible({ timeout: 10000 });
-    await analyticsLink.click();
-
-    // Should navigate to analytics
+    // Should be on analytics
     await expect(page).toHaveURL(/\/analytics/, { timeout: 10000 });
   });
 
@@ -252,7 +247,7 @@ test.describe('Analytics Dashboard Flows', () => {
     await page.fill('input[name="password"]', testPassword);
     await page.click('#login-button');
 
-    await expect(page).toHaveURL(/\/(dashboard|grocery)/, { timeout: 15000 });
+    await expect(page).toHaveURL(/\/(grocery)/, { timeout: 15000 });
 
     // Navigate to grocery first
     await page.goto('/grocery');

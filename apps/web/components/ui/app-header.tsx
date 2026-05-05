@@ -15,7 +15,7 @@ export function AppHeader() {
           Fridge Manager
         </span>
         <Link
-          href="/dashboard"
+          href="/settings"
           className="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
           aria-label="Settings"
           data-testid="header-settings"

@@ -85,8 +85,8 @@ test.describe('Bottom Navigation', () => {
     await page.fill('input[name="password"]', testPassword);
     await page.click('#login-button');
 
-    // Wait for auth redirect — may go to dashboard, grocery, or onboarding
-    await expect(page).toHaveURL(/\/(dashboard|grocery|onboarding)/, { timeout: 15000 });
+    // Wait for auth redirect — may go to grocery or onboarding
+    await expect(page).toHaveURL(/\/(grocery|onboarding)/, { timeout: 15000 });
     await page.waitForLoadState('networkidle');
   }
 
@@ -146,7 +146,7 @@ test.describe('Bottom Navigation', () => {
     await expect(analyticsTab).toHaveAttribute('aria-current', 'page');
   });
 
-  test('settings gear icon navigates to dashboard', async ({ page }) => {
+  test('settings gear icon navigates to settings page', async ({ page }) => {
     await login(page);
     await page.goto('/grocery');
     await page.waitForLoadState('networkidle');
@@ -155,12 +155,12 @@ test.describe('Bottom Navigation', () => {
     await expect(settingsGear).toBeVisible({ timeout: 10000 });
     await settingsGear.click();
 
-    await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
+    await expect(page).toHaveURL(/\/settings/, { timeout: 10000 });
   });
 
-  test('bottom nav is visible on dashboard page', async ({ page }) => {
+  test('bottom nav is visible on settings page', async ({ page }) => {
     await login(page);
-    await page.goto('/dashboard');
+    await page.goto('/settings');
     await page.waitForLoadState('networkidle');
 
     await expect(page.getByTestId('nav-tab-grocery')).toBeVisible({ timeout: 10000 });

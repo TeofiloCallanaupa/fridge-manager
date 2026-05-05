@@ -112,7 +112,7 @@ test.describe('Household Invite Flow', () => {
     await page.fill('input[name="email"]', inviteEmail);
     await page.fill('input[name="password"]', 'Password123!');
     await page.click('#login-button');
-    await page.waitForURL(/\/onboarding\/household|\/dashboard/, { timeout: 15000 });
+    await page.waitForURL(/\/onboarding\/household|\/grocery/, { timeout: 15000 });
     
     // User B clicks the invite link again (or is redirected there via next param)
     await page.goto(`/invite/${token}`);
@@ -120,8 +120,8 @@ test.describe('Household Invite Flow', () => {
     // Click Accept Invitation
     await page.click('button[type="submit"]');
     
-    // 5. Should be redirected to dashboard and successfully joined
-    await page.waitForURL('/dashboard');
+    // 5. Should be redirected to grocery and successfully joined
+    await page.waitForURL('/grocery');
     
     // Verify DB state
     const { data: member } = await adminClient.from('household_members')

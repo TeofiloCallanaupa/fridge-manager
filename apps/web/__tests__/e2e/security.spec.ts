@@ -102,7 +102,7 @@ test.describe('Security Regression Tests', () => {
       await page.fill('input[name="email"]', userC.email);
       await page.fill('input[name="password"]', 'SecureTest123!');
       await page.click('#login-button');
-      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+      await expect(page).toHaveURL(/\/grocery/, { timeout: 15000 });
 
       // Try to accept User B's invite
       await page.goto(`/invite/${inviteForB.id}`);
@@ -111,7 +111,7 @@ test.describe('Security Regression Tests', () => {
       // Click Accept
       await page.click('button[type="submit"]');
 
-      // Should be redirected back to the invite page with an error — NOT to /dashboard
+      // Should be redirected back to the invite page with an error — NOT to /grocery
       // The server action detects email mismatch and redirects to /invite/{token}?error=...
       await page.waitForURL(/\/invite\/.*\?error=/, { timeout: 10000 });
       const url = page.url();
@@ -175,7 +175,7 @@ test.describe('Security Regression Tests', () => {
     test('Allows valid relative paths', async ({ page }) => {
       // This will fail at the token exchange step (fake code),
       // but the redirect target should be /error (not the next param since exchange failed)
-      await page.goto('/auth/callback?next=/dashboard&code=fake-code');
+      await page.goto('/auth/callback?next=/settings&code=fake-code');
 
       // It should go to /error since the code is invalid, but it should NOT go to an external site
       const url = page.url();
@@ -183,8 +183,8 @@ test.describe('Security Regression Tests', () => {
     });
   });
 
-  test.describe('Dashboard Profile Query', () => {
-    test('Dashboard shows actual display name (not fallback)', async ({ page }) => {
+  test.describe('Settings Profile Query', () => {
+    test('Settings page shows actual display name (not fallback)', async ({ page }) => {
       const password = 'DashTest123!';
       const email = `dash-test-${crypto.randomUUID()}@example.com`;
 
@@ -218,13 +218,16 @@ test.describe('Security Regression Tests', () => {
       await page.fill('input[name="password"]', password);
       await page.click('#login-button');
 
-      await expect(page).toHaveURL(/\/dashboard/, { timeout: 15000 });
+      await expect(page).toHaveURL(/\/grocery/, { timeout: 15000 });
+
+      // Navigate to settings
+      await page.goto('/settings');
 
       // Should show the actual display name, not the fallback "Chef"
       await expect(page.getByText('Dashboard Test Name')).toBeVisible({ timeout: 5000 });
 
-      // Should NOT show the fallback
-      const chefHeading = page.locator('h2:has-text("Welcome back, Chef")');
+      // Should NOT show the fallback "Chef" (only shown when no display_name)
+      const chefHeading = page.locator('h2:has-text("Chef")');
       await expect(chefHeading).not.toBeVisible();
     });
   });

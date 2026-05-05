@@ -1,6 +1,25 @@
 import { Tabs } from 'expo-router'
+import { Pressable } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { router } from 'expo-router'
+
+function SettingsGearButton() {
+  const theme = useTheme()
+  return (
+    <Pressable
+      onPress={() => router.push('/(app)/settings')}
+      style={{ marginRight: 12 }}
+      testID="header-settings"
+    >
+      <MaterialCommunityIcons
+        name="cog-outline"
+        size={24}
+        color={theme.colors.onSurfaceVariant}
+      />
+    </Pressable>
+  )
+}
 
 export default function AppLayout() {
   const theme = useTheme()
@@ -16,6 +35,7 @@ export default function AppLayout() {
           fontWeight: 'bold',
         },
         headerShadowVisible: false,
+        headerRight: () => <SettingsGearButton />,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarLabelStyle: {
@@ -53,11 +73,12 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="analytics"
         options={{
-          title: 'Settings',
+          title: 'Analytics',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+            <MaterialCommunityIcons name="chart-line" color={color} size={size} />
           ),
         }}
       />
@@ -68,21 +89,20 @@ export default function AppLayout() {
           href: null,
         }}
       />
+      {/* Settings is accessed via header gear icon — hide from tab bar */}
+      <Tabs.Screen
+        name="settings"
+        options={{
+          href: null,
+          title: 'Settings',
+        }}
+      />
       {/* Notifications is accessed from Settings — hide from tab bar */}
       <Tabs.Screen
         name="notifications"
         options={{
           href: null,
           title: 'Notifications',
-          headerShown: false,
-        }}
-      />
-      {/* Analytics is accessed from Settings — hide from tab bar */}
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          href: null,
-          title: 'Analytics',
           headerShown: false,
         }}
       />

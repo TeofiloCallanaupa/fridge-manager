@@ -36,7 +36,7 @@ export async function signup(formData: FormData) {
   
   if (data?.session) {
     // If auto-confirm is on, we're already logged in
-    redirect(next || '/dashboard')
+    redirect(next || '/grocery')
   } else {
     redirect('/signup?message=Check your email to confirm your account')
   }
