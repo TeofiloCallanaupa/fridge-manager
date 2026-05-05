@@ -1,6 +1,13 @@
 -- ============================================================================
 -- Migration 011: Enable pg_cron and schedule notification check
 -- Triggers the check-expiration-notifications Edge Function daily at 1pm UTC (9am ET)
+--
+-- ⚠️  DEPLOYMENT NOTE:
+--   Before applying to production, replace the two placeholders below:
+--     1. <SUPABASE_URL>  → your project URL (e.g. https://abc123.supabase.co)
+--     2. <ANON_KEY>      → your project's anon/public key
+--   These values are in: Supabase Dashboard → Settings → API
+--   DO NOT commit real keys to this file — apply manually via SQL Editor.
 -- ============================================================================
 
 -- Enable extensions
@@ -12,7 +19,6 @@ GRANT USAGE ON SCHEMA extensions TO postgres;
 
 -- Schedule daily notification check at 1pm UTC (9am ET)
 -- Uses pg_net to call the Edge Function via HTTP POST
--- NOTE: Replace <SUPABASE_URL> and <ANON_KEY> with actual values in the applied migration
 SELECT cron.schedule(
   'daily-expiration-check',     -- job name
   '0 13 * * *',                 -- cron expression: 1pm UTC daily

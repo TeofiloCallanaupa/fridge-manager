@@ -33,8 +33,8 @@ description: Review system architecture, schema design, data flow, and API surfa
 - [ ] No Redux anywhere
 
 ### Navigation & UX
-- [ ] 3-tab bottom nav: Grocery, Inventory, Settings
-- [ ] Analytics lives inside Settings (not its own tab)
+- [ ] 3-tab bottom nav: Grocery, Inventory, Analytics
+- [ ] Settings accessible via gear icon in AppHeader (not its own tab)
 - [ ] Checkout is "auto-move on check" (not a separate flow)
 - [ ] Discard is "Used it" / "Tossed it" (single tap)
 

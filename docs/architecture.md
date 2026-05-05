@@ -820,15 +820,19 @@ apps/mobile/
 - ~~Should the default shelf-life table be user-editable per household?~~ **Resolved: No.** Not needed for MVP. Users can edit expiration dates on individual items. The adaptive learning system (future) handles household-specific adjustments automatically.
 - ~~Exact values for the `default_shelf_days` seed data?~~ **Resolved: Import USDA FoodKeeper dataset directly.** 500+ items with fridge/freezer/pantry shelf life ranges. No manual value-picking needed.
 
-### Remaining: Mobile Navigation Structure
+### Navigation Structure
 
-~~How should the bottom tab bar be organized?~~ **Resolved: Option B (3-tab + menu)**
+~~How should the bottom tab bar be organized?~~ **Resolved: 3-tab bottom nav + header gear icon**
+
+Analytics is used more frequently than Settings, so it gets its own tab. Settings (profile, household, notification prefs) is accessible via a ⚙️ gear icon in the page header on every screen.
 
 | Tab | Content |
 |-----|---------|
 | 🛒 **Grocery** | Category-grouped shopping list. Main screen. |
-| 🏠 **Inventory** | Fridge/freezer/pantry items with color-coded expiration + days since added. Recently Removed section at bottom. |
-| ⚙️ **Settings** | Profile (display name, avatar editor), household management, notification preferences, analytics page (At a Glance + Charts tabs). |
+| 📦 **Inventory** | Fridge/freezer/pantry items with color-coded expiration + days since added. Recently Removed section at bottom. |
+| 📊 **Analytics** | At a Glance tab (text stats) + Charts tab (Victory charts). |
+
+**Settings access:** ⚙️ gear icon in the top-right of the `AppHeader` on all authenticated pages → navigates to the Dashboard/Settings page (profile, avatar, household management, notification preferences).
 
 ---
 
@@ -853,7 +857,7 @@ Design screens BEFORE coding using **Google Stitch** (MCP tool available in Anti
 | **Discard Flow** | "Used it" / "Tossed it" prompt, restock suggestion |
 | **Recently Removed** | Activity feed with avatars, undo actions |
 | **Onboarding** | Signup → display name → avatar creator → household setup |
-| **Settings** | Profile + avatar editor, household management, notification prefs, analytics |
+| **Dashboard / Settings** | Profile + avatar editor, household management, notification prefs (accessible via header gear icon) |
 | **Analytics** | At a Glance tab (text stats) + Charts tab (Victory charts) |
 
 ### Design System
