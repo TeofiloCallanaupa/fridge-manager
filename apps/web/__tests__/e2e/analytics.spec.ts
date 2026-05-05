@@ -225,7 +225,7 @@ test.describe('Analytics Dashboard Flows', () => {
     await expect(page.getByTestId('stat-cards')).toBeVisible({ timeout: 5000 });
   });
 
-  test('dashboard links to analytics page', async ({ page }) => {
+  test('dashboard links to analytics page via nav card', async ({ page }) => {
     await page.goto('/login');
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
@@ -241,6 +241,27 @@ test.describe('Analytics Dashboard Flows', () => {
     const analyticsLink = page.getByTestId('nav-analytics');
     await expect(analyticsLink).toBeVisible({ timeout: 10000 });
     await analyticsLink.click();
+
+    // Should navigate to analytics
+    await expect(page).toHaveURL(/\/analytics/, { timeout: 10000 });
+  });
+
+  test('bottom nav tab navigates to analytics page', async ({ page }) => {
+    await page.goto('/login');
+    await page.fill('input[name="email"]', testEmail);
+    await page.fill('input[name="password"]', testPassword);
+    await page.click('#login-button');
+
+    await expect(page).toHaveURL(/\/(dashboard|grocery)/, { timeout: 15000 });
+
+    // Navigate to grocery first
+    await page.goto('/grocery');
+    await page.waitForLoadState('networkidle');
+
+    // Click analytics tab in bottom nav
+    const analyticsTab = page.getByTestId('nav-tab-analytics');
+    await expect(analyticsTab).toBeVisible({ timeout: 10000 });
+    await analyticsTab.click();
 
     // Should navigate to analytics
     await expect(page).toHaveURL(/\/analytics/, { timeout: 10000 });
