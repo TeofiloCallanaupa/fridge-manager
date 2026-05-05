@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
@@ -14,7 +15,7 @@ import { InventoryItemCard } from './inventory-item-card'
 import { RecentlyRemoved } from './recently-removed'
 import { ItemDetailSheet } from './item-detail-sheet'
 import { QuickAddSheet } from './quick-add-sheet'
-import { Plus } from 'lucide-react'
+import { Plus, Settings } from 'lucide-react'
 import type { StorageLocation } from '@fridge-manager/shared'
 
 type InventoryListProps = {
@@ -56,15 +57,25 @@ export function InventoryList({ householdId, userId }: InventoryListProps) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground tracking-tight">
-          Inventory
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {counts
-            ? `${(counts.fridge + counts.freezer + counts.pantry)} items in your kitchen`
-            : 'Loading...'}
-        </p>
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Inventory
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {counts
+              ? `${(counts.fridge + counts.freezer + counts.pantry)} items in your kitchen`
+              : 'Loading...'}
+          </p>
+        </div>
+        <Link
+          href="/dashboard"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+          aria-label="Settings"
+          data-testid="header-settings"
+        >
+          <Settings className="w-5 h-5" />
+        </Link>
       </div>
 
       {/* Location tabs */}

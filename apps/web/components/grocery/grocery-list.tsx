@@ -1,13 +1,14 @@
 'use client'
 
 import { useMemo } from 'react'
+import Link from 'next/link'
 import { useGroceryItems, useFinishShopping } from '@/hooks/use-grocery-items'
 import { useCategories } from '@/hooks/use-categories'
 import { useRealtimeGrocery } from '@/hooks/use-realtime-grocery'
 import { CategorySection } from './category-section'
 import { GroceryFab } from './grocery-fab'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ShoppingBasket, ShoppingCart } from 'lucide-react'
+import { ShoppingBasket, ShoppingCart, Settings } from 'lucide-react'
 import type { GroceryItemWithCategory } from '@/hooks/use-grocery-items'
 import type { Category } from '@fridge-manager/shared'
 
@@ -67,21 +68,31 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
   const totalCategories = groups.length
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen pb-32">
+    <div className="bg-surface text-on-surface min-h-screen">
       {/* Top App Bar */}
-      <header className="bg-surface/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="flex justify-between items-center px-8 py-6 max-w-4xl mx-auto">
+      <header className="bg-surface/80 backdrop-blur-xl sticky top-0 z-40 border-b border-outline-variant/30">
+        <div className="flex justify-between items-center px-6 py-4 max-w-4xl mx-auto">
           <div className="flex flex-col">
-            <h1 className="font-sans tracking-tight text-2xl font-bold leading-tight text-primary">
+            <h1 className="font-sans tracking-tight text-lg font-bold leading-tight text-primary">
               Grocery List
             </h1>
-            <p className="text-on-secondary-container text-sm font-medium">
+            <p className="text-on-secondary-container text-xs font-medium">
               {isLoading
                 ? 'Loading...'
                 : `${totalItems} item${totalItems !== 1 ? 's' : ''}${checkedCount > 0 ? ` · ${checkedCount} checked` : ''} · ${totalCategories} categor${totalCategories !== 1 ? 'ies' : 'y'}`}
             </p>
           </div>
-          <SyncBadge status={syncStatus} />
+          <div className="flex items-center gap-2">
+            <SyncBadge status={syncStatus} />
+            <Link
+              href="/dashboard"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors"
+              aria-label="Settings"
+              data-testid="header-settings"
+            >
+              <Settings className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </header>
 
