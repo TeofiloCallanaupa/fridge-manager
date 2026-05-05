@@ -88,6 +88,7 @@ export {
 export {
   NOTIFICATION_THRESHOLDS,
   QUIET_HOURS_DEFAULT,
+  DEFAULT_NOTIFICATION_PREFS,
 } from './constants/notifications.js';
 
 // Queries (platform-agnostic, accept any SupabaseClient)

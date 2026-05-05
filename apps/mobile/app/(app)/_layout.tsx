@@ -97,15 +97,7 @@ export default function AppLayout() {
           title: 'Settings',
         }}
       />
-      {/* Notifications is accessed from Settings — hide from tab bar */}
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          href: null,
-          title: 'Notifications',
-          headerShown: false,
-        }}
-      />
+
     </Tabs>
   )
 }
