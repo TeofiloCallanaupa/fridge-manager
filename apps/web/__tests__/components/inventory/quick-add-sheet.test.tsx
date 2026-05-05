@@ -147,29 +147,21 @@ describe('QuickAddSheet', () => {
   })
 
   it('renders category picker with options', async () => {
-    const user = userEvent.setup()
     render(<QuickAddSheet {...defaultProps} />, { wrapper: createWrapper() })
 
-    // Open category selector
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
-
-    // All categories should be listed
-    await expect(screen.getByText('Produce')).toBeDefined()
-    await expect(screen.getByText('Dairy')).toBeDefined()
-    await expect(screen.getByText('Frozen')).toBeDefined()
+    // Category chips should be visible directly (no need to open dropdown)
+    expect(screen.getByText('Produce')).toBeDefined()
+    expect(screen.getByText('Dairy')).toBeDefined()
+    expect(screen.getByText('Frozen')).toBeDefined()
   })
 
   it('renders location selector with fridge/freezer/pantry', async () => {
-    const user = userEvent.setup()
     render(<QuickAddSheet {...defaultProps} />, { wrapper: createWrapper() })
 
-    const locationTrigger = screen.getByRole('combobox', { name: /location/i })
-    await user.click(locationTrigger)
-
-    await expect(screen.getByText(/Fridge/)).toBeDefined()
-    await expect(screen.getByText(/Freezer/)).toBeDefined()
-    await expect(screen.getByText(/Pantry/)).toBeDefined()
+    // Location pills should be visible directly
+    expect(screen.getByText('Fridge')).toBeDefined()
+    expect(screen.getByText('Freezer')).toBeDefined()
+    expect(screen.getByText('Pantry')).toBeDefined()
   })
 
   it('pre-selects the active location from inventory tab', () => {
@@ -178,10 +170,9 @@ describe('QuickAddSheet', () => {
       { wrapper: createWrapper() },
     )
 
-    // The location selector should reflect the active tab's location
-    const locationTrigger = screen.getByRole('combobox', { name: /location/i })
-    // SelectValue renders the option's value text, which contains 'Freezer' in the label
-    expect(locationTrigger.textContent?.toLowerCase()).toContain('freezer')
+    // The Freezer pill button should have the selected styling (bg-primary)
+    const freezerButton = screen.getByText('Freezer').closest('button')
+    expect(freezerButton?.className).toContain('bg-primary')
   })
 
   it('renders expiration date input', () => {
@@ -219,9 +210,7 @@ describe('QuickAddSheet', () => {
     // Fill name
     await user.type(screen.getByLabelText(/item name/i), 'Bananas')
 
-    // Pick category
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip directly
     await user.click(screen.getByText('Produce'))
 
     const submitButton = screen.getByRole('button', { name: /add to inventory/i })
@@ -254,9 +243,7 @@ describe('QuickAddSheet', () => {
     await user.type(screen.getByLabelText(/item name/i), 'Strawberries')
     await user.type(screen.getByLabelText(/quantity/i), '1 lb')
 
-    // Pick category
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip
     await user.click(screen.getByText('Produce'))
 
     // Submit
@@ -280,8 +267,7 @@ describe('QuickAddSheet', () => {
 
     await user.type(screen.getByLabelText(/item name/i), 'Milk')
 
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip
     await user.click(screen.getByText('Dairy'))
 
     const submitButton = screen.getByRole('button', { name: /add to inventory/i })
@@ -299,8 +285,7 @@ describe('QuickAddSheet', () => {
 
     await user.type(screen.getByLabelText(/item name/i), 'Yogurt')
 
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip
     await user.click(screen.getByText('Dairy'))
 
     // Set expiration date
@@ -321,8 +306,7 @@ describe('QuickAddSheet', () => {
 
     await user.type(screen.getByLabelText(/item name/i), 'Lettuce')
 
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip
     await user.click(screen.getByText('Produce'))
 
     const submitButton = screen.getByRole('button', { name: /add to inventory/i })
@@ -339,8 +323,7 @@ describe('QuickAddSheet', () => {
 
     await user.type(screen.getByLabelText(/item name/i), '  Apples  ')
 
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i })
-    await user.click(categoryTrigger)
+    // Click category chip
     await user.click(screen.getByText('Produce'))
 
     const submitButton = screen.getByRole('button', { name: /add to inventory/i })

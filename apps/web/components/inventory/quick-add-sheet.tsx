@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Sheet,
   SheetContent,
@@ -10,13 +10,6 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useCategories } from '@/hooks/use-categories'
 import { useAddInventoryItem } from '@/hooks/use-inventory-mutations'
 import { Plus, Loader2 } from 'lucide-react'
@@ -30,20 +23,20 @@ type QuickAddSheetProps = {
   activeLocation: StorageLocation
 }
 
-const LOCATION_OPTIONS: { value: StorageLocation; label: string }[] = [
-  { value: 'fridge', label: '🧊 Fridge' },
-  { value: 'freezer', label: '❄️ Freezer' },
-  { value: 'pantry', label: '🗄️ Pantry' },
+const LOCATION_OPTIONS: { value: StorageLocation; label: string; emoji: string }[] = [
+  { value: 'fridge', label: 'Fridge', emoji: '🧊' },
+  { value: 'freezer', label: 'Freezer', emoji: '❄️' },
+  { value: 'pantry', label: 'Pantry', emoji: '🗄️' },
 ]
 
 /**
- * Bottom sheet for adding an item directly to inventory
+ * Centered modal for adding an item directly to inventory
  * without going through the grocery list.
  *
  * Features:
  * - Name + quantity inputs
- * - Category picker with emoji
- * - Location pre-selected from current tab
+ * - Chip-based category picker with emoji (matching mobile)
+ * - Pill-based location selector pre-selected from current tab
  * - Optional expiration date
  */
 export function QuickAddSheet({
@@ -78,6 +71,13 @@ export function QuickAddSheet({
     }
   }, [categoryId, categories])
 
+  const handleCategorySelect = useCallback(
+    (catId: string) => {
+      setCategoryId(catId)
+    },
+    []
+  )
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !categoryId) return
@@ -110,8 +110,11 @@ export function QuickAddSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl">
-        <SheetHeader className="pb-4">
+      <SheetContent
+        side="bottom"
+        className="rounded-t-3xl mx-auto max-w-md left-1/2 -translate-x-1/2 sm:rounded-2xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:max-h-[85vh]"
+      >
+        <SheetHeader className="pb-2">
           <SheetTitle className="text-xl font-bold text-primary">
             Quick Add
           </SheetTitle>
@@ -120,7 +123,7 @@ export function QuickAddSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 pb-6">
+        <form onSubmit={handleSubmit} className="space-y-5 pb-6 px-4 overflow-y-auto max-h-[60vh]">
           {/* Item Name */}
           <div className="space-y-2">
             <label
@@ -161,59 +164,66 @@ export function QuickAddSheet({
             />
           </div>
 
-          {/* Category Picker */}
+          {/* Category Chips */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-on-surface">
               Category
             </label>
-            <Select
-              value={categoryId}
-              onValueChange={(v) => v !== null && setCategoryId(v)}
-            >
-              <SelectTrigger
-                className="h-12 rounded-xl bg-surface-container-low border-outline-variant/30"
-                aria-label="Category"
-              >
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    <span className="flex items-center gap-2">
-                      <span>{cat.emoji}</span>
-                      <span>{cat.name}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2" role="group" aria-label="Category">
+              {categories?.map((cat) => {
+                const isSelected = categoryId === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => handleCategorySelect(cat.id)}
+                    className={`
+                      inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium
+                      transition-all duration-150 cursor-pointer select-none
+                      ${
+                        isSelected
+                          ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'
+                          : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container hover:border-outline-variant/60 active:scale-95'
+                      }
+                    `}
+                  >
+                    <span className="text-base leading-none">{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          {/* Location Selector */}
+          {/* Location Pills */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-on-surface">
               Location
             </label>
-            <Select
-              value={location}
-              onValueChange={(v) =>
-                v !== null && setLocation(v as StorageLocation)
-              }
-            >
-              <SelectTrigger
-                className="h-12 rounded-xl bg-surface-container-low border-outline-variant/30"
-                aria-label="Location"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {LOCATION_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2" role="group" aria-label="Location">
+              {LOCATION_OPTIONS.map((opt) => {
+                const isSelected = location === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setLocation(opt.value)}
+                    className={`
+                      flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium
+                      transition-all duration-150 cursor-pointer select-none
+                      ${
+                        isSelected
+                          ? 'bg-primary text-white shadow-md shadow-primary/25'
+                          : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container active:scale-95'
+                      }
+                    `}
+                  >
+                    <span className="text-base leading-none">{opt.emoji}</span>
+                    <span>{opt.label}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Expiration Date */}

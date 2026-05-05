@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Sheet,
   SheetContent,
@@ -10,13 +10,6 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useCategories } from '@/hooks/use-categories'
 import { useAddGroceryItem } from '@/hooks/use-grocery-items'
 import { Plus, Loader2 } from 'lucide-react'
@@ -29,16 +22,16 @@ type AddItemSheetProps = {
 }
 
 const DESTINATION_OPTIONS = [
-  { value: 'fridge', label: '🧊 Fridge' },
-  { value: 'freezer', label: '❄️ Freezer' },
-  { value: 'pantry', label: '🏠 Pantry' },
-  { value: 'none', label: '✕ None' },
+  { value: 'fridge', label: 'Fridge', emoji: '🧊' },
+  { value: 'freezer', label: 'Freezer', emoji: '❄️' },
+  { value: 'pantry', label: 'Pantry', emoji: '🏠' },
+  { value: 'none', label: 'None', emoji: '✕' },
 ] as const
 
 /**
- * Bottom sheet / slide-over for adding a new grocery item.
- * Features: name input, quantity, category picker (with emoji),
- * destination selector (auto-populated from category default).
+ * Centered modal for adding a new grocery item.
+ * Features: name input, quantity, chip-based category picker (matching mobile),
+ * pill-based destination selector, auto-populated from category default.
  */
 export function AddItemSheet({
   open,
@@ -63,6 +56,13 @@ export function AddItemSheet({
     }
   }, [categoryId, categories])
 
+  const handleCategorySelect = useCallback(
+    (catId: string) => {
+      setCategoryId(catId)
+    },
+    []
+  )
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !categoryId) return
@@ -78,7 +78,6 @@ export function AddItemSheet({
       },
       {
         onSuccess: () => {
-          // Reset form and close sheet
           setName('')
           setQuantity('')
           setCategoryId('')
@@ -93,8 +92,11 @@ export function AddItemSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-3xl">
-        <SheetHeader className="pb-4">
+      <SheetContent
+        side="bottom"
+        className="rounded-t-3xl mx-auto max-w-md left-1/2 -translate-x-1/2 sm:rounded-2xl sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:max-h-[85vh]"
+      >
+        <SheetHeader className="pb-2">
           <SheetTitle className="text-xl font-bold text-primary">
             Add Item
           </SheetTitle>
@@ -103,7 +105,7 @@ export function AddItemSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 pb-6">
+        <form onSubmit={handleSubmit} className="space-y-5 pb-6 px-4 overflow-y-auto max-h-[60vh]">
           {/* Item Name */}
           <div className="space-y-2">
             <label
@@ -144,45 +146,66 @@ export function AddItemSheet({
             />
           </div>
 
-          {/* Category Picker */}
+          {/* Category Chips */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-on-surface">
               Category
             </label>
-            <Select value={categoryId} onValueChange={(v) => v !== null && setCategoryId(v)}>
-              <SelectTrigger className="h-12 rounded-xl bg-surface-container-low border-outline-variant/30">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories?.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    <span className="flex items-center gap-2">
-                      <span>{cat.emoji}</span>
-                      <span>{cat.name}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2">
+              {categories?.map((cat) => {
+                const isSelected = categoryId === cat.id
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => handleCategorySelect(cat.id)}
+                    className={`
+                      inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-medium
+                      transition-all duration-150 cursor-pointer select-none
+                      ${
+                        isSelected
+                          ? 'bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]'
+                          : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container hover:border-outline-variant/60 active:scale-95'
+                      }
+                    `}
+                  >
+                    <span className="text-base leading-none">{cat.emoji}</span>
+                    <span>{cat.name}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
-          {/* Destination Selector */}
+          {/* Destination Pills */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-on-surface">
               Goes to
             </label>
-            <Select value={destination} onValueChange={(v) => v !== null && setDestination(v)}>
-              <SelectTrigger className="h-12 rounded-xl bg-surface-container-low border-outline-variant/30">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DESTINATION_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              {DESTINATION_OPTIONS.map((opt) => {
+                const isSelected = destination === opt.value
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setDestination(opt.value)}
+                    className={`
+                      flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-medium
+                      transition-all duration-150 cursor-pointer select-none
+                      ${
+                        isSelected
+                          ? 'bg-primary text-white shadow-md shadow-primary/25'
+                          : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:bg-surface-container active:scale-95'
+                      }
+                    `}
+                  >
+                    <span className="text-base leading-none">{opt.emoji}</span>
+                    <span className="hidden sm:inline">{opt.label}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Submit */}
