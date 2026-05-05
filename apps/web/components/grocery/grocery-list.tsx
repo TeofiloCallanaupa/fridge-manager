@@ -117,7 +117,7 @@ export function GroceryList({ householdId, userId }: GroceryListProps) {
 
       {/* Finish Shopping bar — only visible when items are checked */}
       {checkedCount > 0 && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={() => finishShopping.mutate({ householdId, userId })}
             disabled={finishShopping.isPending}

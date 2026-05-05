@@ -84,7 +84,10 @@ test.describe('Bottom Navigation', () => {
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', testPassword);
     await page.click('#login-button');
-    await expect(page).toHaveURL(/\/(dashboard|grocery)/, { timeout: 15000 });
+
+    // Wait for auth redirect — may go to dashboard, grocery, or onboarding
+    await expect(page).toHaveURL(/\/(dashboard|grocery|onboarding)/, { timeout: 15000 });
+    await page.waitForLoadState('networkidle');
   }
 
   // -----------------------------------------------------------------------

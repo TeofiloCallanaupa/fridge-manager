@@ -44,7 +44,7 @@ export function BottomNav() {
               {/* Active indicator pill — MD3 style */}
               <span
                 className={`
-                  absolute top-2 w-16 h-8 rounded-full transition-all duration-300
+                  absolute top-2 w-16 h-8 rounded-full transition-all duration-300 pointer-events-none
                   ${isActive ? 'bg-primary/12 scale-100' : 'bg-transparent scale-75'}
                 `}
               />

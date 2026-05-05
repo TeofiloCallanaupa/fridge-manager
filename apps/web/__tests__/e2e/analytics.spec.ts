@@ -169,7 +169,7 @@ test.describe('Analytics Dashboard Flows', () => {
   test('renders analytics page with header and tabs', async ({ page }) => {
     await loginAndNavigate(page);
 
-    await expect(page.getByText('Analytics')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Analytics' })).toBeVisible({ timeout: 10000 });
     await expect(page.getByText('Your food insights this month')).toBeVisible();
     await expect(page.getByTestId('tab-glance')).toBeVisible();
     await expect(page.getByTestId('tab-charts')).toBeVisible();

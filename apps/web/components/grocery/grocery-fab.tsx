@@ -21,7 +21,7 @@ export function GroceryFab({ householdId, userId }: GroceryFabProps) {
     <>
       <button
         onClick={() => setSheetOpen(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 forest-gradient text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all duration-200 z-50 hover:shadow-3xl hover:scale-105"
+        className="fixed bottom-24 right-8 w-14 h-14 forest-gradient text-white rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-all duration-200 z-50 hover:shadow-3xl hover:scale-105"
         aria-label="Add grocery item"
       >
         <Plus className="w-7 h-7" strokeWidth={2.5} />
