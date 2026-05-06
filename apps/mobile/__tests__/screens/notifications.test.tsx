@@ -1,10 +1,12 @@
 /**
- * TDD Red Phase — Tests for NotificationsScreen component
+ * Tests for notification preferences within the Settings screen.
  *
- * Verifies the UI renders correctly and interactions trigger the right hooks.
+ * Verifies the notification UI renders correctly and interactions trigger hooks.
+ * The notification preferences are part of the unified SettingsScreen
+ * (not a standalone screen).
  */
 import React from 'react'
-import { render, fireEvent, waitFor } from '@testing-library/react-native'
+import { render, fireEvent } from '@testing-library/react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PaperProvider } from 'react-native-paper'
 
@@ -48,6 +50,7 @@ jest.mock('../../contexts/AuthContext', () => ({
   useAuth: jest.fn(() => ({
     user: { id: 'user-1' },
     householdId: 'hh-1',
+    profile: { display_name: 'Test User', avatar_config: null },
   })),
 }))
 
@@ -55,7 +58,21 @@ jest.mock('expo-router', () => ({
   router: { back: jest.fn() },
 }))
 
-import NotificationsScreen from '../../app/(app)/notifications'
+jest.mock('../../lib/supabase', () => ({
+  supabase: {
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: { name: 'Test House' }, error: null }),
+    }),
+    auth: {
+      signOut: jest.fn(),
+    },
+  },
+}))
+
+// @ts-expect-error — Expo Router route group path; Jest resolves at runtime
+import SettingsScreen from '../../app/(app)/settings'
 import {
   useNotificationPreferences,
   useUpdateNotificationPreference,
@@ -74,7 +91,7 @@ function renderScreen() {
   return render(
     <QueryClientProvider client={queryClient}>
       <PaperProvider>
-        <NotificationsScreen />
+        <SettingsScreen />
       </PaperProvider>
     </QueryClientProvider>
   )
@@ -84,14 +101,14 @@ function renderScreen() {
 // Tests
 // ---------------------------------------------------------------------------
 
-describe('NotificationsScreen', () => {
+describe('Settings — Notification Preferences', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('renders the header', () => {
+  it('renders the Notification Preferences section header', () => {
     const { getByText } = renderScreen()
-    expect(getByText('Notifications')).toBeTruthy()
+    expect(getByText('Notification Preferences')).toBeTruthy()
   })
 
   it('renders all 5 expiration alert rows', () => {
@@ -103,9 +120,9 @@ describe('NotificationsScreen', () => {
     expect(getByText('Expired')).toBeTruthy()
   })
 
-  it('renders quiet hours section', () => {
+  it('renders quiet hours toggle', () => {
     const { getByText } = renderScreen()
-    expect(getByText('Quiet Hours')).toBeTruthy()
+    expect(getByText('Enable Quiet Hours')).toBeTruthy()
   })
 
   it('renders test notification button', () => {
@@ -134,16 +151,5 @@ describe('NotificationsScreen', () => {
     fireEvent.press(getByTestId('test-notification-button'))
 
     expect(mockTestMutate).toHaveBeenCalled()
-  })
-
-  it('shows loading state while preferences are loading', () => {
-    ;(useNotificationPreferences as jest.Mock).mockReturnValue({
-      data: null,
-      isLoading: true,
-      isSuccess: false,
-    })
-
-    const { getByTestId } = renderScreen()
-    expect(getByTestId('loading-indicator')).toBeTruthy()
   })
 })

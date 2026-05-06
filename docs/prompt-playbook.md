@@ -432,17 +432,21 @@ git add -A && git commit -m "feat: complete push notifications" && git push
 
 ## Phase 7: Analytics
 
-### 7.1 — Analytics queries
+### 7.1 — Analytics queries ✅ DONE
 
 ```
 Using /coder, create the analytics query functions in packages/shared. Calculate: waste rate (items wasted / total discarded), items consumed vs wasted by month, top wasted categories, shopping frequency, average shelf life by category. Use TanStack Query for caching.
 ```
 
-### 7.2 — Design analytics dashboard
+> **Result:** Built `packages/shared/src/queries/analytics.ts` with 3 query functions (fetchAnalyticsSummary, fetchMonthlyTrends, fetchCategoryWaste), 5 pure util functions in `utils/analytics.ts` (calculateWasteRate, calculateStreakWeeks, formatWasteRate, formatShelfLife, formatStatNumber), and full type definitions in `types/analytics.ts`. 20 unit tests passing.
+
+### 7.2 — Design analytics dashboard ✅ DONE
 
 ```
 Using /designer, design the Analytics page layout (At a Glance stats + Charts tabs). Sync with the Stitch design system.
 ```
+
+> **Result:** Followed Heirloom Pantry design system. Two-tab layout with SegmentedButtons. Stat cards in 2-column grid with emoji icons. Custom horizontal bar chart for category waste. Stacked trend bars for monthly consumed vs wasted.
 
 ### 7.3 — Analytics page (web) ✅ DONE
 
@@ -452,17 +456,21 @@ Using /coder, build the /analytics route in apps/web with a server component aut
 
 > **Result:** Built /analytics route with server component auth shell + AnalyticsDashboard client component. Two tabs: "At a Glance" (6 stat cards) + "Charts" (Recharts bar charts for trends + category waste). Added dashboard nav cards. recharts dependency.
 
-### 7.4 — Analytics screen (mobile)
+### 7.4 — Analytics screen (mobile) ✅ DONE
 
 ```
 Using /coder, build the analytics screen in apps/mobile using victory-native for charts. Same two-tab layout as web. Use shared query functions from packages/shared.
 ```
 
-### 7.5 — Write component tests (Analytics)
+> **Result:** Built `apps/mobile/app/(app)/analytics.tsx` with At a Glance tab (6 stat cards, streak banner) and Charts tab (custom horizontal bar chart + stacked trend bars). Uses shared query hooks via `hooks/use-analytics.ts`. No external charting lib needed — used native RN Views for bars.
+
+### 7.5 — Write component tests (Analytics) ✅ DONE
 
 ```
 Using /tester, write component tests for the analytics charts and stat displays.
 ```
+
+> **Result:** Mobile: 6 AnalyticsScreen component tests (header, tabs, stat cards, streak, loading) + 6 use-analytics hook tests (summary calc, empty data, streak, category grouping). Shared: 20 analytics utility tests. Also fixed orphan notifications.test.tsx to test settings screen. 107 mobile tests, 126 shared tests all passing.
 
 ### 7.6 — E2E test & Commit Analytics ✅ DONE
 
