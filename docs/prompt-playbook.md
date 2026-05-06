@@ -506,11 +506,13 @@ Using /coder, set up Sentry in both apps/web and apps/mobile. Install @sentry/ne
 
 > **Result:** Sentry integrated in both platforms. Web: wizard-configured with tracing, session replay, and logs — test page verified errors appear in Sentry dashboard. Mobile: SDK initialized in root layout with Expo plugin, disabled in dev, 20% trace sampling. Sentry MCP server added to Antigravity config. No secrets in git.
 
-### 8.3 — Security final review
+### 8.3 — Security final review ✅ DONE
 
 ```
 Using /security-architect, do a final OWASP compliance review of the entire codebase. Check: all RLS policies are enforced, no SQL injection vectors, auth tokens handled properly, Edge Functions validate inputs, no secrets in client code, CORS configured correctly.
 ```
+
+> **Result:** OWASP Top 10 audit: PASS. RLS on all 12 tables with household isolation via `get_user_households()`. All CHECK constraints in place. No secrets in client code. Edge Functions require JWT. 1 moderate transitive dep vuln (ip-address XSS, dev-only, not exploitable). SECURITY DEFINER functions are intentional for RLS. Leaked password protection skipped (premium feature). 0 critical/high findings.
 
 ### 8.4 — Deploy web
 
