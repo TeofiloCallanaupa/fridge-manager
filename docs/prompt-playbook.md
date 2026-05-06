@@ -375,34 +375,44 @@ git add -A && git commit -m "feat: complete core mobile features" && git push
 ### 6.1 — Notification Edge Function ✅ DONE
 
 ```
-Built `check-expiration-notifications` Edge Function (v3). Queries active inventory items, detects threshold hits (halfway/2-day/1-day/day-of/expired), deduplicates via notification_log, checks user preferences + quiet hours, sends FCM push with data payload (inventory_item_id, household_id, notification_type). Also built `send-test-notification` Edge Function for manual testing.
+Using /coder, create the Supabase Edge Function for notifications. It should: query inventory_items hitting expiration thresholds today (halfway, 2-day, 1-day, day-of, post-expiration), check notification_log to skip duplicates, check each user's notification_preferences and quiet hours, send FCM push to Android devices and Web Push to browsers, log to notification_log and system_logs.
 ```
+
+> **Result:** Built `check-expiration-notifications` Edge Function (v3). Queries active inventory items, detects threshold hits, deduplicates via notification_log, checks user preferences + quiet hours, sends FCM push with data payload (inventory_item_id, household_id, notification_type). Also built `send-test-notification` Edge Function for manual testing. Web Push deferred (architecture marks it as optional/nice-to-have).
 
 ### 6.2 — Notification tables migration ✅ DONE
 
 ```
-Tables created: notification_preferences (per-user threshold toggles + quiet hours), push_subscriptions (FCM tokens with unique constraint), notification_log (dedup tracking), system_logs (cron run audit). All have RLS policies + CHECK constraints.
+Using /coder, create supabase/migrations/003_notification_tables.sql with notification_preferences, push_subscriptions, notification_log, and system_logs tables. Include RLS policies and CHECK constraints.
 ```
+
+> **Result:** Tables created: notification_preferences (per-user threshold toggles + quiet hours), push_subscriptions (FCM tokens with unique constraint on user_id/household_id/token), notification_log (dedup tracking), system_logs (cron run audit). All have RLS policies + CHECK constraints.
 
 ### 6.3 — pg_cron setup ✅ DONE
 
 ```
-pg_cron job `daily-expiration-check` runs at `0 13 * * *` (1pm UTC = 9am ET). Calls the Edge Function via pg_net http_post. Active and verified via cron.job table.
+Using /coder, set up the pg_cron job in Supabase to trigger the notification Edge Function daily at 1pm UTC (9am ET). Create a migration for enabling pg_cron and scheduling the job.
 ```
+
+> **Result:** pg_cron job `daily-expiration-check` runs at `0 13 * * *` (1pm UTC = 9am ET). Calls the Edge Function via pg_net http_post. Active and verified via cron.job table.
 
 ### 6.4 — Mobile push setup ✅ DONE
 
 ```
-usePushNotifications hook: requests permission, gets Expo push token (FCM), upserts to push_subscriptions, handles foreground display, navigates to inventory on notification tap. google-services.json configured. Hook registered in root _layout.tsx. Notification tap extracts inventory_item_id from FCM data payload and routes to /(app)/inventory.
+Using /coder, set up Firebase Cloud Messaging in apps/mobile (Expo). Register for push notifications on app launch, save the FCM token to push_subscriptions table, handle incoming push notifications with proper navigation to the relevant inventory item.
 ```
+
+> **Result:** usePushNotifications hook: requests permission, gets Expo push token (FCM), upserts to push_subscriptions, handles foreground display, navigates to inventory on notification tap. google-services.json configured. Hook registered in root _layout.tsx. Notification tap extracts inventory_item_id from FCM data payload and routes to /(app)/inventory.
 
 ### 6.5 — Test Notifications ✅ DONE
 
 ```
-43 notification tests passing (20 core + 23 pipeline integration). Covers: all 5 threshold types, deduplication rules, preference field mapping, multi-item batch processing, date boundary edge cases, quiet hours filtering, message building. Manual test guide at docs/testing-push-notifications.md. Web Push deferred (architecture marks it as optional/nice-to-have).
+Using /tester, write unit tests for the notification query logic in packages/shared and verify the Edge Function behavior.
 ```
 
-### 6.6 — Commit Notifications
+> **Result:** 43 notification tests passing (20 core + 23 pipeline integration). Covers: all 5 threshold types, deduplication rules, preference field mapping, multi-item batch processing, date boundary edge cases, quiet hours filtering, message building. Manual test guide at docs/testing-push-notifications.md.
+
+### 6.6 — Commit Notifications ✅ DONE
 
 > Run this as a git command.
 
@@ -429,8 +439,10 @@ Using /designer, design the Analytics page layout (At a Glance stats + Charts ta
 ### 7.3 — Analytics page (web) ✅ DONE
 
 ```
-Built /analytics route with server component auth shell + AnalyticsDashboard client component. Two tabs: "At a Glance" (6 stat cards) + "Charts" (Recharts bar charts for trends + category waste). Added dashboard nav cards. recharts dependency.
+Using /coder, build the /analytics route in apps/web with a server component auth shell. Use Recharts for charts. Two tabs: "At a Glance" (stat cards for waste rate, items tracked, etc.) and "Charts" (bar charts for monthly trends + category breakdown). Add navigation cards from the dashboard.
 ```
+
+> **Result:** Built /analytics route with server component auth shell + AnalyticsDashboard client component. Two tabs: "At a Glance" (6 stat cards) + "Charts" (Recharts bar charts for trends + category waste). Added dashboard nav cards. recharts dependency.
 
 ### 7.4 — Analytics screen (mobile)
 
@@ -447,8 +459,10 @@ Using /tester, write component tests for the analytics charts and stat displays.
 ### 7.6 — E2E test & Commit Analytics ✅ DONE
 
 ```
-Playwright E2E tests: auth gate redirect, stat card rendering with seeded data, chart tab switching, dashboard navigation to /analytics. 6 test cases.
+Using /e2e, verify the analytics page flows and write Playwright E2E tests for the analytics dashboard.
 ```
+
+> **Result:** Playwright E2E tests: auth gate redirect, stat card rendering with seeded data, chart tab switching, dashboard navigation to /analytics. 6 test cases.
 
 > Run this as a git command.
 
