@@ -350,18 +350,26 @@ Using /coder, build the inventory screen in apps/mobile. SegmentedButtons for fr
 ### 5.4 — Discard flow + recently removed (mobile) ✅ DONE
 
 ```
-Using /coder + /tester + /designer, built: DiscardSheet (2-step modal: "What happened?" → "Add to grocery list?"), RecentlyRemoved (reason chips, 1-hour Undo window, expandable correction panel), inventory mutation hooks (discard/restore/re-add/change-reason). Long-press item triggers discard. 16 component tests passing.
+Using /coder + /tester + /designer, build the discard flow and recently removed section in apps/mobile. DiscardSheet (2-step modal: "What happened?" → "Add to grocery list?"), RecentlyRemoved (reason chips, undo window, expandable correction panel), inventory mutation hooks (discard/restore/re-add/change-reason). Long-press item triggers discard. Write component tests.
 ```
+
+> **Result:** Built DiscardSheet (2-step modal), RecentlyRemoved (reason chips, 1-hour Undo window, expandable correction panel), inventory mutation hooks. 16 component tests passing.
 
 ### 5.5 — Write component tests (mobile) ✅ DONE
 
 ```
-Added 3 new test suites (27 tests) covering ExpirationBadge (null/green/yellow/red/label), InventoryItemCard (name/qty/emoji/metadata/press/longPress/a11y), and InventoryScreen (header/counts/tabs/empty/loading/error). Also fixed stale login test and web grocery-list type errors. Total: 11 suites, 81 tests passing.
+Using /tester, write component tests for mobile inventory and discard components. Cover ExpirationBadge, InventoryItemCard, and InventoryScreen. Run pnpm --filter mobile test.
 ```
+
+> **Result:** Added 3 new test suites (27 tests) covering ExpirationBadge (null/green/yellow/red/label), InventoryItemCard (name/qty/emoji/metadata/press/longPress/a11y), and InventoryScreen (header/counts/tabs/empty/loading/error). Also fixed stale login test and web grocery-list type errors. Total: 11 suites, 81 tests passing.
 
 ### 5.6 — Manual E2E test & Commit Mobile Features ✅ DONE
 
-Pre-flight verified: 0 TS errors (mobile + web), 81 mobile tests passing, 63 shared tests passing. All work committed incrementally through 5.0–5.5.
+```
+Using /e2e, do a final manual verification of all mobile features. Run TypeScript checks and all test suites to confirm zero errors before committing.
+```
+
+> **Result:** Pre-flight verified: 0 TS errors (mobile + web), 81 mobile tests passing, 63 shared tests passing. All work committed incrementally through 5.0–5.5.
 
 > Commit:
 ```bash
