@@ -71,13 +71,7 @@ jest.mock('../../lib/supabase', () => ({
   },
 }))
 
-// @ts-expect-error — Expo Router route group path; Jest resolves at runtime
 import SettingsScreen from '../../app/(app)/settings'
-import {
-  useNotificationPreferences,
-  useUpdateNotificationPreference,
-  useSendTestNotification,
-} from '../../hooks/use-notification-preferences'
 
 // ---------------------------------------------------------------------------
 // Helpers
