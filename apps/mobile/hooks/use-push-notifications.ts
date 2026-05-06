@@ -5,11 +5,13 @@
  * - Gets the Expo push token (FCM on Android)
  * - Upserts the token to push_subscriptions table
  * - Handles foreground notification display
+ * - Navigates to the inventory screen when a notification is tapped
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import { router } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 
@@ -87,6 +89,24 @@ export function usePushNotifications() {
     [user, householdId]
   );
 
+  /**
+   * Handle notification tap — navigate to the inventory screen.
+   * The FCM data payload contains: inventory_item_id, household_id, notification_type
+   */
+  const handleNotificationTap = useCallback(
+    (response: Notifications.NotificationResponse) => {
+      const data = response.notification.request.content.data as
+        | { inventory_item_id?: string; notification_type?: string }
+        | undefined;
+
+      if (data?.inventory_item_id) {
+        // Navigate to inventory screen — the item will be visible in the list
+        router.navigate('/(app)/inventory');
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     // Register and save token
     registerForPushNotifications().then((token) => {
@@ -105,10 +125,7 @@ export function usePushNotifications() {
 
     // Listen for notification interactions (tap)
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log('Notification tapped:', response);
-        // TODO: Navigate to relevant inventory item
-      }
+      handleNotificationTap
     );
 
     return () => {
@@ -119,7 +136,7 @@ export function usePushNotifications() {
         responseListener.current.remove();
       }
     };
-  }, [registerForPushNotifications, upsertToken]);
+  }, [registerForPushNotifications, upsertToken, handleNotificationTap]);
 
   return {
     expoPushToken,

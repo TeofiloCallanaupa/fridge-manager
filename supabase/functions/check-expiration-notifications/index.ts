@@ -182,7 +182,8 @@ async function sendFCMPush(
   token: string,
   message: NotificationMessage,
   projectId: string,
-  accessToken: string
+  accessToken: string,
+  dataPayload?: Record<string, string>
 ): Promise<boolean> {
   try {
     const res = await fetch(
@@ -200,6 +201,7 @@ async function sendFCMPush(
               title: message.title,
               body: message.body,
             },
+            data: dataPayload,
             android: {
               priority: 'high',
             },
@@ -362,7 +364,12 @@ Deno.serve(async (_req: Request) => {
                 sub.token,
                 message,
                 firebaseServiceAccount.project_id,
-                fcmAccessToken
+                fcmAccessToken,
+                {
+                  inventory_item_id: item.id,
+                  household_id: item.household_id,
+                  notification_type: threshold,
+                }
               );
               if (success) {
                 totalNotificationsSent++;
