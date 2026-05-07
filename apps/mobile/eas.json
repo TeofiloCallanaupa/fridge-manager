@@ -14,7 +14,9 @@
       },
       "distribution": "internal",
       "env": {
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://vsjyngzffwdhqgjuoady.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzanluZ3pmZndkaHFnanVvYWR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTI4MjAsImV4cCI6MjA5Mjg4ODgyMH0.bY26dJ7IazkBsWyJx7PmZ9DGG_Eip54F8ggk1WYQOSw"
       }
     },
     "production": {
