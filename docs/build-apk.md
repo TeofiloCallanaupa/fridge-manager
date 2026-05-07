@@ -32,10 +32,10 @@ cd apps/mobile
 ### Step 1: Log into EAS
 
 ```bash
-npx eas-cli login
+npx eas-cli login --sso
 ```
 
-Enter your Expo account email and password. You only need to do this once.
+This opens your browser to sign in with Google (or whatever you used to sign up). No password needed.
 
 To verify you're logged in:
 ```bash

@@ -49,7 +49,14 @@
           "organization": "self-nyp",
           "project": "fridge-manager-mobile"
         }
-      ]
-    ]
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "bef729e4-9b9d-4766-808d-9e0267fea2f9"
+      }
+    }
   }
 }

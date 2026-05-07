@@ -514,11 +514,13 @@ Using /security-architect, do a final OWASP compliance review of the entire code
 
 > **Result:** OWASP Top 10 audit: PASS. RLS on all 12 tables with household isolation via `get_user_households()`. All CHECK constraints in place. No secrets in client code. Edge Functions require JWT. 1 moderate transitive dep vuln (ip-address XSS, dev-only, not exploitable). SECURITY DEFINER functions are intentional for RLS. Leaked password protection skipped (premium feature). 0 critical/high findings.
 
-### 8.4 — Deploy web
+### 8.4 — Deploy web ✅ DONE
 
 ```
 Using /coder, prepare apps/web for Vercel deployment. Set up environment variables (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY), verify the build passes with pnpm --filter web build, and configure the Vercel project settings.
 ```
+
+> **Result:** Live at https://fridge-manager-web.vercel.app/. Verified: pages load, auth redirect works, console clean. Env vars configured in Vercel dashboard. Auto-deploys from `main`.
 
 ### 8.5 — Build mobile APK
 
