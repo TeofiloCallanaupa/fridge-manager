@@ -6,13 +6,6 @@ import { render, fireEvent } from '@testing-library/react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PaperProvider } from 'react-native-paper'
 
-// Mock Victory Native (Skia won't be available in test environment)
-jest.mock('victory-native', () => ({
-  CartesianChart: ({ children }: any) => children,
-  Bar: () => null,
-  Line: () => null,
-  useChartPressState: () => ({ state: { isActive: false } }),
-}))
 
 const mockSummary = {
   wasteRate: 11,
