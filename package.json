@@ -20,6 +20,13 @@
     "overrides": {
       "postcss": ">=8.5.10",
       "uuid": ">=14.0.0"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "esbuild",
+      "msw",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
