@@ -58,7 +58,6 @@ jest.mock('expo-router', () => ({
   router: { back: jest.fn() },
 }))
 
-// @ts-expect-error — Expo Router route group path; Jest resolves at runtime
 import AnalyticsScreen from '../../app/(app)/analytics'
 import { useAnalyticsSummary } from '../../hooks/use-analytics'
 
