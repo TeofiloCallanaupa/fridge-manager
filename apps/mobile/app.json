@@ -28,6 +28,9 @@
       "permissions": [
         "INTERNET",
         "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "INTERNET",
+        "RECEIVE_BOOT_COMPLETED",
         "VIBRATE"
       ]
     },
@@ -58,6 +61,12 @@
       "eas": {
         "projectId": "bef729e4-9b9d-4766-808d-9e0267fea2f9"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/bef729e4-9b9d-4766-808d-9e0267fea2f9"
     }
   }
 }
