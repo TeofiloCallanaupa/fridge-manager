@@ -8,7 +8,7 @@
  * Matches Stitch-generated "Heirloom Pantry" design.
  */
 import React, { useState } from 'react'
-import { View, ScrollView, StyleSheet, Dimensions } from 'react-native'
+import { View, ScrollView, StyleSheet, Dimensions, Pressable } from 'react-native'
 import {
   Text,
   SegmentedButtons,
@@ -25,6 +25,8 @@ import {
   formatWasteRate,
   formatShelfLife,
 } from '@fridge-manager/shared'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const CARD_WIDTH = (SCREEN_WIDTH - 24 * 2 - 12) / 2
@@ -127,9 +129,22 @@ export default function AnalyticsScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text variant="headlineMedium" style={styles.title}>
-          Analytics
-        </Text>
+        <View style={styles.headerRow}>
+          <Text variant="headlineMedium" style={styles.title}>
+            Analytics
+          </Text>
+          <Pressable
+            onPress={() => router.push('/(app)/settings')}
+            style={styles.settingsButton}
+            testID="header-settings"
+          >
+            <MaterialCommunityIcons
+              name="cog-outline"
+              size={24}
+              color={theme.colors.onSurfaceVariant}
+            />
+          </Pressable>
+        </View>
         <Text
           variant="bodyMedium"
           style={{ color: theme.colors.onSurfaceVariant }}
@@ -370,6 +385,14 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 20,
     gap: 4,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  settingsButton: {
+    padding: 8,
   },
   title: {
     fontWeight: 'bold',
