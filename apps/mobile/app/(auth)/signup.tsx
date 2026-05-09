@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
 import { Text, TextInput, ActivityIndicator } from 'react-native-paper'
 import { Link } from 'expo-router'
 import { supabase } from '../../lib/supabase'
@@ -28,6 +28,10 @@ export default function SignupScreen() {
   }
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
     <ScrollView 
       style={styles.container} 
       contentContainerStyle={styles.scrollContent}
@@ -62,6 +66,8 @@ export default function SignupScreen() {
               underlineColor="transparent"
               activeUnderlineColor="transparent"
               placeholderTextColor="#707972"
+              cursorColor="#206140"
+              selectionColor="#20614040"
             />
           </View>
         </View>
@@ -79,6 +85,8 @@ export default function SignupScreen() {
               activeUnderlineColor="transparent"
               placeholderTextColor="#707972"
               placeholder="••••••••"
+              cursorColor="#206140"
+              selectionColor="#20614040"
             />
           </View>
         </View>
@@ -106,6 +114,7 @@ export default function SignupScreen() {
         </View>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
