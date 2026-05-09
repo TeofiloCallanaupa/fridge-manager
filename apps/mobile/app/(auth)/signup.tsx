@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native'
 import { Text, TextInput, ActivityIndicator } from 'react-native-paper'
 import { Link } from 'expo-router'
 import { supabase } from '../../lib/supabase'
@@ -8,6 +8,22 @@ export default function SignupScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    )
+    const hideSub = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    )
+    return () => {
+      showSub.remove()
+      hideSub.remove()
+    }
+  }, [])
 
   async function signUpWithEmail() {
     setLoading(true)
@@ -34,7 +50,7 @@ export default function SignupScreen() {
     >
     <ScrollView 
       style={styles.container} 
-      contentContainerStyle={styles.scrollContent}
+      contentContainerStyle={[styles.scrollContent, keyboardVisible && { paddingBottom: 300 }]}
       keyboardShouldPersistTaps="handled"
     >
       {/* Top Navigation */}
@@ -126,7 +142,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 300,
+    paddingBottom: 40,
   },
   topNav: {
     flexDirection: 'row',
