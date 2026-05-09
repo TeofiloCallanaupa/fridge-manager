@@ -4,13 +4,14 @@
  *
  * Replaces the old settings page + standalone notifications.tsx.
  */
-import React, { useCallback } from 'react'
-import { View, ScrollView, StyleSheet } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { View, ScrollView, StyleSheet, Keyboard } from 'react-native'
 import {
   Text,
   Switch,
   Button,
   ActivityIndicator,
+  TextInput,
   useTheme,
 } from 'react-native-paper'
 import { useAuth } from '../../contexts/AuthContext'
@@ -24,6 +25,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { QUIET_HOURS_DEFAULT, DEFAULT_NOTIFICATION_PREFS, buildAvatarUrl } from '@fridge-manager/shared'
 import { Image } from 'react-native'
+import { useSendInvite, usePendingInvites } from '../../hooks/use-household-invite'
 
 // ---------------------------------------------------------------------------
 // Alert row config
@@ -61,6 +63,13 @@ function formatTime(time: string | null): string {
 export default function SettingsScreen() {
   const theme = useTheme()
   const { user, profile, householdId } = useAuth()
+
+  // Invite state
+  const [showInviteInput, setShowInviteInput] = useState(false)
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteFeedback, setInviteFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const sendInvite = useSendInvite()
+  const { data: pendingInvites } = usePendingInvites(householdId)
 
   // Notification preferences
   const { data: prefs, isLoading: prefsLoading } = useNotificationPreferences(
@@ -133,6 +142,33 @@ export default function SettingsScreen() {
   const quietHoursEnabled =
     currentPrefs.quiet_hours_start !== null &&
     currentPrefs.quiet_hours_end !== null
+
+  const handleSendInvite = useCallback(async () => {
+    if (!inviteEmail.trim() || !householdId) return
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(inviteEmail.trim())) {
+      setInviteFeedback({ type: 'error', message: 'Please enter a valid email address' })
+      return
+    }
+
+    setInviteFeedback(null)
+    Keyboard.dismiss()
+
+    try {
+      await sendInvite.mutateAsync({ email: inviteEmail.trim(), householdId })
+      setInviteFeedback({ type: 'success', message: `Invite sent to ${inviteEmail.trim()}!` })
+      setInviteEmail('')
+      // Auto-collapse after a short delay
+      setTimeout(() => {
+        setShowInviteInput(false)
+        setInviteFeedback(null)
+      }, 2500)
+    } catch (err: any) {
+      setInviteFeedback({ type: 'error', message: err.message || 'Failed to send invite' })
+    }
+  }, [inviteEmail, householdId, sendInvite])
 
   async function signOut() {
     await supabase.auth.signOut()
@@ -306,6 +342,129 @@ export default function SettingsScreen() {
               </View>
             </View>
           ))}
+
+          {/* Pending invites */}
+          {pendingInvites && pendingInvites.length > 0 && (
+            <>
+              <View style={styles.pendingDivider} />
+              <Text
+                variant="labelMedium"
+                style={{ color: theme.colors.onSurfaceVariant, marginBottom: 6, marginTop: 4 }}
+              >
+                Pending Invites
+              </Text>
+              {pendingInvites.map((invite) => (
+                <View key={invite.id} style={styles.memberRow} testID={`pending-${invite.id}`}>
+                  <View style={[styles.memberAvatar, styles.avatarPlaceholder, { backgroundColor: '#F59E0B20' }]}>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#F59E0B' }}>✉</Text>
+                  </View>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ flex: 1, fontWeight: '500', color: theme.colors.onSurfaceVariant }}
+                    numberOfLines={1}
+                  >
+                    {invite.invited_email}
+                  </Text>
+                  <View style={[styles.roleBadge, { backgroundColor: '#F59E0B20' }]}>
+                    <Text
+                      variant="labelSmall"
+                      style={{ color: '#F59E0B', fontWeight: '600' }}
+                    >
+                      Pending
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </>
+          )}
+
+          {/* Invite member button + collapsible input */}
+          <Button
+            testID="invite-member-button"
+            mode="outlined"
+            icon={showInviteInput ? 'close' : 'account-plus'}
+            onPress={() => {
+              setShowInviteInput(!showInviteInput)
+              setInviteFeedback(null)
+              setInviteEmail('')
+            }}
+            style={styles.inviteButton}
+            textColor={theme.colors.primary}
+          >
+            {showInviteInput ? 'Cancel' : '+ Invite Member'}
+          </Button>
+
+          {showInviteInput && (
+            <View style={styles.inviteInputContainer} testID="invite-input-section">
+              <TextInput
+                testID="invite-email-input"
+                mode="outlined"
+                label="Email address"
+                placeholder="name@example.com"
+                value={inviteEmail}
+                onChangeText={(text) => {
+                  setInviteEmail(text)
+                  setInviteFeedback(null)
+                }}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                autoFocus
+                outlineStyle={{ borderRadius: 12 }}
+                style={{ backgroundColor: 'transparent' }}
+                right={
+                  inviteEmail.trim() ? (
+                    <TextInput.Icon
+                      icon="send"
+                      onPress={handleSendInvite}
+                      disabled={sendInvite.isPending}
+                    />
+                  ) : undefined
+                }
+                onSubmitEditing={handleSendInvite}
+                returnKeyType="send"
+              />
+
+              <Button
+                testID="send-invite-button"
+                mode="contained"
+                onPress={handleSendInvite}
+                loading={sendInvite.isPending}
+                disabled={!inviteEmail.trim() || sendInvite.isPending}
+                style={styles.sendInviteButton}
+                labelStyle={{ fontWeight: '600' }}
+              >
+                Send Invite
+              </Button>
+
+              {inviteFeedback && (
+                <View
+                  style={[
+                    styles.feedbackRow,
+                    {
+                      backgroundColor: inviteFeedback.type === 'success'
+                        ? theme.colors.primary + '15'
+                        : theme.colors.error + '15',
+                    },
+                  ]}
+                  testID="invite-feedback"
+                >
+                  <Text
+                    variant="bodySmall"
+                    style={{
+                      color: inviteFeedback.type === 'success'
+                        ? theme.colors.primary
+                        : theme.colors.error,
+                      fontWeight: '500',
+                    }}
+                  >
+                    {inviteFeedback.type === 'success' ? '✅ ' : '⚠️ '}
+                    {inviteFeedback.message}
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
         </View>
       </View>
 
@@ -367,4 +526,25 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   signOut: { marginTop: 8 },
+  pendingDivider: {
+    height: 1,
+    backgroundColor: 'rgba(0,0,0,0.06)',
+    marginVertical: 10,
+  },
+  inviteButton: {
+    borderRadius: 24,
+    marginTop: 14,
+  },
+  inviteInputContainer: {
+    marginTop: 12,
+    gap: 10,
+  },
+  sendInviteButton: {
+    borderRadius: 24,
+  },
+  feedbackRow: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
 })
