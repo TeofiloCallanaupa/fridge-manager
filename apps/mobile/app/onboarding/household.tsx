@@ -65,7 +65,7 @@ export default function HouseholdScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets>
         <View style={styles.header}>
           <Text variant="headlineLarge" style={{ fontWeight: 'bold', color: theme.colors.primary }}>
             Join a Household
