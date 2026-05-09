@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView } from 'react-native'
 import { Text, TextInput, ActivityIndicator } from 'react-native-paper'
 import { Link } from 'expo-router'
 import { supabase } from '../../lib/supabase'
@@ -59,6 +59,10 @@ export default function LoginScreen() {
   }
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
     <ScrollView 
       style={styles.container} 
       contentContainerStyle={styles.scrollContent}
@@ -189,6 +193,7 @@ export default function LoginScreen() {
         </View>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
