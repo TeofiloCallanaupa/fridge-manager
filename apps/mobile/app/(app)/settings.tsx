@@ -5,7 +5,7 @@
  * Replaces the old settings page + standalone notifications.tsx.
  */
 import React, { useCallback, useState } from 'react'
-import { View, ScrollView, StyleSheet, Keyboard } from 'react-native'
+import { View, ScrollView, StyleSheet, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
 import {
   Text,
   Switch,
@@ -175,9 +175,15 @@ export default function SettingsScreen() {
   }
 
   return (
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
     >
       <Text variant="headlineMedium" style={{ fontWeight: 'bold', marginBottom: 20 }}>
         Settings
@@ -475,6 +481,7 @@ export default function SettingsScreen() {
         Sign Out
       </Button>
     </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
