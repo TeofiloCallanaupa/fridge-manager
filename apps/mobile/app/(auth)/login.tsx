@@ -7,7 +7,9 @@ import { supabase } from '../../lib/supabase'
 export default function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [magicLinkEmail, setMagicLinkEmail] = useState('')
   const [loading, setLoading] = useState(false)
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false)
 
   async function signInWithEmail() {
     setLoading(true)
@@ -20,6 +22,40 @@ export default function LoginScreen() {
       Alert.alert('Sign In Failed', error.message)
     }
     setLoading(false)
+  }
+
+  async function resetPassword() {
+    const resetEmail = email.trim()
+    if (!resetEmail) {
+      Alert.alert('Enter Email', 'Please enter your email address first, then tap "Forgot Password?"')
+      return
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+      redirectTo: 'https://fridge-manager-web.vercel.app/reset-password',
+    })
+    if (error) {
+      Alert.alert('Error', error.message)
+    } else {
+      Alert.alert('Check Your Email', `A password reset link has been sent to ${resetEmail}`)
+    }
+  }
+
+  async function signInWithMagicLink() {
+    const linkEmail = magicLinkEmail.trim()
+    if (!linkEmail) {
+      Alert.alert('Enter Email', 'Please enter your email address to receive a magic link.')
+      return
+    }
+    setMagicLinkLoading(true)
+    const { error } = await supabase.auth.signInWithOtp({
+      email: linkEmail,
+    })
+    if (error) {
+      Alert.alert('Error', error.message)
+    } else {
+      Alert.alert('Check Your Email', `A magic link has been sent to ${linkEmail}`)
+    }
+    setMagicLinkLoading(false)
   }
 
   return (
@@ -65,7 +101,9 @@ export default function LoginScreen() {
         <View style={styles.formGroup}>
           <View style={styles.labelRow}>
             <Text style={styles.label}>Password</Text>
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
+            <TouchableOpacity onPress={resetPassword}>
+              <Text style={styles.forgotPassword}>Forgot Password?</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -106,7 +144,10 @@ export default function LoginScreen() {
         <View style={styles.formGroup}>
           <View style={styles.inputContainer}>
             <TextInput
+              testID="magic-link-email-input"
               placeholder="hello@kitchen.com"
+              onChangeText={setMagicLinkEmail}
+              value={magicLinkEmail}
               autoCapitalize="none"
               keyboardType="email-address"
               style={styles.input}
@@ -118,11 +159,17 @@ export default function LoginScreen() {
         </View>
 
         <TouchableOpacity 
+          testID="magic-link-button"
           style={styles.secondaryButton} 
-          disabled={loading}
+          onPress={signInWithMagicLink}
+          disabled={magicLinkLoading}
           activeOpacity={0.8}
         >
-          <Text style={styles.secondaryButtonText}>Send Magic Link</Text>
+          {magicLinkLoading ? (
+            <ActivityIndicator color="#1a1c1b" />
+          ) : (
+            <Text style={styles.secondaryButtonText}>Send Magic Link</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.footer}>
