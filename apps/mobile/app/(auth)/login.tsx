@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: 24,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
-    paddingBottom: 40,
+    paddingBottom: 300,
   },
   topNav: {
     flexDirection: 'row',
