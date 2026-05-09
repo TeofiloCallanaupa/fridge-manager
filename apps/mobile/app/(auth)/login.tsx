@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Keyboard } from 'react-native'
+import React, { useState } from 'react'
+import { View, StyleSheet, Platform, Alert, ScrollView, TouchableOpacity } from 'react-native'
 import { Text, TextInput, ActivityIndicator } from 'react-native-paper'
 import { Link } from 'expo-router'
 import { supabase } from '../../lib/supabase'
@@ -10,22 +10,6 @@ export default function LoginScreen() {
   const [magicLinkEmail, setMagicLinkEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [magicLinkLoading, setMagicLinkLoading] = useState(false)
-  const [keyboardVisible, setKeyboardVisible] = useState(false)
-
-  useEffect(() => {
-    const showSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
-      () => setKeyboardVisible(true)
-    )
-    const hideSub = Keyboard.addListener(
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
-      () => setKeyboardVisible(false)
-    )
-    return () => {
-      showSub.remove()
-      hideSub.remove()
-    }
-  }, [])
 
   async function signInWithEmail() {
     setLoading(true)
@@ -75,14 +59,11 @@ export default function LoginScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
     <ScrollView 
       style={styles.container} 
-      contentContainerStyle={[styles.scrollContent, keyboardVisible && { paddingBottom: 300 }]}
+      contentContainerStyle={styles.scrollContent}
       keyboardShouldPersistTaps="handled"
+      automaticallyAdjustKeyboardInsets
     >
       {/* Top Navigation */}
       <View style={styles.topNav}>
@@ -208,7 +189,6 @@ export default function LoginScreen() {
         </View>
       </View>
     </ScrollView>
-    </KeyboardAvoidingView>
   )
 }
 
