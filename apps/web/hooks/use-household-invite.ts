@@ -1,11 +1,12 @@
 /**
- * Hooks for household invite management.
+ * Hooks for household invite management (web).
  *
- * - useSendInvite()    — mutation to invite a member via the send-invite Edge Function
+ * - useSendInvite()     — mutation to invite a member via the send-invite Edge Function
+ * - useResendInvite()   — mutation to resend a pending invite
  * - usePendingInvites() — query to list pending invites for the household
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 
 // ---------------------------------------------------------------------------
 // Query keys
@@ -29,10 +30,12 @@ export type PendingInvite = {
 }
 
 // ---------------------------------------------------------------------------
-// usePendingInvites — list pending invites for the household
+// usePendingInvites
 // ---------------------------------------------------------------------------
 
 export function usePendingInvites(householdId: string | null | undefined) {
+  const supabase = createClient()
+
   return useQuery({
     queryKey: inviteKeys.pending(householdId ?? null),
     queryFn: async (): Promise<PendingInvite[]> => {
@@ -51,10 +54,11 @@ export function usePendingInvites(householdId: string | null | undefined) {
 }
 
 // ---------------------------------------------------------------------------
-// useSendInvite — send an invitation via the Edge Function
+// useSendInvite
 // ---------------------------------------------------------------------------
 
 export function useSendInvite() {
+  const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -70,20 +74,19 @@ export function useSendInvite() {
       })
 
       if (error) throw error
+      if (data?.error) throw new Error(data.error)
 
-      // The Edge Function returns { success, invite_id, action } or { error }
-      if (data?.error) {
-        throw new Error(data.error)
+      return data as {
+        success: boolean
+        invite_id?: string
+        action: 'invited' | 'added_directly'
+        message?: string
       }
-
-      return data as { success: boolean; invite_id?: string; action: 'invited' | 'added_directly'; message?: string }
     },
     onSuccess: (_data, variables) => {
-      // Invalidate pending invites so the list refreshes
       queryClient.invalidateQueries({
         queryKey: inviteKeys.pending(variables.householdId),
       })
-      // If user was added directly, also refresh the members list
       queryClient.invalidateQueries({
         queryKey: ['household-members'],
       })
@@ -92,10 +95,11 @@ export function useSendInvite() {
 }
 
 // ---------------------------------------------------------------------------
-// useResendInvite — resend a pending invite
+// useResendInvite
 // ---------------------------------------------------------------------------
 
 export function useResendInvite() {
+  const supabase = createClient()
   const queryClient = useQueryClient()
 
   return useMutation({

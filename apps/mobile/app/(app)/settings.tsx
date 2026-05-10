@@ -25,7 +25,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { QUIET_HOURS_DEFAULT, DEFAULT_NOTIFICATION_PREFS, buildAvatarUrl } from '@fridge-manager/shared'
 import { Image } from 'react-native'
-import { useSendInvite, usePendingInvites } from '../../hooks/use-household-invite'
+import { useSendInvite, usePendingInvites, useResendInvite } from '../../hooks/use-household-invite'
 
 // ---------------------------------------------------------------------------
 // Alert row config
@@ -69,6 +69,7 @@ export default function SettingsScreen() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteFeedback, setInviteFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const sendInvite = useSendInvite()
+  const resendInvite = useResendInvite()
   const { data: pendingInvites } = usePendingInvites(householdId)
 
   // Notification preferences
@@ -157,8 +158,11 @@ export default function SettingsScreen() {
     Keyboard.dismiss()
 
     try {
-      await sendInvite.mutateAsync({ email: inviteEmail.trim(), householdId })
-      setInviteFeedback({ type: 'success', message: `Invite sent to ${inviteEmail.trim()}!` })
+      const result = await sendInvite.mutateAsync({ email: inviteEmail.trim(), householdId })
+      const message = result.action === 'added_directly'
+        ? `${inviteEmail.trim()} has been added to the household!`
+        : `Invite sent to ${inviteEmail.trim()}!`
+      setInviteFeedback({ type: 'success', message })
       setInviteEmail('')
       // Auto-collapse after a short delay
       setTimeout(() => {
@@ -371,14 +375,27 @@ export default function SettingsScreen() {
                   >
                     {invite.invited_email}
                   </Text>
-                  <View style={[styles.roleBadge, { backgroundColor: '#F59E0B20' }]}>
-                    <Text
-                      variant="labelSmall"
-                      style={{ color: '#F59E0B', fontWeight: '600' }}
-                    >
-                      Pending
-                    </Text>
-                  </View>
+                  <Button
+                    testID={`resend-${invite.id}`}
+                    mode="text"
+                    compact
+                    icon="email-fast-outline"
+                    onPress={() => {
+                      if (!householdId) return
+                      resendInvite.mutate(
+                        { email: invite.invited_email, householdId },
+                        {
+                          onSuccess: () => setInviteFeedback({ type: 'success', message: `Resent invite to ${invite.invited_email}` }),
+                          onError: (err: any) => setInviteFeedback({ type: 'error', message: err.message || 'Resend failed' }),
+                        }
+                      )
+                    }}
+                    loading={resendInvite.isPending}
+                    textColor={theme.colors.primary}
+                    style={{ marginRight: -8 }}
+                  >
+                    Resend
+                  </Button>
                 </View>
               ))}
             </>

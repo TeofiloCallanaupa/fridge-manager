@@ -19,6 +19,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') || '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
     
     // We create the client using the user's Auth header so we execute on their behalf
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
@@ -26,6 +27,9 @@ Deno.serve(async (req) => {
         headers: { Authorization: req.headers.get('Authorization')! },
       },
     });
+
+    // Admin client for looking up users and bypassing RLS
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Verify authentication
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
@@ -46,8 +50,60 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Insert the invite into the database
-    // The RLS policy "household_invites_insert" will enforce that the user owns the household
+    // -----------------------------------------------------------------------
+    // Check if the invited email belongs to an existing user
+    // -----------------------------------------------------------------------
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = existingUsers?.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase()
+    );
+
+    if (existingUser) {
+      // Check if they're already a member of this household
+      const { data: existingMember } = await supabaseAdmin
+        .from('household_members')
+        .select('id')
+        .eq('user_id', existingUser.id)
+        .eq('household_id', household_id)
+        .single();
+
+      if (existingMember) {
+        return new Response(
+          JSON.stringify({ error: 'This user is already a member of this household' }),
+          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Directly add the existing user as a member
+      const { error: insertError } = await supabaseAdmin
+        .from('household_members')
+        .insert({
+          household_id,
+          user_id: existingUser.id,
+          role: 'member',
+        });
+
+      if (insertError) {
+        console.error('Error adding existing user:', insertError);
+        return new Response(JSON.stringify({ error: insertError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          action: 'added_directly',
+          message: `${email} has been added to the household`,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // -----------------------------------------------------------------------
+    // New user — create a pending invite
+    // -----------------------------------------------------------------------
     const { data: invite, error: insertError } = await supabaseClient
       .from('household_invites')
       .insert({
@@ -99,7 +155,7 @@ Deno.serve(async (req) => {
       console.log(`[DEV MODE] Skipping Resend. Invite URL for ${email}: ${inviteUrl}`);
     }
 
-    return new Response(JSON.stringify({ success: true, invite_id: invite.id }), {
+    return new Response(JSON.stringify({ success: true, invite_id: invite.id, action: 'invited' }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
