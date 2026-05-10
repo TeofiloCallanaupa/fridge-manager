@@ -11,6 +11,7 @@ import { onlineManager, focusManager } from '@tanstack/react-query'
 import { queryClient } from '../lib/query-client'
 import { usePushNotifications } from '../hooks/use-push-notifications'
 import * as Sentry from '@sentry/react-native'
+import * as Updates from 'expo-updates'
 
 // ---------------------------------------------------------------------------
 // Sentry — error tracking & performance monitoring
@@ -139,6 +140,24 @@ function RootLayoutNav() {
   useEffect(() => {
     const subscription = AppState.addEventListener('change', onAppStateChange)
     return () => subscription.remove()
+  }, [])
+
+  // Check for OTA updates on launch
+  useEffect(() => {
+    if (__DEV__) return // skip in development
+    async function checkForUpdates() {
+      try {
+        const update = await Updates.checkForUpdateAsync()
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync()
+          await Updates.reloadAsync()
+        }
+      } catch (e) {
+        // Silently fail — update will apply on next cold start
+        console.log('[OTA] Update check failed:', e)
+      }
+    }
+    checkForUpdates()
   }, [])
 
   if (isLoading) {
