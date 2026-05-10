@@ -25,6 +25,7 @@ export default async function InvitePage({
     .single();
 
   if (inviteError || !invite) {
+    console.error('Invite fetch error:', { inviteError, token, hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL, hasKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY });
     return (
       <div className="flex h-screen w-full items-center justify-center p-4 bg-[var(--color-surface)]">
         <div className="max-w-md text-center space-y-4">
