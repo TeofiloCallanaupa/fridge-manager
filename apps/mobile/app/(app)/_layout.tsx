@@ -3,6 +3,7 @@ import { Pressable } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 function SettingsGearButton() {
   const theme = useTheme()
@@ -23,6 +24,7 @@ function SettingsGearButton() {
 
 export default function AppLayout() {
   const theme = useTheme()
+  const insets = useSafeAreaInsets()
 
   return (
     <Tabs
@@ -46,8 +48,8 @@ export default function AppLayout() {
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.outlineVariant,
-          height: 64,
-          paddingBottom: 8,
+          height: 64 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
           paddingTop: 4,
         },
       }}
