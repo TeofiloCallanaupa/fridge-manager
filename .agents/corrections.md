@@ -58,3 +58,15 @@ After making changes to:
 | `supabase/functions/**` | Deploy via MCP `deploy_edge_function` (include `deno.json`) |
 | `packages/shared/**` | Rebuild: `pnpm --filter shared build` |
 | `supabase/migrations/**` | Apply via MCP `apply_migration` + local `npx supabase db reset` |
+
+---
+
+## 5. Production URLs & Identifiers
+
+| Key | Value |
+|-----|-------|
+| **Web (Vercel)** | `https://fridge-manager-web.vercel.app` |
+| **Supabase Project Ref** | `vsjyngzffwdhqgjuoady` |
+| **NEXT_PUBLIC_SITE_URL** | Set as Supabase Edge Function secret → `https://fridge-manager-web.vercel.app` |
+
+**Note:** Invite links use `NEXT_PUBLIC_SITE_URL` to build the URL. This is set as a Supabase secret so edge functions generate correct links (not `localhost:3000`).
