@@ -1,78 +1,19 @@
+/// <reference types="https://deno.land/x/deploy@0.12.0/types.d.ts" />
+// @ts-nocheck — Supabase Edge Functions run on Deno; these jsr: imports resolve at deploy time
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 /**
  * send-test-notification
  *
- * Sends a test push notification to the calling user's registered devices.
+ * Sends a test push notification to the calling user's registered devices
+ * via the Expo Push API.
+ *
  * Requires authentication (verify_jwt: true).
  *
  * POST body (optional):
  *   { "title": "Custom title", "body": "Custom body" }
- *
- * If no body provided, sends a default test message.
  */
-
-// ---------------------------------------------------------------------------
-// FCM Sender (shared with check-expiration-notifications)
-// ---------------------------------------------------------------------------
-
-async function getAccessToken(serviceAccount: {
-  client_email: string;
-  private_key: string;
-  token_uri: string;
-}): Promise<string> {
-  const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const now = Math.floor(Date.now() / 1000);
-  const claim = btoa(
-    JSON.stringify({
-      iss: serviceAccount.client_email,
-      scope: 'https://www.googleapis.com/auth/firebase.messaging',
-      aud: serviceAccount.token_uri,
-      iat: now,
-      exp: now + 3600,
-    })
-  );
-
-  const signInput = `${header}.${claim}`;
-
-  const pemContent = serviceAccount.private_key
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\\n/g, '');
-  const binaryKey = Uint8Array.from(atob(pemContent), (c) => c.charCodeAt(0));
-
-  const cryptoKey = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryKey,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signature = await crypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    cryptoKey,
-    new TextEncoder().encode(signInput)
-  );
-
-  const jwt = `${signInput}.${btoa(
-    String.fromCharCode(...new Uint8Array(signature))
-  )}`;
-
-  const tokenRes = await fetch(serviceAccount.token_uri, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
-  });
-
-  const tokenData = await tokenRes.json();
-  return tokenData.access_token;
-}
-
-// ---------------------------------------------------------------------------
-// Main Handler
-// ---------------------------------------------------------------------------
 
 Deno.serve(async (req: Request) => {
   try {
@@ -111,8 +52,8 @@ Deno.serve(async (req: Request) => {
     }
 
     // 4. Parse optional custom message from request body
-    let title = '🧪 Test Notification';
-    let body = `Hey! This is a test push from Fridge Manager. If you see this, notifications are working! 🎉`;
+    let title = '\ud83e\uddea Test Notification';
+    let body = 'If you see this, push notifications are working! \ud83c\udf89';
 
     try {
       const reqBody = await req.json();
@@ -147,54 +88,55 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // 6. Get Firebase credentials
-    const firebaseKeyRaw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT_KEY');
-    if (!firebaseKeyRaw) {
+    // 6. Build Expo push messages
+    const messages = subscriptions
+      .filter((sub) => sub.token.startsWith('ExponentPushToken'))
+      .map((sub) => ({
+        to: sub.token,
+        sound: 'default' as const,
+        title,
+        body,
+        data: { type: 'test' },
+      }));
+
+    if (messages.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'Firebase not configured' }),
-        { status: 503, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({
+          error: 'No Expo push tokens found',
+          detail: 'Registered tokens are not Expo Push Tokens.',
+        }),
+        { status: 404, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const firebaseServiceAccount = JSON.parse(firebaseKeyRaw);
-    const accessToken = await getAccessToken(firebaseServiceAccount);
+    // 7. Send via Expo Push API
+    const expoRes = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(messages),
+    });
 
-    // 7. Send to all registered devices
+    const expoResult = await expoRes.json();
+    console.log('Expo push result:', JSON.stringify(expoResult));
+
+    // Count successes and failures
     let sent = 0;
     let failed = 0;
+    const errors: string[] = [];
 
-    for (const sub of subscriptions) {
-      if (sub.platform !== 'android') continue; // Only FCM for now
-
-      try {
-        const res = await fetch(
-          `https://fcm.googleapis.com/v1/projects/${firebaseServiceAccount.project_id}/messages:send`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              message: {
-                token: sub.token,
-                notification: { title, body },
-                android: { priority: 'high' },
-              },
-            }),
-          }
-        );
-
-        if (res.ok) {
+    if (expoResult.data) {
+      for (const ticket of expoResult.data) {
+        if (ticket.status === 'ok') {
           sent++;
         } else {
-          const errBody = await res.text();
-          console.error(`FCM failed for token ${sub.token.slice(0, 10)}...:`, errBody);
           failed++;
+          if (ticket.details?.error) {
+            errors.push(ticket.details.error);
+          }
         }
-      } catch (err) {
-        console.error('FCM request error:', err);
-        failed++;
       }
     }
 
@@ -204,8 +146,10 @@ Deno.serve(async (req: Request) => {
       details: {
         user_id: user.id,
         devices_total: subscriptions.length,
+        expo_tokens: messages.length,
         sent,
         failed,
+        errors,
       },
     });
 
@@ -215,6 +159,7 @@ Deno.serve(async (req: Request) => {
         devices_found: subscriptions.length,
         sent,
         failed,
+        errors,
       }),
       { headers: { 'Content-Type': 'application/json' } }
     );

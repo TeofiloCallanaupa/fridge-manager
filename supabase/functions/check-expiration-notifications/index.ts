@@ -1,3 +1,5 @@
+/// <reference types="https://deno.land/x/deploy@0.12.0/types.d.ts" />
+// @ts-nocheck — Supabase Edge Functions run on Deno; these jsr: imports resolve at deploy time
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
