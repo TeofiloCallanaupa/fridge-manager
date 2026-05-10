@@ -10,10 +10,14 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import { router } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+
+/** EAS project ID — must match the one in app.json > extra.eas.projectId */
+const EAS_PROJECT_ID = Constants.expoConfig?.extra?.eas?.projectId ?? 'bef729e4-9b9d-4766-808d-9e0267fea2f9';
 
 // Configure how notifications appear when the app is in the foreground
 Notifications.setNotificationHandler({
@@ -57,8 +61,10 @@ export function usePushNotifications() {
 
     setPermissionGranted(true);
 
-    // Get the Expo push token (maps to FCM on Android)
-    const tokenData = await Notifications.getExpoPushTokenAsync();
+    // Get the Expo push token — projectId binds the token to our EAS project
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId: EAS_PROJECT_ID,
+    });
 
     return tokenData.data;
   }, []);
