@@ -5,7 +5,7 @@
  * Replaces the old settings page + standalone notifications.tsx.
  */
 import React, { useCallback, useState } from 'react'
-import { View, ScrollView, StyleSheet, Keyboard, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, ScrollView, StyleSheet, Keyboard, KeyboardAvoidingView, Platform, Share } from 'react-native'
 import {
   Text,
   Switch,
@@ -159,16 +159,21 @@ export default function SettingsScreen() {
 
     try {
       const result = await sendInvite.mutateAsync({ email: inviteEmail.trim(), householdId })
-      const message = result.action === 'added_directly'
-        ? `${inviteEmail.trim()} has been added to the household!`
-        : `Invite sent to ${inviteEmail.trim()}!`
-      setInviteFeedback({ type: 'success', message })
-      setInviteEmail('')
-      // Auto-collapse after a short delay
-      setTimeout(() => {
-        setShowInviteInput(false)
-        setInviteFeedback(null)
-      }, 2500)
+      if (result.action === 'added_directly') {
+        setInviteFeedback({ type: 'success', message: `${inviteEmail.trim()} has been added to the household!` })
+        setInviteEmail('')
+        setTimeout(() => { setShowInviteInput(false); setInviteFeedback(null) }, 2500)
+      } else {
+        // Open native share sheet with the invite link
+        setInviteFeedback({ type: 'success', message: 'Invite created! Share the link below.' })
+        setInviteEmail('')
+        if (result.invite_url) {
+          await Share.share({
+            message: `Join my household on Fridge Manager! ${result.invite_url}`,
+            url: result.invite_url,
+          })
+        }
+      }
     } catch (err: any) {
       setInviteFeedback({ type: 'error', message: err.message || 'Failed to send invite' })
     }

@@ -16,6 +16,9 @@ import {
   RotateCw,
   UserPlus,
   Send,
+  Copy,
+  Check,
+  Link2,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useCurrentHousehold } from '@/hooks/use-household'
@@ -135,6 +138,8 @@ function HouseholdSection({
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const sendInvite = useSendInvite()
   const resendInvite = useResendInvite()
@@ -150,23 +155,31 @@ function HouseholdSection({
     }
 
     setFeedback(null)
+    setInviteUrl(null)
+    setCopied(false)
     try {
       const result = await sendInvite.mutateAsync({
         email: inviteEmail.trim(),
         householdId: household.householdId,
       })
-      const message = result.action === 'added_directly'
-        ? `${inviteEmail.trim()} has been added to the household!`
-        : `Invite sent to ${inviteEmail.trim()}!`
-      setFeedback({ type: 'success', message })
-      setInviteEmail('')
-      setTimeout(() => {
-        setShowInvite(false)
-        setFeedback(null)
-      }, 3000)
+      if (result.action === 'added_directly') {
+        setFeedback({ type: 'success', message: `${inviteEmail.trim()} has been added to the household!` })
+        setInviteEmail('')
+        setTimeout(() => { setShowInvite(false); setFeedback(null) }, 3000)
+      } else {
+        setFeedback({ type: 'success', message: `Invite created! Share this link with ${inviteEmail.trim()}:` })
+        setInviteUrl(result.invite_url || null)
+        setInviteEmail('')
+      }
     } catch (err: any) {
       setFeedback({ type: 'error', message: err.message || 'Failed to send invite' })
     }
+  }
+
+  const handleCopyLink = async (url: string) => {
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -266,6 +279,28 @@ function HouseholdSection({
         >
           {feedback.type === 'success' ? '✅ ' : '⚠️ '}
           {feedback.message}
+        </div>
+      )}
+
+      {/* Copyable invite link */}
+      {inviteUrl && (
+        <div className="mt-2 flex items-center gap-2">
+          <input
+            type="text"
+            readOnly
+            value={inviteUrl}
+            className="flex-1 px-3 py-2 rounded-lg bg-surface-container text-on-surface-variant text-xs border border-outline-variant/20 select-all"
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+          />
+          <button
+            type="button"
+            onClick={() => handleCopyLink(inviteUrl)}
+            className="px-3 py-2 rounded-lg bg-primary text-on-primary text-xs font-medium flex items-center gap-1 cursor-pointer hover:opacity-90 transition-opacity"
+            data-testid="copy-invite-link"
+          >
+            {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
         </div>
       )}
 

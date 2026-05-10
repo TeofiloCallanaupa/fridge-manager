@@ -79,7 +79,8 @@ export function useSendInvite() {
       return data as {
         success: boolean
         invite_id?: string
-        action: 'invited' | 'added_directly'
+        invite_url?: string
+        action: 'invited' | 'resent' | 'added_directly'
         message?: string
       }
     },

@@ -155,42 +155,14 @@ Deno.serve(async (req) => {
       invite = newInvite;
     }
 
-    // Generate the deep link
+    // Generate the invite link for manual sharing
     const siteUrl = Deno.env.get('NEXT_PUBLIC_SITE_URL') || 'http://localhost:3000';
     const inviteUrl = `${siteUrl}/invite/${invite.id}`;
-
-    // Send email using Resend, or fallback to logging
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
-    
-    if (resendApiKey) {
-      const resendRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'Fridge Manager <invites@fridgemanager.app>',
-          to: email,
-          subject: 'You have been invited to a Household!',
-          html: `<p>You've been invited to join a household on Fridge Manager.</p><p><a href="${inviteUrl}">Click here to join</a></p>`,
-        }),
-      });
-
-      if (!resendRes.ok) {
-        const err = await resendRes.text();
-        console.error('Failed to send email:', err);
-        // We still return success since the invite was created in DB
-      } else {
-        console.log(`Successfully sent invite email to ${email}`);
-      }
-    } else {
-      console.log(`[DEV MODE] No RESEND_API_KEY set. Invite URL for ${email}: ${inviteUrl}`);
-    }
 
     return new Response(JSON.stringify({
       success: true,
       invite_id: invite.id,
+      invite_url: inviteUrl,
       action: existingInvite ? 'resent' : 'invited',
     }), {
       status: 200,

@@ -76,7 +76,7 @@ export function useSendInvite() {
         throw new Error(data.error)
       }
 
-      return data as { success: boolean; invite_id?: string; action: 'invited' | 'added_directly'; message?: string }
+      return data as { success: boolean; invite_id?: string; invite_url?: string; action: 'invited' | 'resent' | 'added_directly'; message?: string }
     },
     onSuccess: (_data, variables) => {
       // Invalidate pending invites so the list refreshes
