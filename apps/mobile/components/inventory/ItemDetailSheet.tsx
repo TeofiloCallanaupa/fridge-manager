@@ -35,6 +35,8 @@ type ItemDetailSheetProps = {
   onDismiss: () => void
   userId: string
   householdId: string
+  /** Which mode to open in. Default: 'detail'. Use 'discard' for long-press shortcut. */
+  initialMode?: ViewMode
   /** Called after a successful discard + optional re-add */
   onComplete?: (action: 'consumed' | 'tossed', reAdded: boolean) => void
 }
@@ -68,6 +70,7 @@ export function ItemDetailSheet({
   onDismiss,
   userId,
   householdId,
+  initialMode = 'detail',
   onComplete,
 }: ItemDetailSheetProps) {
   const theme = useTheme()
@@ -88,11 +91,13 @@ export function ItemDetailSheet({
 
   // Reset state when sheet opens/closes or item changes
   useEffect(() => {
-    if (!visible) {
+    if (visible) {
+      setMode(initialMode)
+    } else {
       setMode('detail')
       setChosenAction(null)
     }
-  }, [visible])
+  }, [visible, initialMode])
 
   // -------------------------------------------------------------------------
   // Edit handlers

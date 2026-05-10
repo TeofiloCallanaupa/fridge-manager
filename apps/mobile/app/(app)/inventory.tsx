@@ -14,7 +14,6 @@ import {
 } from 'react-native-paper'
 import { OfflineBanner } from '../../components/OfflineBanner'
 import { InventoryItemCard } from '../../components/inventory/InventoryItemCard'
-import { DiscardSheet } from '../../components/inventory/DiscardSheet'
 import { ItemDetailSheet } from '../../components/inventory/ItemDetailSheet'
 import { RecentlyRemoved } from '../../components/inventory/RecentlyRemoved'
 import {
@@ -36,8 +35,8 @@ export default function InventoryScreen() {
   const theme = useTheme()
   const { user, householdId } = useAuth()
   const [activeTab, setActiveTab] = useState<StorageLocation>('fridge')
-  const [discardItem, setDiscardItem] = useState<InventoryItemWithDetails | null>(null)
   const [detailItem, setDetailItem] = useState<InventoryItemWithDetails | null>(null)
+  const [detailMode, setDetailMode] = useState<'detail' | 'discard'>('detail')
   const [snackMessage, setSnackMessage] = useState<string | null>(null)
 
   const { data: counts } = useInventoryCounts(householdId ?? undefined)
@@ -61,22 +60,16 @@ export default function InventoryScreen() {
 
   const handleLongPress = useCallback(
     (item: InventoryItemWithDetails) => {
-      setDiscardItem(item)
+      setDetailMode('discard')
+      setDetailItem(item)
     },
     []
   )
 
-  const handleDiscardComplete = useCallback(
-    (action: 'consumed' | 'tossed', reAdded: boolean) => {
-      const actionLabel = action === 'consumed' ? 'Marked as used' : 'Marked as tossed'
-      const restockLabel = reAdded ? ' · Added to grocery list' : ''
-      setSnackMessage(`${actionLabel}${restockLabel}`)
-    },
-    []
-  )
 
   const handleItemPress = useCallback(
     (item: InventoryItemWithDetails) => {
+      setDetailMode('detail')
       setDetailItem(item)
     },
     []
@@ -219,23 +212,15 @@ export default function InventoryScreen() {
         />
       )}
 
-      {/* Discard flow modal (long-press shortcut) */}
-      <DiscardSheet
-        item={discardItem}
-        visible={!!discardItem}
-        onDismiss={() => setDiscardItem(null)}
-        userId={user?.id ?? ''}
-        householdId={householdId ?? ''}
-        onComplete={handleDiscardComplete}
-      />
-
-      {/* Item detail + edit sheet (tap) */}
+      {/* Item detail + edit + discard sheet */}
+      {/* Tap opens in detail mode, long-press opens in discard mode */}
       <ItemDetailSheet
         item={detailItem}
         visible={!!detailItem}
         onDismiss={() => setDetailItem(null)}
         userId={user?.id ?? ''}
         householdId={householdId ?? ''}
+        initialMode={detailMode}
         onComplete={handleDetailComplete}
       />
 
