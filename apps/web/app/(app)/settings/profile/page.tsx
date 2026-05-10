@@ -85,7 +85,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="bg-[var(--color-surface)] text-[var(--color-on-surface)] min-h-screen pb-28">
+    <div className="bg-[var(--color-surface)] text-[var(--color-on-surface)] min-h-screen pb-44">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 max-w-2xl mx-auto">
         <button
@@ -191,7 +191,7 @@ export default function EditProfilePage() {
       </main>
 
       {/* Fixed Bottom Save Button */}
-      <footer className="fixed bottom-0 left-0 w-full p-6 bg-[var(--color-surface)]/90 backdrop-blur-md z-40">
+      <footer className="fixed bottom-16 left-0 w-full p-6 bg-[var(--color-surface)]/90 backdrop-blur-md z-40">
         <div className="max-w-2xl mx-auto">
           <button
             type="button"
