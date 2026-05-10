@@ -1,8 +1,8 @@
 /**
  * Hooks for household invite management.
  *
- * - useSendInvite()    — mutation to invite a member via the send-invite Edge Function
- * - usePendingInvites() — query to list pending invites for the household
+ * - useGenerateInviteLink() — mutation to create a single-use invite link
+ * - usePendingInvites()     — query to list pending invites for the household
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
@@ -22,7 +22,7 @@ export const inviteKeys = {
 
 export type PendingInvite = {
   id: string
-  invited_email: string
+  invited_email: string | null
   status: string
   created_at: string
   expires_at: string
@@ -51,69 +51,27 @@ export function usePendingInvites(householdId: string | null | undefined) {
 }
 
 // ---------------------------------------------------------------------------
-// useSendInvite — send an invitation via the Edge Function
+// useGenerateInviteLink — create a single-use invite link
 // ---------------------------------------------------------------------------
 
-export function useSendInvite() {
+export function useGenerateInviteLink() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({
-      email,
-      householdId,
-    }: {
-      email: string
-      householdId: string
-    }) => {
+    mutationFn: async ({ householdId }: { householdId: string }) => {
       const { data, error } = await supabase.functions.invoke('send-invite', {
-        body: { email, household_id: householdId },
-      })
-
-      if (error) throw error
-
-      // The Edge Function returns { success, invite_id, action } or { error }
-      if (data?.error) {
-        throw new Error(data.error)
-      }
-
-      return data as { success: boolean; invite_id?: string; invite_url?: string; action: 'invited' | 'resent' | 'added_directly'; message?: string }
-    },
-    onSuccess: (_data, variables) => {
-      // Invalidate pending invites so the list refreshes
-      queryClient.invalidateQueries({
-        queryKey: inviteKeys.pending(variables.householdId),
-      })
-      // If user was added directly, also refresh the members list
-      queryClient.invalidateQueries({
-        queryKey: ['household-members'],
-      })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// useResendInvite — resend a pending invite
-// ---------------------------------------------------------------------------
-
-export function useResendInvite() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async ({
-      email,
-      householdId,
-    }: {
-      email: string
-      householdId: string
-    }) => {
-      const { data, error } = await supabase.functions.invoke('send-invite', {
-        body: { email, household_id: householdId },
+        body: { household_id: householdId },
       })
 
       if (error) throw error
       if (data?.error) throw new Error(data.error)
 
-      return data
+      return data as {
+        success: boolean
+        invite_id: string
+        invite_url: string
+        action: 'invited'
+      }
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({

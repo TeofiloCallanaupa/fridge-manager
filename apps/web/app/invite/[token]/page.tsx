@@ -60,7 +60,8 @@ export default async function InvitePage({
   // 2. If the user is not logged in, redirect them to sign up with a ?next param
   if (!user) {
     const nextPath = encodeURIComponent(`/invite/${token}`);
-    redirect(`/signup?next=${nextPath}&email=${encodeURIComponent(invite.invited_email)}`);
+    const emailParam = invite.invited_email ? `&email=${encodeURIComponent(invite.invited_email)}` : '';
+    redirect(`/signup?next=${nextPath}${emailParam}`);
   }
 
   return (
@@ -125,10 +126,8 @@ async function acceptInvite(formData: FormData) {
     redirect('/?error=This invite has expired');
   }
 
-  // Verify the authenticated user's email matches the invited email
-  if (user.email !== invite.invited_email) {
-    redirect(`/invite/${token}?error=This invite was sent to a different email address`);
-  }
+  // No email-match check — invite links are generic single-use tokens.
+  // Anyone with the link can accept it (consent-based design).
 
   // 1. Insert into household_members
   const { error: insertError } = await supabaseAdmin

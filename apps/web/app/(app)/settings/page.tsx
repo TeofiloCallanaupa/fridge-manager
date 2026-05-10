@@ -12,10 +12,6 @@ import {
   Moon,
   FlaskConical,
   Loader2,
-  Mail,
-  RotateCw,
-  UserPlus,
-  Send,
   Copy,
   Check,
   Link2,
@@ -31,7 +27,7 @@ import {
 import { useHouseholdMembers } from '@/hooks/use-household-members'
 import { QUIET_HOURS_DEFAULT, DEFAULT_NOTIFICATION_PREFS, buildAvatarUrl } from '@fridge-manager/shared'
 import { useQuery } from '@tanstack/react-query'
-import { usePendingInvites, useSendInvite, useResendInvite } from '@/hooks/use-household-invite'
+import { usePendingInvites, useGenerateInviteLink } from '@/hooks/use-household-invite'
 
 // ---------------------------------------------------------------------------
 // Alert row config
@@ -135,44 +131,26 @@ function HouseholdSection({
   household: any
   members: any[] | undefined
 }) {
-  const [showInvite, setShowInvite] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
   const [inviteUrl, setInviteUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const sendInvite = useSendInvite()
-  const resendInvite = useResendInvite()
+  const generateInvite = useGenerateInviteLink()
   const { data: pendingInvites } = usePendingInvites(household?.householdId)
 
-  const handleSendInvite = async () => {
-    if (!inviteEmail.trim() || !household?.householdId) return
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(inviteEmail.trim())) {
-      setFeedback({ type: 'error', message: 'Please enter a valid email address' })
-      return
-    }
-
+  const handleGenerateInvite = async () => {
+    if (!household?.householdId) return
     setFeedback(null)
     setInviteUrl(null)
     setCopied(false)
     try {
-      const result = await sendInvite.mutateAsync({
-        email: inviteEmail.trim(),
+      const result = await generateInvite.mutateAsync({
         householdId: household.householdId,
       })
-      if (result.action === 'added_directly') {
-        setFeedback({ type: 'success', message: `${inviteEmail.trim()} has been added to the household!` })
-        setInviteEmail('')
-        setTimeout(() => { setShowInvite(false); setFeedback(null) }, 3000)
-      } else {
-        setFeedback({ type: 'success', message: `Invite created! Share this link with ${inviteEmail.trim()}:` })
-        setInviteUrl(result.invite_url || null)
-        setInviteEmail('')
-      }
+      setFeedback({ type: 'success', message: 'Invite link created! Share it with someone to invite them.' })
+      setInviteUrl(result.invite_url || null)
     } catch (err: any) {
-      setFeedback({ type: 'error', message: err.message || 'Failed to send invite' })
+      setFeedback({ type: 'error', message: err.message || 'Failed to create invite' })
     }
   }
 
@@ -238,29 +216,14 @@ function HouseholdSection({
                 data-testid={`pending-${invite.id}`}
               >
                 <div className="w-9 h-9 rounded-full bg-amber-500/10 flex items-center justify-center">
-                  <Mail className="w-4 h-4 text-amber-500" />
+                  <Link2 className="w-4 h-4 text-amber-500" />
                 </div>
                 <span className="flex-1 text-on-surface-variant text-sm truncate">
-                  {invite.invited_email}
+                  Invite created {new Date(invite.created_at).toLocaleDateString()}
                 </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    resendInvite.mutate(
-                      { email: invite.invited_email, householdId: household.householdId },
-                      {
-                        onSuccess: () => setFeedback({ type: 'success', message: `Resent invite to ${invite.invited_email}` }),
-                        onError: (err: any) => setFeedback({ type: 'error', message: err.message || 'Resend failed' }),
-                      }
-                    )
-                  }}
-                  disabled={resendInvite.isPending}
-                  className="text-xs font-medium text-primary hover:underline flex items-center gap-1 disabled:opacity-50 cursor-pointer"
-                  data-testid={`resend-${invite.id}`}
-                >
-                  <RotateCw className={`w-3 h-3 ${resendInvite.isPending ? 'animate-spin' : ''}`} />
-                  Resend
-                </button>
+                <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500">
+                  Pending
+                </span>
               </div>
             ))}
           </div>
@@ -304,57 +267,21 @@ function HouseholdSection({
         </div>
       )}
 
-      {/* Invite button / input */}
-      {showInvite ? (
-        <div className="mt-4 space-y-3">
-          <div className="flex gap-2">
-            <input
-              type="email"
-              placeholder="name@example.com"
-              value={inviteEmail}
-              onChange={(e) => {
-                setInviteEmail(e.target.value)
-                setFeedback(null)
-              }}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendInvite()}
-              autoFocus
-              className="flex-1 px-4 py-2.5 rounded-xl bg-surface-container text-on-surface text-sm border border-outline-variant/30 focus:border-primary focus:outline-none placeholder:text-on-surface-variant/50"
-              data-testid="invite-email-input"
-            />
-            <button
-              type="button"
-              onClick={handleSendInvite}
-              disabled={!inviteEmail.trim() || sendInvite.isPending}
-              className="px-4 py-2.5 rounded-xl bg-primary text-on-primary text-sm font-medium disabled:opacity-50 cursor-pointer flex items-center gap-1.5 hover:opacity-90 transition-opacity"
-              data-testid="send-invite-button"
-            >
-              {sendInvite.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-              Send
-            </button>
-          </div>
-          <button
-            type="button"
-            onClick={() => { setShowInvite(false); setFeedback(null); setInviteEmail('') }}
-            className="text-on-surface-variant text-xs hover:underline cursor-pointer"
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setShowInvite(true)}
-          className="mt-4 w-full py-3 rounded-full border border-outline-variant/50 text-on-surface-variant text-sm font-medium hover:text-on-surface hover:border-outline transition-colors cursor-pointer flex items-center justify-center gap-2"
-          data-testid="invite-member-button"
-        >
-          <UserPlus className="w-4 h-4" />
-          Add / Invite Member
-        </button>
-      )}
+      {/* Generate invite link button */}
+      <button
+        type="button"
+        onClick={handleGenerateInvite}
+        disabled={generateInvite.isPending}
+        className="mt-4 w-full py-3 rounded-full border border-outline-variant/50 text-on-surface-variant text-sm font-medium hover:text-on-surface hover:border-outline transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+        data-testid="generate-invite-button"
+      >
+        {generateInvite.isPending ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <Link2 className="w-4 h-4" />
+        )}
+        Generate Invite Link
+      </button>
     </div>
   )
 }

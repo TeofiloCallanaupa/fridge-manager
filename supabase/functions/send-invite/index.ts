@@ -21,14 +21,14 @@ Deno.serve(async (req) => {
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') || '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
     
-    // We create the client using the user's Auth header so we execute on their behalf
+    // User-scoped client (respects RLS — only owners can insert invites)
     const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: {
         headers: { Authorization: req.headers.get('Authorization')! },
       },
     });
 
-    // Admin client for looking up users and bypassing RLS
+    // Admin client for checking existing invites (bypasses RLS)
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Verify authentication
@@ -41,121 +41,41 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { email, household_id } = await req.json();
+    const { household_id } = await req.json();
 
-    if (!email || !household_id) {
-      return new Response(JSON.stringify({ error: 'Missing email or household_id' }), {
+    if (!household_id) {
+      return new Response(JSON.stringify({ error: 'Missing household_id' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // -----------------------------------------------------------------------
-    // Check if the invited email belongs to an existing user
+    // Create a single-use invite link (no email required, consent-based)
     // -----------------------------------------------------------------------
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(
-      (u) => u.email?.toLowerCase() === email.toLowerCase()
-    );
-
-    if (existingUser) {
-      // Check if they're already a member of this household
-      const { data: existingMember } = await supabaseAdmin
-        .from('household_members')
-        .select('id')
-        .eq('user_id', existingUser.id)
-        .eq('household_id', household_id)
-        .single();
-
-      if (existingMember) {
-        return new Response(
-          JSON.stringify({ error: 'This user is already a member of this household' }),
-          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      // Directly add the existing user as a member
-      const { error: insertError } = await supabaseAdmin
-        .from('household_members')
-        .insert({
-          household_id,
-          user_id: existingUser.id,
-          role: 'member',
-        });
-
-      if (insertError) {
-        console.error('Error adding existing user:', insertError);
-        return new Response(JSON.stringify({ error: insertError.message }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          action: 'added_directly',
-          message: `${email} has been added to the household`,
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // -----------------------------------------------------------------------
-    // New user — check for existing pending invite or create one
+    // Anyone with this link can accept it, but only once. After acceptance the
+    // invite status changes to 'accepted' and the link becomes invalid.
     // -----------------------------------------------------------------------
 
-    // Use admin client to check for existing pending invite (avoids RLS issues)
-    const { data: existingInvite } = await supabaseAdmin
+    const { data: invite, error: insertError } = await supabaseClient
       .from('household_invites')
-      .select('id, invited_email, expires_at')
-      .eq('household_id', household_id)
-      .eq('invited_email', email)
-      .eq('status', 'pending')
+      .insert({
+        household_id,
+        invited_by: user.id,
+        invited_email: null, // Generic link — no email restriction
+      })
+      .select()
       .single();
 
-    let invite;
-
-    if (existingInvite) {
-      // Refresh the expiry on the existing invite (resend scenario)
-      const { data: updated, error: updateError } = await supabaseAdmin
-        .from('household_invites')
-        .update({ expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
-        .eq('id', existingInvite.id)
-        .select()
-        .single();
-
-      if (updateError) {
-        console.error('Error refreshing invite:', updateError);
-        return new Response(JSON.stringify({ error: updateError.message }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      invite = updated;
-    } else {
-      // Create a new invite
-      const { data: newInvite, error: insertError } = await supabaseClient
-        .from('household_invites')
-        .insert({
-          household_id,
-          invited_by: user.id,
-          invited_email: email,
-        })
-        .select()
-        .single();
-
-      if (insertError) {
-        console.error('Error inserting invite:', insertError);
-        return new Response(JSON.stringify({ error: insertError.message }), {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
-      invite = newInvite;
+    if (insertError) {
+      console.error('Error creating invite:', insertError);
+      return new Response(JSON.stringify({ error: insertError.message }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    // Generate the invite link for manual sharing
+    // Generate the shareable invite link
     const siteUrl = Deno.env.get('NEXT_PUBLIC_SITE_URL') || 'http://localhost:3000';
     const inviteUrl = `${siteUrl}/invite/${invite.id}`;
 
@@ -163,7 +83,7 @@ Deno.serve(async (req) => {
       success: true,
       invite_id: invite.id,
       invite_url: inviteUrl,
-      action: existingInvite ? 'resent' : 'invited',
+      action: 'invited',
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

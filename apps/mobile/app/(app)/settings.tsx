@@ -25,7 +25,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { QUIET_HOURS_DEFAULT, DEFAULT_NOTIFICATION_PREFS, buildAvatarUrl } from '@fridge-manager/shared'
 import { Image } from 'react-native'
-import { useSendInvite, usePendingInvites, useResendInvite } from '../../hooks/use-household-invite'
+import { useGenerateInviteLink, usePendingInvites } from '../../hooks/use-household-invite'
 
 // ---------------------------------------------------------------------------
 // Alert row config
@@ -65,11 +65,8 @@ export default function SettingsScreen() {
   const { user, profile, householdId } = useAuth()
 
   // Invite state
-  const [showInviteInput, setShowInviteInput] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
   const [inviteFeedback, setInviteFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-  const sendInvite = useSendInvite()
-  const resendInvite = useResendInvite()
+  const generateInvite = useGenerateInviteLink()
   const { data: pendingInvites } = usePendingInvites(householdId)
 
   // Notification preferences
@@ -144,40 +141,23 @@ export default function SettingsScreen() {
     currentPrefs.quiet_hours_start !== null &&
     currentPrefs.quiet_hours_end !== null
 
-  const handleSendInvite = useCallback(async () => {
-    if (!inviteEmail.trim() || !householdId) return
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(inviteEmail.trim())) {
-      setInviteFeedback({ type: 'error', message: 'Please enter a valid email address' })
-      return
-    }
-
+  const handleGenerateInvite = useCallback(async () => {
+    if (!householdId) return
     setInviteFeedback(null)
-    Keyboard.dismiss()
 
     try {
-      const result = await sendInvite.mutateAsync({ email: inviteEmail.trim(), householdId })
-      if (result.action === 'added_directly') {
-        setInviteFeedback({ type: 'success', message: `${inviteEmail.trim()} has been added to the household!` })
-        setInviteEmail('')
-        setTimeout(() => { setShowInviteInput(false); setInviteFeedback(null) }, 2500)
-      } else {
-        // Open native share sheet with the invite link
-        setInviteFeedback({ type: 'success', message: 'Invite created! Share the link below.' })
-        setInviteEmail('')
-        if (result.invite_url) {
-          await Share.share({
-            message: `Join my household on Fridge Manager! ${result.invite_url}`,
-            url: result.invite_url,
-          })
-        }
+      const result = await generateInvite.mutateAsync({ householdId })
+      setInviteFeedback({ type: 'success', message: 'Invite link created!' })
+      if (result.invite_url) {
+        await Share.share({
+          message: `Join my household on Fridge Manager! ${result.invite_url}`,
+          url: result.invite_url,
+        })
       }
     } catch (err: any) {
-      setInviteFeedback({ type: 'error', message: err.message || 'Failed to send invite' })
+      setInviteFeedback({ type: 'error', message: err.message || 'Failed to create invite' })
     }
-  }, [inviteEmail, householdId, sendInvite])
+  }, [householdId, generateInvite])
 
   async function signOut() {
     await supabase.auth.signOut()
@@ -371,126 +351,66 @@ export default function SettingsScreen() {
               {pendingInvites.map((invite) => (
                 <View key={invite.id} style={styles.memberRow} testID={`pending-${invite.id}`}>
                   <View style={[styles.memberAvatar, styles.avatarPlaceholder, { backgroundColor: '#F59E0B20' }]}>
-                    <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#F59E0B' }}>✉</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#F59E0B' }}>🔗</Text>
                   </View>
                   <Text
-                    variant="bodyMedium"
-                    style={{ flex: 1, fontWeight: '500', color: theme.colors.onSurfaceVariant }}
+                    variant="bodySmall"
+                    style={{ flex: 1, color: theme.colors.onSurfaceVariant }}
                     numberOfLines={1}
                   >
-                    {invite.invited_email}
+                    Invite created {new Date(invite.created_at).toLocaleDateString()}
                   </Text>
-                  <Button
-                    testID={`resend-${invite.id}`}
-                    mode="text"
-                    compact
-                    icon="email-fast-outline"
-                    onPress={() => {
-                      if (!householdId) return
-                      resendInvite.mutate(
-                        { email: invite.invited_email, householdId },
-                        {
-                          onSuccess: () => setInviteFeedback({ type: 'success', message: `Resent invite to ${invite.invited_email}` }),
-                          onError: (err: any) => setInviteFeedback({ type: 'error', message: err.message || 'Resend failed' }),
-                        }
-                      )
-                    }}
-                    loading={resendInvite.isPending}
-                    textColor={theme.colors.primary}
-                    style={{ marginRight: -8 }}
-                  >
-                    Resend
-                  </Button>
+                  <View style={[
+                    styles.roleBadge,
+                    { backgroundColor: '#F59E0B20' },
+                  ]}>
+                    <Text variant="labelSmall" style={{ color: '#F59E0B', fontWeight: '600' }}>
+                      Pending
+                    </Text>
+                  </View>
                 </View>
               ))}
             </>
           )}
 
-          {/* Invite member button + collapsible input */}
+          {/* Generate invite link button */}
           <Button
-            testID="invite-member-button"
+            testID="generate-invite-button"
             mode="outlined"
-            icon={showInviteInput ? 'close' : 'account-plus'}
-            onPress={() => {
-              setShowInviteInput(!showInviteInput)
-              setInviteFeedback(null)
-              setInviteEmail('')
-            }}
+            icon="link-plus"
+            onPress={handleGenerateInvite}
+            loading={generateInvite.isPending}
+            disabled={generateInvite.isPending}
             style={styles.inviteButton}
             textColor={theme.colors.primary}
           >
-            {showInviteInput ? 'Cancel' : '+ Invite Member'}
+            Generate Invite Link
           </Button>
 
-          {showInviteInput && (
-            <View style={styles.inviteInputContainer} testID="invite-input-section">
-              <TextInput
-                testID="invite-email-input"
-                mode="outlined"
-                label="Email address"
-                placeholder="name@example.com"
-                value={inviteEmail}
-                onChangeText={(text) => {
-                  setInviteEmail(text)
-                  setInviteFeedback(null)
+          {inviteFeedback && (
+            <View
+              style={[
+                styles.feedbackRow,
+                {
+                  backgroundColor: inviteFeedback.type === 'success'
+                    ? theme.colors.primary + '15'
+                    : theme.colors.error + '15',
+                },
+              ]}
+              testID="invite-feedback"
+            >
+              <Text
+                variant="bodySmall"
+                style={{
+                  color: inviteFeedback.type === 'success'
+                    ? theme.colors.primary
+                    : theme.colors.error,
+                  fontWeight: '500',
                 }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoFocus
-                outlineStyle={{ borderRadius: 12 }}
-                style={{ backgroundColor: 'transparent' }}
-                right={
-                  inviteEmail.trim() ? (
-                    <TextInput.Icon
-                      icon="send"
-                      onPress={handleSendInvite}
-                      disabled={sendInvite.isPending}
-                    />
-                  ) : undefined
-                }
-                onSubmitEditing={handleSendInvite}
-                returnKeyType="send"
-              />
-
-              <Button
-                testID="send-invite-button"
-                mode="contained"
-                onPress={handleSendInvite}
-                loading={sendInvite.isPending}
-                disabled={!inviteEmail.trim() || sendInvite.isPending}
-                style={styles.sendInviteButton}
-                labelStyle={{ fontWeight: '600' }}
               >
-                Send Invite
-              </Button>
-
-              {inviteFeedback && (
-                <View
-                  style={[
-                    styles.feedbackRow,
-                    {
-                      backgroundColor: inviteFeedback.type === 'success'
-                        ? theme.colors.primary + '15'
-                        : theme.colors.error + '15',
-                    },
-                  ]}
-                  testID="invite-feedback"
-                >
-                  <Text
-                    variant="bodySmall"
-                    style={{
-                      color: inviteFeedback.type === 'success'
-                        ? theme.colors.primary
-                        : theme.colors.error,
-                      fontWeight: '500',
-                    }}
-                  >
-                    {inviteFeedback.type === 'success' ? '✅ ' : '⚠️ '}
-                    {inviteFeedback.message}
-                  </Text>
-                </View>
-              )}
+                {inviteFeedback.type === 'success' ? '✅ ' : '⚠️ '}
+                {inviteFeedback.message}
+              </Text>
             </View>
           )}
         </View>
