@@ -127,92 +127,51 @@ function buildNotificationMessage(
 }
 
 // ---------------------------------------------------------------------------
-// FCM Sender
+// Expo Push Sender
 // ---------------------------------------------------------------------------
 
-async function getAccessToken(serviceAccount: { client_email: string; private_key: string; token_uri: string }): Promise<string> {
-  // Build JWT for Google OAuth2
-  const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-  const now = Math.floor(Date.now() / 1000);
-  const claim = btoa(JSON.stringify({
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/firebase.messaging',
-    aud: serviceAccount.token_uri,
-    iat: now,
-    exp: now + 3600,
-  }));
-
-  const signInput = `${header}.${claim}`;
-
-  // Import the private key for signing
-  const pemContent = serviceAccount.private_key
-    .replace(/-----BEGIN PRIVATE KEY-----/, '')
-    .replace(/-----END PRIVATE KEY-----/, '')
-    .replace(/\n/g, '');
-  const binaryKey = Uint8Array.from(atob(pemContent), c => c.charCodeAt(0));
-
-  const cryptoKey = await crypto.subtle.importKey(
-    'pkcs8',
-    binaryKey,
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
-
-  const signature = await crypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    cryptoKey,
-    new TextEncoder().encode(signInput)
-  );
-
-  const jwt = `${signInput}.${btoa(String.fromCharCode(...new Uint8Array(signature)))}`;
-
-  // Exchange JWT for access token
-  const tokenRes = await fetch(serviceAccount.token_uri, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&assertion=${jwt}`,
-  });
-
-  const tokenData = await tokenRes.json();
-  return tokenData.access_token;
-}
-
-async function sendFCMPush(
-  token: string,
+async function sendExpoPush(
+  tokens: string[],
   message: NotificationMessage,
-  projectId: string,
-  accessToken: string,
   dataPayload?: Record<string, string>
-): Promise<boolean> {
+): Promise<{ sent: number; failed: number }> {
+  const messages = tokens
+    .filter((t) => t.startsWith('ExponentPushToken'))
+    .map((token) => ({
+      to: token,
+      sound: 'default' as const,
+      title: message.title,
+      body: message.body,
+      data: dataPayload,
+    }));
+
+  if (messages.length === 0) return { sent: 0, failed: 0 };
+
   try {
-    const res = await fetch(
-      `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: {
-            token,
-            notification: {
-              title: message.title,
-              body: message.body,
-            },
-            data: dataPayload,
-            android: {
-              priority: 'high',
-            },
-          },
-        }),
+    const res = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(messages),
+    });
+
+    const result = await res.json();
+    let sent = 0;
+    let failed = 0;
+
+    if (result.data) {
+      for (const ticket of result.data) {
+        if (ticket.status === 'ok') sent++;
+        else failed++;
       }
-    );
-    return res.ok;
+    }
+
+    return { sent, failed };
   } catch (err) {
-    console.error('FCM send failed:', err);
-    return false;
+    console.error('Expo push send failed:', err);
+    return { sent: 0, failed: messages.length };
   }
 }
 
@@ -225,26 +184,9 @@ Deno.serve(async (_req: Request) => {
   const today = new Date();
 
   try {
-    // Initialize Supabase client with service role (bypasses RLS)
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    // Parse Firebase service account
-    const firebaseKeyRaw = Deno.env.get('FIREBASE_SERVICE_ACCOUNT_KEY');
-    let firebaseServiceAccount: { client_email: string; private_key: string; token_uri: string; project_id: string } | null = null;
-    let fcmAccessToken: string | null = null;
-
-    if (firebaseKeyRaw) {
-      try {
-        firebaseServiceAccount = JSON.parse(firebaseKeyRaw);
-        fcmAccessToken = await getAccessToken(firebaseServiceAccount!);
-      } catch (err) {
-        console.error('Failed to parse Firebase key or get access token:', err);
-      }
-    } else {
-      console.warn('FIREBASE_SERVICE_ACCOUNT_KEY not set — FCM disabled');
-    }
 
     // 1. Query all active inventory items with expiration dates
     const { data: items, error: itemsError } = await supabase
@@ -359,23 +301,18 @@ Deno.serve(async (_req: Request) => {
           const message = buildNotificationMessage(item.name, threshold, daysExpired);
 
           for (const sub of subscriptions) {
-            if (sub.platform === 'android' && firebaseServiceAccount && fcmAccessToken) {
-              const success = await sendFCMPush(
-                sub.token,
-                message,
-                firebaseServiceAccount.project_id,
-                fcmAccessToken,
-                {
-                  inventory_item_id: item.id,
-                  household_id: item.household_id,
-                  notification_type: threshold,
-                }
-              );
-              if (success) {
-                totalNotificationsSent++;
-              } else {
-                errors.push(`FCM failed for user ${member.user_id}, item ${item.name}`);
+            const result = await sendExpoPush(
+              [sub.token],
+              message,
+              {
+                inventory_item_id: item.id,
+                household_id: item.household_id,
+                notification_type: threshold,
               }
+            );
+            totalNotificationsSent += result.sent;
+            if (result.failed > 0) {
+              errors.push(`Push failed for user ${member.user_id}, item ${item.name}`);
             }
           }
         }
