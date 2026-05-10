@@ -102,24 +102,57 @@ Deno.serve(async (req) => {
     }
 
     // -----------------------------------------------------------------------
-    // New user — create a pending invite
+    // New user — check for existing pending invite or create one
     // -----------------------------------------------------------------------
-    const { data: invite, error: insertError } = await supabaseClient
+
+    // Use admin client to check for existing pending invite (avoids RLS issues)
+    const { data: existingInvite } = await supabaseAdmin
       .from('household_invites')
-      .insert({
-        household_id,
-        invited_by: user.id,
-        invited_email: email,
-      })
-      .select()
+      .select('id, invited_email, expires_at')
+      .eq('household_id', household_id)
+      .eq('invited_email', email)
+      .eq('status', 'pending')
       .single();
 
-    if (insertError) {
-      console.error('Error inserting invite:', insertError);
-      return new Response(JSON.stringify({ error: insertError.message }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    let invite;
+
+    if (existingInvite) {
+      // Refresh the expiry on the existing invite (resend scenario)
+      const { data: updated, error: updateError } = await supabaseAdmin
+        .from('household_invites')
+        .update({ expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
+        .eq('id', existingInvite.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('Error refreshing invite:', updateError);
+        return new Response(JSON.stringify({ error: updateError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      invite = updated;
+    } else {
+      // Create a new invite
+      const { data: newInvite, error: insertError } = await supabaseClient
+        .from('household_invites')
+        .insert({
+          household_id,
+          invited_by: user.id,
+          invited_email: email,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error('Error inserting invite:', insertError);
+        return new Response(JSON.stringify({ error: insertError.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      invite = newInvite;
     }
 
     // Generate the deep link
@@ -152,10 +185,14 @@ Deno.serve(async (req) => {
         console.log(`Successfully sent invite email to ${email}`);
       }
     } else {
-      console.log(`[DEV MODE] Skipping Resend. Invite URL for ${email}: ${inviteUrl}`);
+      console.log(`[DEV MODE] No RESEND_API_KEY set. Invite URL for ${email}: ${inviteUrl}`);
     }
 
-    return new Response(JSON.stringify({ success: true, invite_id: invite.id, action: 'invited' }), {
+    return new Response(JSON.stringify({
+      success: true,
+      invite_id: invite.id,
+      action: existingInvite ? 'resent' : 'invited',
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
