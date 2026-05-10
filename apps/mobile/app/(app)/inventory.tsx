@@ -15,6 +15,7 @@ import {
 import { OfflineBanner } from '../../components/OfflineBanner'
 import { InventoryItemCard } from '../../components/inventory/InventoryItemCard'
 import { DiscardSheet } from '../../components/inventory/DiscardSheet'
+import { ItemDetailSheet } from '../../components/inventory/ItemDetailSheet'
 import { RecentlyRemoved } from '../../components/inventory/RecentlyRemoved'
 import {
   useInventoryItems,
@@ -36,6 +37,7 @@ export default function InventoryScreen() {
   const { user, householdId } = useAuth()
   const [activeTab, setActiveTab] = useState<StorageLocation>('fridge')
   const [discardItem, setDiscardItem] = useState<InventoryItemWithDetails | null>(null)
+  const [detailItem, setDetailItem] = useState<InventoryItemWithDetails | null>(null)
   const [snackMessage, setSnackMessage] = useState<string | null>(null)
 
   const { data: counts } = useInventoryCounts(householdId ?? undefined)
@@ -73,17 +75,31 @@ export default function InventoryScreen() {
     []
   )
 
+  const handleItemPress = useCallback(
+    (item: InventoryItemWithDetails) => {
+      setDetailItem(item)
+    },
+    []
+  )
+
+  const handleDetailComplete = useCallback(
+    (action: 'consumed' | 'tossed', reAdded: boolean) => {
+      const actionLabel = action === 'consumed' ? 'Marked as used' : 'Marked as tossed'
+      const restockLabel = reAdded ? ' · Added to grocery list' : ''
+      setSnackMessage(`${actionLabel}${restockLabel}`)
+    },
+    []
+  )
+
   const renderItem = useCallback(
     ({ item }: { item: InventoryItemWithDetails }) => (
       <InventoryItemCard
         item={item}
-        onPress={() => {
-          // Item detail sheet — will be built later
-        }}
+        onPress={() => handleItemPress(item)}
         onLongPress={() => handleLongPress(item)}
       />
     ),
-    [handleLongPress]
+    [handleItemPress, handleLongPress]
   )
 
   const renderEmpty = useCallback(() => {
@@ -203,7 +219,7 @@ export default function InventoryScreen() {
         />
       )}
 
-      {/* Discard flow modal */}
+      {/* Discard flow modal (long-press shortcut) */}
       <DiscardSheet
         item={discardItem}
         visible={!!discardItem}
@@ -211,6 +227,16 @@ export default function InventoryScreen() {
         userId={user?.id ?? ''}
         householdId={householdId ?? ''}
         onComplete={handleDiscardComplete}
+      />
+
+      {/* Item detail + edit sheet (tap) */}
+      <ItemDetailSheet
+        item={detailItem}
+        visible={!!detailItem}
+        onDismiss={() => setDetailItem(null)}
+        userId={user?.id ?? ''}
+        householdId={householdId ?? ''}
+        onComplete={handleDetailComplete}
       />
 
       {/* Feedback snackbar */}

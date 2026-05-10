@@ -51,6 +51,21 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // 3a. Guard: only allow household owners to send test notifications.
+    // This prevents abuse of this debug/diagnostic endpoint in production.
+    const { data: ownedHouseholds } = await supabaseAdmin
+      .from('household_members')
+      .select('household_id')
+      .eq('user_id', user.id)
+      .eq('role', 'owner');
+
+    if (!ownedHouseholds || ownedHouseholds.length === 0) {
+      return new Response(JSON.stringify({ error: 'Only household owners can send test notifications' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
     // 4. Parse optional custom message from request body
     let title = '\ud83e\uddea Test Notification';
     let body = 'If you see this, push notifications are working! \ud83c\udf89';

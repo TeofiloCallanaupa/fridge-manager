@@ -304,4 +304,117 @@ test.describe('Row Level Security (Integration)', () => {
       .single();
     expect(check?.household_id).toBe(householdA.id);
   });
+
+  // =========================================================================
+  // Regression tests — Review fixes (2026-05-10)
+  // =========================================================================
+
+  test('Regression: Household UPDATE restricted to owners (migration 013)', async () => {
+    // Add User B as a member (not owner) of Household A via admin
+    await adminClient.from('household_members').upsert({
+      household_id: householdA.id,
+      user_id: userB.id,
+      role: 'member',
+    }, { onConflict: 'household_id,user_id' });
+
+    // User B (member) tries to update Household A's name
+    const { data: updated, error } = await clientB.from('households')
+      .update({ name: 'Hacked Name' })
+      .eq('id', householdA.id)
+      .select();
+
+    // Should fail — only owners can update households
+    if (error) {
+      expect(error).toBeTruthy();
+    } else {
+      expect(updated?.length ?? 0).toBe(0);
+    }
+
+    // Verify the name is unchanged
+    const { data: check } = await clientA.from('households')
+      .select('name')
+      .eq('id', householdA.id)
+      .single();
+    expect(check?.name).toBe('Household A');
+
+    // User A (owner) CAN update Household A's name
+    const { error: ownerErr } = await clientA.from('households')
+      .update({ name: 'Household A Updated' })
+      .eq('id', householdA.id);
+    expect(ownerErr).toBeNull();
+
+    // Verify it was updated
+    const { data: check2 } = await clientA.from('households')
+      .select('name')
+      .eq('id', householdA.id)
+      .single();
+    expect(check2?.name).toBe('Household A Updated');
+
+    // Restore original name
+    await clientA.from('households')
+      .update({ name: 'Household A' })
+      .eq('id', householdA.id);
+
+    // Clean up: remove User B from Household A
+    await adminClient.from('household_members')
+      .delete()
+      .eq('household_id', householdA.id)
+      .eq('user_id', userB.id);
+  });
+
+  test('Regression: Nullable invited_email for link-based invites (migration 012)', async () => {
+    // Owner can create an invite with null email (link-based)
+    const { data: invite, error } = await clientA.from('household_invites').insert({
+      household_id: householdA.id,
+      invited_by: userA.id,
+      invited_email: null,
+    }).select().single();
+
+    expect(error).toBeNull();
+    expect(invite).toBeTruthy();
+    expect(invite!.invited_email).toBeNull();
+    expect(invite!.status).toBe('pending');
+
+    // Owner can also create an invite with an email (backwards compatible)
+    const { data: invite2, error: err2 } = await clientA.from('household_invites').insert({
+      household_id: householdA.id,
+      invited_by: userA.id,
+      invited_email: 'someone@example.com',
+    }).select().single();
+
+    expect(err2).toBeNull();
+    expect(invite2).toBeTruthy();
+    expect(invite2!.invited_email).toBe('someone@example.com');
+  });
+
+  test('Regression: Non-owner member cannot update household settings', async () => {
+    // Add User B as a member of Household A via admin
+    await adminClient.from('household_members').upsert({
+      household_id: householdA.id,
+      user_id: userB.id,
+      role: 'member',
+    }, { onConflict: 'household_id,user_id' });
+
+    // User B tries to update timezone
+    const { data: updated } = await clientB.from('households')
+      .update({ timezone: 'America/Los_Angeles' })
+      .eq('id', householdA.id)
+      .select();
+
+    // Should return 0 rows (RLS blocks non-owners)
+    expect(updated?.length ?? 0).toBe(0);
+
+    // Verify unchanged
+    const { data: check } = await clientA.from('households')
+      .select('timezone')
+      .eq('id', householdA.id)
+      .single();
+    expect(check?.timezone).toBe('America/New_York');
+
+    // Clean up
+    await adminClient.from('household_members')
+      .delete()
+      .eq('household_id', householdA.id)
+      .eq('user_id', userB.id);
+  });
 });

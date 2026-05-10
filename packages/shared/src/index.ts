@@ -40,6 +40,14 @@ export type {
 export type { AvatarConfig } from './types/avatar.js';
 
 export type {
+  EditInventoryInput,
+  DiscardInput,
+  RestoreInput,
+  ReAddToGroceryInput,
+  ChangeReasonInput,
+} from './types/mutations.js';
+
+export type {
   NotificationType,
   NotificationLog,
   SystemLogEvent,
@@ -90,6 +98,11 @@ export {
   QUIET_HOURS_DEFAULT,
   DEFAULT_NOTIFICATION_PREFS,
 } from './constants/notifications.js';
+
+export {
+  MAX_NAME_LENGTH,
+  MAX_QUANTITY_LENGTH,
+} from './constants/validation.js';
 
 // Queries (platform-agnostic, accept any SupabaseClient)
 export {

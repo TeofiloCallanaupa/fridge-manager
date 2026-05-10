@@ -4,42 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import type { InventoryItemWithDetails } from '@/hooks/use-inventory-items'
-import type { StorageLocation, DiscardReason } from '@fridge-manager/shared'
+import type { StorageLocation, DiscardReason, EditInventoryInput, DiscardInput, ReAddToGroceryInput } from '@fridge-manager/shared'
+import { MAX_NAME_LENGTH, MAX_QUANTITY_LENGTH } from '@fridge-manager/shared'
 
 // ---------------------------------------------------------------------------
-// Types
+// Types (additional web-only types if needed)
 // ---------------------------------------------------------------------------
-
-type EditInventoryInput = {
-  itemId: string
-  householdId: string
-  updates: {
-    name?: string
-    quantity?: string | null
-    expiration_date?: string | null
-    location?: StorageLocation
-  }
-}
-
-type DiscardInput = {
-  itemId: string
-  householdId: string
-  reason: DiscardReason
-}
-
-type ReAddToGroceryInput = {
-  name: string
-  quantity: string | null
-  categoryId: string
-  destination: 'fridge' | 'freezer' | 'pantry' | 'none'
-  householdId: string
-  addedBy: string
-}
-
-/** Max length for item name */
-const MAX_NAME_LENGTH = 200
-/** Max length for quantity */
-const MAX_QUANTITY_LENGTH = 50
 
 // ---------------------------------------------------------------------------
 // Purchase history query

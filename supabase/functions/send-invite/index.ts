@@ -3,7 +3,10 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const allowedOrigin = Deno.env.get('CORS_ORIGIN') || '*';
+// CORS: require explicit origin configuration — never default to wildcard
+const allowedOrigin = Deno.env.get('CORS_ORIGIN')
+  || Deno.env.get('NEXT_PUBLIC_SITE_URL')
+  || 'http://localhost:3000';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': allowedOrigin,

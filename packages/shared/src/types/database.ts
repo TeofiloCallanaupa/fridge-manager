@@ -118,6 +118,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "grocery_items_added_by_profiles_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "grocery_items_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
@@ -140,7 +147,7 @@ export type Database = {
           household_id: string
           id: string
           invited_by: string
-          invited_email: string
+          invited_email: string | null
           status: string
         }
         Insert: {
@@ -149,7 +156,7 @@ export type Database = {
           household_id: string
           id?: string
           invited_by: string
-          invited_email: string
+          invited_email?: string | null
           status?: string
         }
         Update: {
@@ -158,7 +165,7 @@ export type Database = {
           household_id?: string
           id?: string
           invited_by?: string
-          invited_email?: string
+          invited_email?: string | null
           status?: string
         }
         Relationships: [
@@ -202,6 +209,13 @@ export type Database = {
             columns: ["household_id"]
             isOneToOne: false
             referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_members_user_id_profiles_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -283,6 +297,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "inventory_items_added_by_profiles_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "inventory_items_category_id_fkey"
             columns: ["category_id"]

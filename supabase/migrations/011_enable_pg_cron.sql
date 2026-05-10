@@ -2,12 +2,12 @@
 -- Migration 011: Enable pg_cron and schedule notification check
 -- Triggers the check-expiration-notifications Edge Function daily at 1pm UTC (9am ET)
 --
--- ⚠️  DEPLOYMENT NOTE:
---   Before applying to production, replace the two placeholders below:
+-- ⚠️  THIS MIGRATION CONTAINS PLACEHOLDERS — DO NOT APPLY AUTOMATICALLY.
+--   Apply manually via Supabase Dashboard → SQL Editor with real values:
 --     1. <SUPABASE_URL>  → your project URL (e.g. https://abc123.supabase.co)
 --     2. <ANON_KEY>      → your project's anon/public key
 --   These values are in: Supabase Dashboard → Settings → API
---   DO NOT commit real keys to this file — apply manually via SQL Editor.
+--   DO NOT commit real keys to this file.
 -- ============================================================================
 
 -- Enable extensions

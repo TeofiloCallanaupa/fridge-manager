@@ -1,41 +1,53 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import type { StorageLocation, DiscardReason } from '@fridge-manager/shared'
+import type { StorageLocation, DiscardReason, EditInventoryInput, DiscardInput, RestoreInput, ReAddToGroceryInput, ChangeReasonInput } from '@fridge-manager/shared'
+import { MAX_NAME_LENGTH, MAX_QUANTITY_LENGTH } from '@fridge-manager/shared'
 
 // ---------------------------------------------------------------------------
-// Types
+// Edit inventory item mutation
 // ---------------------------------------------------------------------------
 
-type DiscardInput = {
-  itemId: string
-  householdId: string
-  reason: DiscardReason
-}
+/**
+ * Updates an inventory item's name, quantity, expiration, or location.
+ * Used by the item detail sheet to correct mistakes (e.g. wrong expiration date).
+ */
+export function useEditInventoryItem() {
+  const queryClient = useQueryClient()
 
-type RestoreInput = {
-  itemId: string
-  householdId: string
-}
+  return useMutation({
+    mutationFn: async ({ itemId, updates }: EditInventoryInput) => {
+      // Client-side validation
+      if (updates.name !== undefined) {
+        const trimmed = updates.name.trim()
+        if (!trimmed) throw new Error('Item name cannot be empty')
+        if (trimmed.length > MAX_NAME_LENGTH) {
+          throw new Error(`Item name must be under ${MAX_NAME_LENGTH} characters`)
+        }
+        updates.name = trimmed
+      }
+      if (updates.quantity !== undefined && updates.quantity !== null) {
+        if (updates.quantity.length > MAX_QUANTITY_LENGTH) {
+          throw new Error(`Quantity must be under ${MAX_QUANTITY_LENGTH} characters`)
+        }
+      }
 
-type ReAddToGroceryInput = {
-  name: string
-  quantity: string | null
-  categoryId: string
-  destination: 'fridge' | 'freezer' | 'pantry' | 'none'
-  householdId: string
-  addedBy: string
-}
+      const { data, error } = await supabase
+        .from('inventory_items')
+        .update(updates)
+        .eq('id', itemId)
+        .select()
+        .single()
 
-type ChangeReasonInput = {
-  itemId: string
-  householdId: string
-  newReason: DiscardReason
-}
+      if (error) throw error
+      return data
+    },
 
-/** Max length for item name */
-const MAX_NAME_LENGTH = 200
-/** Max length for quantity */
-const MAX_QUANTITY_LENGTH = 50
+    onSuccess: (_data, { householdId }) => {
+      queryClient.invalidateQueries({ queryKey: ['inventory-items', householdId] })
+      queryClient.invalidateQueries({ queryKey: ['inventory-counts', householdId] })
+    },
+  })
+}
 
 // ---------------------------------------------------------------------------
 // Discard mutation

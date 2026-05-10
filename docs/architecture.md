@@ -12,12 +12,12 @@
 - **Supabase Auth** (magic links or email/password). Dropped NextAuth + Google OAuth because Google OAuth requires Cloud Console setup, consent screen config, and manually whitelisting test user emails.
 - **Supabase for the database** (free tier: 500MB, 50K MAU auth). Postgres is a natural fit for relational data. Real-time subscriptions built in.
 - **Supabase pg_cron + Edge Functions** for the daily expiration check cron job. Keeps everything in Supabase instead of burning Vercel's 2 free cron slots.
-- **Offline support via WatermelonDB** for the mobile app. Grocery store reception is spotty, the app must work offline. WatermelonDB provides local SQLite with background sync to Supabase.
+- **Offline support (deferred).** WatermelonDB was planned for local SQLite with background sync, but is not yet implemented. The mobile app currently uses TanStack Query (server state only) and requires connectivity. WatermelonDB or an equivalent offline solution should be added before wider rollout — grocery store reception is spotty.
 
 ## Stack
 
 ```
-Mobile:     Expo (React Native) + WatermelonDB → Play Store / APK sideload
+Mobile:     Expo (React Native) → Play Store / APK sideload
 Web:        Next.js (App Router) → Vercel (free tier)
 Backend:    Supabase (Auth + Postgres + Realtime + Edge Functions + pg_cron)
 Push:       Firebase Cloud Messaging (Android native)
@@ -37,8 +37,8 @@ Errors:     Sentry (free tier)
 | Concern | Solution |
 |---------|----------|
 | Server state (fetching, caching, refetching) | **TanStack Query (React Query)** |
-| Real-time data | **Supabase Realtime** subscriptions |
-| Local offline data (mobile) | **WatermelonDB** (its own reactive system) |
+| Real-time data | **Supabase Realtime** subscriptions (web only; mobile deferred) |
+| Local offline data (mobile) | **Deferred** — WatermelonDB planned but not yet implemented |
 | Auth / current household | **React Context** |
 | Form state | Local `useState` |
 

@@ -55,6 +55,7 @@ jest.mock('../../../hooks/use-inventory-items', () => ({
 
 // Mock the mutation hooks used by child components
 jest.mock('../../../hooks/use-inventory-mutations', () => ({
+  useEditInventoryItem: () => ({ mutate: jest.fn(), isPending: false }),
   useDiscardItem: () => ({ mutate: jest.fn(), isPending: false }),
   useRestoreItem: () => ({ mutate: jest.fn(), isPending: false }),
   useReAddToGroceryList: () => ({ mutate: jest.fn(), isPending: false }),
